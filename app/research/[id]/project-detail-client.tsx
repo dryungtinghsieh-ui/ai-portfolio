@@ -128,14 +128,14 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="mb-12"
+                  className="mb-12 p-4 rounded-xl border border-blue-500/20 bg-slate-900/30"
                 >
-                  <div className="relative h-96 sm:h-[500px] w-full rounded-xl overflow-hidden border border-blue-500/20">
+                  <div className="relative h-96 sm:h-[500px] w-full rounded-lg overflow-hidden">
                     <Image
                       src={project.image}
                       alt={project.title}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       priority
                     />
                   </div>
