@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ResearchProject, researchProjects } from '@/lib/research-data';
 
 interface ProjectDetailClientProps {
@@ -120,6 +121,26 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               <p className="text-lg sm:text-xl text-cyan-300 mb-12 font-medium">
                 {project.shortDescription}
               </p>
+
+              {/* Hero Image */}
+              {project.image && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="mb-12 rounded-xl overflow-hidden border border-blue-500/20"
+                >
+                  <div className="relative h-96 sm:h-[500px] w-full">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
 
             {/* Full Description */}
