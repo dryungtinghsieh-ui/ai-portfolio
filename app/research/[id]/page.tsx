@@ -3,12 +3,13 @@ import { researchProjects } from '@/lib/research-data';
 import { notFound } from 'next/navigation';
 import { ProjectDetailClient } from './project-detail-client';
 
-export default function ProjectDetailPage({
+export default async function ProjectDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const project = researchProjects.find((p) => p.id === params.id);
+  const { id } = await params;
+  const project = researchProjects.find((p) => p.id === id);
 
   if (!project) {
     notFound();
