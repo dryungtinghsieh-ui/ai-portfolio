@@ -202,7 +202,7 @@ export default function Home() {
                   className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-12"
                 >
                   <motion.a
-                    href="#projects"
+                    href="/research"
                     whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)' }}
                     whileTap={{ scale: 0.95 }}
                     className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 font-semibold text-black transition-all duration-200 hover:shadow-lg"
