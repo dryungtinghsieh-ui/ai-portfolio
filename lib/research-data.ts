@@ -131,36 +131,38 @@ export const researchProjects: ResearchProject[] = [
   },
 
   {
-    id: 'tdr-signal-analysis',
-    title: 'Intelligent TDR Signal Analysis & Diagnostics',
+    id: 'underwater-acoustic-communications',
+    title: 'Full-Duplex Underwater Acoustic Communications',
     shortDescription:
-      'ML-based Time Domain Reflectometry interpretation for automated fault detection in interconnects',
+      'Real-time two-way underwater robot conversations using acoustic self-interference cancellation in space',
     fullDescription:
-      'Created an intelligent system that automatically interprets Time Domain Reflectometry (TDR) signals using machine learning. The system can identify and classify cable faults, discontinuities, and impedance mismatches faster and more accurately than manual analysis. This automation reduces testing time and improves reliability in manufacturing and field diagnostics.',
-    image: '/research/tdr-analysis.jpg',
+      'Revolutionary underwater communication system enabling robots and AUVs to talk and listen simultaneously. Like having a real-time conversation underwater, this system transmits and receives acoustic signals at the same time using advanced acoustic vector sensors and spatial interference cancellation. By eliminating self-echo through innovative signal processing techniques, it achieves true full-duplex communications—doubling channel efficiency compared to traditional half-duplex systems. Perfect for deep-sea exploration networks, autonomous underwater vehicle coordination, and ocean monitoring systems where real-time data exchange is critical.',
+    image: '/research/underwater-acoustic.jpg',
     technologies: [
-      'TDR',
+      'Acoustic Communications',
+      'Full-Duplex Technology',
       'Signal Processing',
-      'Machine Learning',
-      'Computer Vision',
-      'Pattern Recognition',
-      'Fault Detection',
+      'Interference Cancellation',
+      'Underwater Acoustics',
+      'Vector Sensors',
+      'Autonomous Underwater Vehicles',
     ],
     publications: [
       {
-        title: 'Deep Learning for Automated TDR Signal Diagnosis',
-        publication: 'IEEE International Test Conference',
-        year: 2024,
+        title: 'Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space',
+        publication: 'Journal of Communications and Networks',
+        year: 2023,
       },
     ],
     achievements: [
-      '95% fault detection accuracy',
-      'Automated diagnosis in real-time',
-      '10× faster than manual interpretation',
-      'Reduced field maintenance costs',
+      '2× bandwidth efficiency vs. traditional half-duplex systems',
+      'Real-time bidirectional communication underwater',
+      'Adaptive steering angle adjustment via integrated protocol',
+      'Validated in real underwater acoustic channels',
+      'Supports advanced phased array beam forming',
     ],
     impact:
-      'Improved manufacturing quality control and reduced warranty claims',
+      'Transforms underwater robotics enables simultaneous communication for coordinated deep-sea operations and real-time ocean monitoring networks',
   },
 
   {
