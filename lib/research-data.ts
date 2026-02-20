@@ -49,7 +49,7 @@ export const researchProjects: ResearchProject[] = [
       'Batteryless wearable ECG monitoring using serialized analog folded neural network for continuous health screening',
     fullDescription:
       'Introduced an ultra-low power analog Folded Neural Network (FNN) for physiological signal processing in a batteryless fashion. By serializing computation, the proposed FNN provides significant benefits over traditional analog implementations, including lower space, reduced power consumption, and lower peak-to-average power ratio. The system leverages distributed sensing and analog computation to enable continuous ECG-based cardiovascular health monitoring on wearable devices without battery dependency. Extensive evaluation on ECG datasets demonstrates optimal performance at 6 layers with hidden size of 30, achieving accurate anomaly detection suitable for early diagnosis of myocardial infarction and cardiomyopathy/heart failure in both clinical and pre-clinical environments.',
-    image: '/research/ecg_acqnmon.jpg',
+    image: '/research/ecg_acqnmon-exp.jpg',
     technologies: [
       'Analog Neural Networks',
       'Folded Neural Networks',
