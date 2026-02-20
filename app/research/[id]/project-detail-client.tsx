@@ -252,9 +252,14 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       <h3 className="font-semibold text-blue-300 text-base sm:text-lg mb-2">
                         {pub.title}
                       </h3>
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-400">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-400 mb-2">
                         <p>{pub.publication}</p>
-                        <p className="text-cyan-400 font-semibold">{pub.year}</p>
+                        <div className="flex items-center gap-4 mt-2 sm:mt-0">
+                          <p className="text-cyan-400 font-semibold">{pub.year}</p>
+                          {pub.citations && (
+                            <p className="text-blue-300 font-semibold">Cited by {pub.citations}</p>
+                          )}
+                        </div>
                       </div>
                       {pub.url && (
                         <a

@@ -10,6 +10,7 @@ export interface ResearchProject {
     url?: string;
     publication: string;
     year: number;
+    citations?: number;
   }[];
   achievements?: string[];
   impact?: string;
@@ -129,9 +130,18 @@ export const researchProjects: ResearchProject[] = [
     ],
     publications: [
       {
+        title: 'FD-UWA: Full-duplex underwater acoustic comms via self-interference cancellation in space',
+        publication: '2020 IEEE 17th International Conference on Mobile Ad Hoc and Sensor Systems (MASS), pp. 256-264',
+        year: 2020,
+        url: 'https://ieeexplore.ieee.org/abstract/document/9356050/',
+        citations: 18,
+      },
+      {
         title: 'Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space',
-        publication: 'Journal of Communications and Networks',
+        publication: 'Journal of Communications and Networks, 25(2), pp. 167-181',
         year: 2023,
+        url: 'https://ieeexplore.ieee.org/abstract/document/10102781/',
+        citations: 21,
       },
     ],
     achievements: [
