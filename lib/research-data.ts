@@ -44,40 +44,32 @@ export const researchProjects: ResearchProject[] = [
 
   {
     id: 'hybrid-neural-networks',
-    title: 'Analog-Digital Hybrid Neural Networks',
+    title: 'Ultra-low Power Analog Folded Neural Network for Cardiovascular Health Monitoring',
     shortDescription:
-      'Novel architecture combining analog computing with digital neural networks for edge AI applications',
+      'Batteryless wearable ECG monitoring using serialized analog folded neural network for continuous health screening',
     fullDescription:
-      'Pioneered hybrid neural network architectures that leverage analog signal processing for feature extraction combined with digital neural network processing. This approach achieves superior energy efficiency and latency compared to pure digital implementations, making it ideal for edge AI and IoT applications with stringent power constraints.',
-    image: '/research/hybrid-nn.jpg',
+      'Introduced an ultra-low power analog Folded Neural Network (FNN) for physiological signal processing in a batteryless fashion. By serializing computation, the proposed FNN provides significant benefits over traditional analog implementations, including lower space, reduced power consumption, and lower peak-to-average power ratio. The system leverages distributed sensing and analog computation to enable continuous ECG-based cardiovascular health monitoring on wearable devices without battery dependency. Extensive evaluation on ECG datasets demonstrates optimal performance at 6 layers with hidden size of 30, achieving accurate anomaly detection suitable for early diagnosis of myocardial infarction and cardiomyopathy/heart failure in both clinical and pre-clinical environments.',
+    image: '/research/ecg_acqnmon.jpg',
     technologies: [
-      'Hybrid Neural Networks',
-      'Analog AI',
-      'Edge AI',
-      'Signal Processing',
-      'Hardware Acceleration',
+      'Analog Neural Networks',
+      'Folded Neural Networks',
+      'Ultra-Low Power Design',
+      'Health Monitoring',
+      'Wearable Computing',
+      'ECG Signal Processing',
+      'Distributed Sensing',
       'VLSI',
     ],
-    publications: [
-      {
-        title: 'Energy-Efficient Analog-Digital Hybrid Neural Networks',
-        publication: 'IEEE Journal of Solid-State Circuits',
-        year: 2024,
-      },
-      {
-        title: 'Analog Computing for Next-Generation Edge AI',
-        publication: 'International Solid-State Circuits Conference (ISSCC)',
-        year: 2023,
-      },
-    ],
     achievements: [
-      '10× energy efficiency improvement vs. digital-only approaches',
-      '100× reduction in latency for inference',
-      'Scalable architecture from microcontroller to FPGA',
-      'Patent filed for novel signal processing techniques',
+      'Batteryless operation through serialized computation',
+      'Optimized 6-layer architecture with hidden size 30',
+      'Enables continuous health monitoring on wearable devices',
+      'Superior accuracy in ECG-based cardiovascular anomaly detection',
+      'Minimal thermal noise and spatial requirements',
+      'Reduced peak-to-average power ratio vs. traditional analog implementations',
     ],
     impact:
-      'Enables real-time AI inference on battery-powered edge devices',
+      'Transforms continuous cardiovascular health monitoring by enabling batteryless wearable devices for early disease detection',
   },
 
   {
