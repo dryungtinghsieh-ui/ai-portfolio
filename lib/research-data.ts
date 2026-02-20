@@ -24,7 +24,7 @@ export const researchProjects: ResearchProject[] = [
       'Machine learning framework for S-parameter prediction achieving 4000× computational acceleration',
     fullDescription:
       'Developed a comprehensive ML pipeline that predicts S-parameters for high-speed interconnect systems. This breakthrough approach reduced electromagnetic simulation time from hours to milliseconds, delivering exceptional accuracy with only 4% prediction error. The innovation resulted in $12.5M USD capital savings by enabling rapid design iterations without expensive physical prototyping.',
-    image: '/research/AI-Spara.jpg',
+    image: '/research/ai-cup.jpg',
     technologies: [
       'TensorFlow',
       'PyTorch',
@@ -38,6 +38,17 @@ export const researchProjects: ResearchProject[] = [
       '4% prediction error maintains design reliability',
       '$12.5M capital savings through faster iterations',
       'Deployed in production at TE Connectivity',
+      '🏆 Best AI Innovation Prize in TE AI Cup 2022-23',
+      '🌍 Won among 40 competing teams from 25 universities globally',
+    ],
+    publications: [
+      {
+        title: 'Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space',
+        publication: 'Journal of Communications and Networks, 25(2), pp. 167-181',
+        year: 2023,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:d1gkVwhDpl0C',
+        citations: 21,
+      },
     ],
     impact:
       'Transformed design cycle from weeks to hours, enabling rapid prototyping and cost optimization',
