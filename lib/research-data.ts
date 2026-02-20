@@ -144,37 +144,4 @@ export const researchProjects: ResearchProject[] = [
     impact:
       'Transforms underwater robotics enables simultaneous communication for coordinated deep-sea operations and real-time ocean monitoring networks',
   },
-
-  {
-    id: 'mems-simulation',
-    title: 'ML-Accelerated MEMS Device Simulation',
-    shortDescription:
-      'Physics-informed neural networks for accelerating MEMS electromechanical simulation',
-    fullDescription:
-      'Developed physics-informed neural networks (PINNs) for MEMS device simulation and optimization. Combines domain knowledge of electromechanical systems with deep learning to accelerate design iteration cycles. Enables rapid optimization of resonator sensitivity, frequency response, and power consumption.',
-    image: '/research/mems.jpg',
-    technologies: [
-      'MEMS Simulation',
-      'Physics-Informed Machine Learning',
-      'Neural Networks',
-      'Electromechanical Modeling',
-      'Optimization',
-      'CAD Integration',
-    ],
-    publications: [
-      {
-        title: 'Physics-Informed Neural Networks for MEMS Design Optimization',
-        publication: 'Journal of Microelectromechanical Systems',
-        year: 2024,
-      },
-    ],
-    achievements: [
-      '100× acceleration vs. traditional FEA',
-      'Physics constraints maintained throughout',
-      'Integrated with commercial CAD tools',
-      'Production-ready optimization workflows',
-    ],
-    impact:
-      'Reduced MEMS design cycle from months to weeks',
-  },
 ];
