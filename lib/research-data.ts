@@ -79,7 +79,7 @@ export const researchProjects: ResearchProject[] = [
       'Bio-inspired neuromorphic computing approach for ultra-low power signal analysis',
     fullDescription:
       'Developed spiking neural network (SNN) models that mimic biological neurons for signal processing tasks. SNNs offer natural temporal representation and spike-based communication, significantly reducing power consumption compared to artificial neural networks. Applications include signal integrity analysis, anomaly detection, and real-time data stream processing.',
-    image: '/research/Synapse_overview_eqCircuit.jpg',
+    image: '/research/snn-exp.jpg',
     technologies: [
       'Spiking Neural Networks',
       'Neuromorphic Computing',
