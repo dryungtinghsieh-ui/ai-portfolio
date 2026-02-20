@@ -270,7 +270,7 @@ export default function Home() {
                   />
                   <div className="relative rounded-2xl overflow-hidden border-2 border-blue-500/30 shadow-2xl">
                     <Image
-                      src="/portrait.jpg"
+                      src="/me.jpg"
                       alt="Dr. Yung-Ting Hsieh"
                       width={320}
                       height={400}
