@@ -256,7 +256,7 @@ export default function Home() {
                 variants={itemVariants}
                 className="flex justify-center"
               >
-                <div className="relative w-96 h-[520px] md:w-[420px] md:h-[580px] max-h-[600px]">
+                <div className="relative w-full max-w-[480px] h-[680px] md:w-[500px] md:h-[700px]">
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl"
                     animate={{
@@ -272,8 +272,8 @@ export default function Home() {
                     <Image
                       src="/me.jpg"
                       alt="Dr. Yung-Ting Hsieh"
-                      width={420}
-                      height={580}
+                      width={500}
+                      height={700}
                       priority
                       className="w-full h-full object-cover object-center"
                     />
