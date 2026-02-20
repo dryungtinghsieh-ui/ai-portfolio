@@ -32,18 +32,6 @@ export const researchProjects: ResearchProject[] = [
       'Deep Learning',
       'High-Speed Interconnects',
     ],
-    publications: [
-      {
-        title: 'Accelerating S-Parameter Prediction with Deep Neural Networks',
-        publication: 'IEEE Transactions on Components, Packaging and Manufacturing Technology',
-        year: 2024,
-      },
-      {
-        title: 'Physics-Informed Machine Learning for Electromagnetic Simulation',
-        publication: 'ACM International Conference on Machine Learning for Systems',
-        year: 2023,
-      },
-    ],
     achievements: [
       '4000× computational acceleration over traditional EM simulators',
       '4% prediction error maintains design reliability',
