@@ -117,7 +117,7 @@ export const researchProjects: ResearchProject[] = [
       'Real-time two-way underwater robot conversations using acoustic self-interference cancellation in space',
     fullDescription:
       'Revolutionary underwater communication system enabling robots and AUVs to talk and listen simultaneously. Like having a real-time conversation underwater, this system transmits and receives acoustic signals at the same time using advanced acoustic vector sensors and spatial interference cancellation. By eliminating self-echo through innovative signal processing techniques, it achieves true full-duplex communications—doubling channel efficiency compared to traditional half-duplex systems. Perfect for deep-sea exploration networks, autonomous underwater vehicle coordination, and ocean monitoring systems where real-time data exchange is critical.',
-    image: '/research/underwater-acoustic.jpg',
+    image: '/research/underwater-acoustic-exp.jpg',
     technologies: [
       'Acoustic Communications',
       'Full-Duplex Technology',
