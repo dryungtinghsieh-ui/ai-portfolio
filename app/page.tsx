@@ -220,7 +220,7 @@ export default function Home() {
                   </motion.a>
 
                   <motion.a
-                    href="mailto:contact@example.com"
+                    href="mailto:dr.yungting.hsieh@gmail.com"
                     whileHover={{ scale: 1.05, borderColor: 'rgba(34, 197, 94, 0.8)' }}
                     whileTap={{ scale: 0.95 }}
                     className="px-8 py-3 rounded-lg border border-green-500/50 font-semibold text-green-400 hover:text-green-300 transition-all duration-200"
