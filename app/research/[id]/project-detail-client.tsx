@@ -23,11 +23,11 @@ const itemVariants = {
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   return (
-    <main className="min-h-screen w-full bg-black text-white overflow-hidden">
+    <main className="min-h-screen w-full bg-slate-50 text-slate-900 overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-black opacity-90" />
-        <svg className="absolute inset-0 w-full h-full opacity-10" preserveAspectRatio="none">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-50 to-cyan-50 opacity-100" />
+        <svg className="absolute inset-0 w-full h-full opacity-5" preserveAspectRatio="none">
           <defs>
             <pattern
               id="grid"
@@ -38,7 +38,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               <path
                 d="M 50 0 L 0 0 0 50"
                 fill="none"
-                stroke="rgba(59, 130, 246, 0.3)"
+                stroke="rgba(59, 130, 246, 0.1)"
                 strokeWidth="0.5"
               />
             </pattern>
@@ -75,7 +75,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
       {/* Content */}
       <div className="relative z-10">
         {/* Header with navigation */}
-        <section className="pt-12 px-4 sm:px-6 lg:px-8 border-b border-blue-500/10">
+        <section className="pt-12 px-4 sm:px-6 lg:px-8 border-b border-blue-300/20">
           <div className="max-w-6xl mx-auto pb-8">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -86,7 +86,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               <div className="flex items-center gap-4">
                 <Link
                   href="/research"
-                  className="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors"
+                  className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
                 >
                   <span className="mr-2">←</span>
                   <span>Back to Projects</span>
@@ -94,7 +94,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               </div>
               <Link
                 href="/"
-                className="text-gray-400 hover:text-blue-300 transition-colors text-sm"
+                className="text-slate-600 hover:text-blue-600 transition-colors text-sm"
               >
                 Home
               </Link>
@@ -128,7 +128,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8 }}
-                  className="mb-12 p-4 rounded-xl border border-blue-500/20 bg-slate-900/30"
+                  className="mb-12 p-4 rounded-xl border border-blue-300/40 bg-blue-100/50"
                 >
                   <div className="relative h-96 sm:h-[500px] w-full rounded-lg overflow-hidden">
                     <Image
@@ -148,12 +148,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               initial="hidden"
               animate="visible"
               variants={itemVariants}
-              className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-slate-900/50 to-slate-800/50 border border-blue-500/20"
+              className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-slate-700/80 to-slate-700/80 border border-slate-600/50"
             >
-              <h2 className="text-xl sm:text-2xl font-bold text-blue-300 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">
                 Overview
               </h2>
-              <p className="text-gray-300 leading-relaxed text-base sm:text-lg">
+              <p className="text-slate-200 leading-relaxed text-base sm:text-lg">
                 {project.fullDescription}
               </p>
             </motion.div>
@@ -164,12 +164,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 initial="hidden"
                 animate="visible"
                 variants={itemVariants}
-                className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-green-900/20 to-cyan-900/20 border border-green-500/20"
+                className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-cyan-100/60 to-blue-100/60 border border-cyan-300/50"
               >
-                <h2 className="text-xl sm:text-2xl font-bold text-green-400 mb-4">
+                <h2 className="text-xl sm:text-2xl font-bold text-cyan-700 mb-4">
                   Real-World Impact
                 </h2>
-                <p className="text-gray-300 leading-relaxed text-base sm:text-lg">
+                <p className="text-slate-700 leading-relaxed text-base sm:text-lg">
                   {project.impact}
                 </p>
               </motion.div>
@@ -182,14 +182,14 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               variants={itemVariants}
               className="mb-12"
             >
-              <h2 className="text-xl sm:text-2xl font-bold text-blue-300 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">
                 Technologies & Techniques
               </h2>
               <div className="flex flex-wrap gap-3">
                 {project.technologies.map((tech, i) => (
                   <span
                     key={i}
-                    className="px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-sm sm:text-base"
+                    className="px-4 py-2 rounded-full bg-blue-200/60 border border-blue-400/40 text-blue-700 text-sm sm:text-base"
                   >
                     {tech}
                   </span>
@@ -205,7 +205,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 variants={itemVariants}
                 className="mb-12"
               >
-                <h2 className="text-xl sm:text-2xl font-bold text-cyan-300 mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">
                   Key Achievements
                 </h2>
                 <div className="space-y-4">
@@ -215,12 +215,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      className="flex items-start p-4 rounded-lg bg-blue-500/5 border-l-2 border-blue-500/50"
+                      className="flex items-start p-4 rounded-lg bg-blue-100/50 border-l-2 border-blue-400"
                     >
-                      <span className="mr-4 text-blue-400 font-bold text-lg flex-shrink-0">
+                      <span className="mr-4 text-blue-600 font-bold text-lg flex-shrink-0">
                         ✓
                       </span>
-                      <p className="text-gray-300 text-base sm:text-lg">
+                      <p className="text-slate-700 text-base sm:text-lg">
                         {achievement}
                       </p>
                     </motion.div>
@@ -237,7 +237,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 variants={itemVariants}
                 className="mb-12"
               >
-                <h2 className="text-xl sm:text-2xl font-bold text-blue-300 mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">
                   Publications
                 </h2>
                 <div className="space-y-4">
@@ -247,21 +247,21 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.1 }}
-                      className="p-4 rounded-lg bg-slate-900/30 border border-blue-500/20 hover:border-blue-500/50 transition-all"
+                      className="p-4 rounded-lg bg-blue-50/60 border border-blue-300/30 hover:border-blue-400/50 transition-all"
                     >
-                      <h3 className="font-semibold text-blue-300 text-base sm:text-lg mb-2">
+                      <h3 className="font-semibold text-blue-700 text-base sm:text-lg mb-2">
                         {pub.title}
                       </h3>
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-400">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-slate-600">
                         <p>{pub.publication}</p>
-                        <p className="text-cyan-400 font-semibold">{pub.year}</p>
+                        <p className="text-cyan-600 font-semibold">{pub.year}</p>
                       </div>
                       {pub.url && (
                         <a
                           href={pub.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block mt-3 text-blue-400 hover:text-blue-300 transition-colors text-sm underline"
+                          className="inline-block mt-3 text-blue-600 hover:text-blue-700 transition-colors text-sm underline"
                         >
                           Read Publication →
                         </a>
@@ -277,9 +277,9 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               initial="hidden"
               animate="visible"
               variants={itemVariants}
-              className="mt-16 pt-12 border-t border-blue-500/10"
+              className="mt-16 pt-12 border-t border-blue-300/20"
             >
-              <h2 className="text-2xl font-bold text-blue-300 mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-8">
                 Related Projects
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -290,15 +290,15 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                     <Link key={relatedProject.id} href={`/research/${relatedProject.id}`}>
                       <motion.div
                         whileHover={{ y: -5 }}
-                        className="p-6 rounded-lg bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-blue-500/20 hover:border-blue-500/50 transition-all cursor-pointer"
+                        className="p-6 rounded-lg bg-gradient-to-br from-blue-100/50 to-cyan-100/50 border border-blue-300/40 hover:border-blue-400/60 transition-all cursor-pointer"
                       >
-                        <h3 className="font-bold text-blue-300 mb-2 text-lg">
+                        <h3 className="font-bold text-blue-700 mb-2 text-lg">
                           {relatedProject.title}
                         </h3>
-                        <p className="text-gray-400 text-sm line-clamp-2 mb-4">
+                        <p className="text-slate-600 text-sm line-clamp-2 mb-4">
                           {relatedProject.shortDescription}
                         </p>
-                        <p className="text-blue-400 text-sm font-semibold">
+                        <p className="text-blue-600 text-sm font-semibold">
                           Learn more →
                         </p>
                       </motion.div>
@@ -310,25 +310,25 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-transparent to-slate-900/50">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 text-center bg-gradient-to-b from-transparent to-blue-100/30">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl sm:text-3xl font-bold mb-6">
+            <h3 className="text-2xl sm:text-3xl font-bold mb-6 text-slate-900">
               Want to Discuss This Research?
             </h3>
-            <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+            <p className="text-slate-700 mb-8 max-w-2xl mx-auto">
               I'm always excited to discuss technical details, potential applications, or collaborative opportunities.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.a
-                href="mailto:contact@example.com"
+                href="mailto:dr.yungting.hsieh@gmail.com"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 font-semibold text-black hover:shadow-lg transition-all"
+                className="px-8 py-3 rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 font-semibold text-white hover:shadow-lg transition-all"
               >
                 Get In Touch
               </motion.a>
@@ -336,7 +336,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-3 rounded-lg border border-blue-400/50 font-semibold text-blue-300 hover:text-blue-200 transition-all"
+                  className="px-8 py-3 rounded-lg border border-blue-400/70 font-semibold text-blue-700 hover:text-blue-800 transition-all"
                 >
                   Back to All Projects
                 </motion.button>
