@@ -23,7 +23,7 @@ export const researchProjects: ResearchProject[] = [
       'Machine learning framework for S-parameter prediction achieving 4000× computational acceleration',
     fullDescription:
       'Developed a comprehensive ML pipeline that predicts S-parameters for high-speed interconnect systems. This breakthrough approach reduced electromagnetic simulation time from hours to milliseconds, delivering exceptional accuracy with only 4% prediction error. The innovation resulted in $12.5M USD capital savings by enabling rapid design iterations without expensive physical prototyping.',
-    image: '/research/s-parameter.jpg',
+    image: '/research/AI-Spara.jpg',
     technologies: [
       'TensorFlow',
       'PyTorch',
