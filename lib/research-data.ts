@@ -24,15 +24,24 @@ export const researchProjects: ResearchProject[] = [
     shortDescription:
       'Like a GPS for high-speed circuits: AI predicts signal behavior in seconds instead of waiting hours for simulations.',
     fullDescription:
-      'When engineers design high-speed connectors, tiny signal reflections can break an entire product. Traditionally, teams run heavy electromagnetic simulations and wait a long time for each design trial. This project trains AI to preview the answer almost instantly. In plain terms, instead of repeatedly baking a whole cake to test one ingredient, we can taste a reliable sample first. That means faster design decisions, fewer costly dead-ends, and much quicker time-to-market while keeping engineering accuracy at production level.',
+      'When engineers design high-speed connectors, tiny signal reflections can break an entire product. Traditionally, teams run heavy electromagnetic simulations and wait a long time for each design trial. In the TE AI Cup 2022-23 challenge, our team proposed novel neural-network architectures and signal pre-processing methods to predict IEEE-standard Channel Operating Margin (COM) parameters, replacing a time-consuming model-based MATLAB workflow. In plain terms, instead of repeatedly baking a whole cake to test one ingredient, we can taste a reliable sample first. That means faster design decisions, fewer costly dead-ends, and much quicker time-to-market while keeping engineering accuracy at production level.',
     image: '/research/ai-cup.jpg',
     technologies: [
       'TensorFlow',
       'PyTorch',
       'Signal Processing',
       'S-Parameters',
+      'Channel Operating Margin (COM)',
       'Deep Learning',
       'High-Speed Interconnects',
+    ],
+    publications: [
+      {
+        title: 'Rutgers ECE Team Won Best AI Innovation Prize in TE AI Cup 2022-23',
+        publication: 'Rutgers University ECE Newsletter 2023',
+        year: 2024,
+        url: 'https://ece.rutgers.edu/sites/default/files/2024-06/ECE_Newsletter_2023.pdf',
+      },
     ],
     achievements: [
       'Up to 4000x faster prediction than traditional full simulation workflows',
@@ -41,6 +50,7 @@ export const researchProjects: ResearchProject[] = [
       'Deployed in production at TE Connectivity',
       'Won Best AI Innovation Prize in TE AI Cup 2022-23',
       'Ranked first among 40 teams from 25 universities worldwide',
+      'Recognized in Rutgers ECE Newsletter with team members from CPS Lab and ECE',
     ],
     impact:
       'Turned a slow trial-and-error design cycle into a rapid feedback loop engineers can use daily.',
