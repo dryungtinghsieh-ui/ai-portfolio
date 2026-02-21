@@ -11,6 +11,7 @@ export interface ResearchProject {
     publication: string;
     year: number;
     citations?: number;
+    scholarId?: string;
   }[];
   achievements?: string[];
   impact?: string;
@@ -63,6 +64,47 @@ export const researchProjects: ResearchProject[] = [
       'Distributed Sensing',
       'VLSI',
     ],
+    publications: [
+      {
+        title:
+          'Neural network design via voltage-based resistive processing unit and diode activation function-a new architecture',
+        publication:
+          '2021 IEEE International Midwest Symposium on Circuits and Systems (MWSCAS)',
+        year: 2021,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:2osOgNQ5qMEC',
+        citations: 18,
+        scholarId: '2osOgNQ5qMEC',
+      },
+      {
+        title:
+          'Ultra-low Power Analog Recurrent Neural Network Design Approximation for Wireless Health Monitoring',
+        publication:
+          '2022 IEEE 19th International Conference on Mobile Ad Hoc and Smart Systems (MASS)',
+        year: 2022,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:YsMSGLbcyi4C',
+        citations: 14,
+        scholarId: 'YsMSGLbcyi4C',
+      },
+      {
+        title:
+          'Hybrid analog-digital sensing approach for low-power real-time anomaly detection in drones',
+        publication:
+          '2021 IEEE 18th International Conference on Mobile Ad Hoc and Smart Systems (MASS)',
+        year: 2021,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:Tyk-4Ss8FVUC',
+        citations: 12,
+        scholarId: 'Tyk-4Ss8FVUC',
+      },
+      {
+        title:
+          'Ultra-low power analog folded neural network for cardiovascular health monitoring',
+        publication: 'IEEE Journal of Biomedical and Health Informatics',
+        year: 2024,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4TOpqqG69KYC',
+        citations: 6,
+        scholarId: '4TOpqqG69KYC',
+      },
+    ],
     achievements: [
       'Batteryless operation through serialized computation',
       'Optimized 6-layer architecture with hidden size 30',
@@ -93,14 +135,23 @@ export const researchProjects: ResearchProject[] = [
     ],
     publications: [
       {
-        title: 'Spiking Neural Networks for TDR Signal Interpretation',
-        publication: 'IEEE Transactions on Neural Networks and Learning Systems',
+        title: 'A lightweight hybrid analog-digital spiking neural network for iot',
+        publication:
+          '2024 20th International Conference on Distributed Computing in Smart Systems and the Internet of Things (DCOSS-IoT)',
         year: 2024,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4DMP91E08xMC',
+        citations: 4,
+        scholarId: '4DMP91E08xMC',
       },
       {
-        title: 'Bio-Inspired Signal Processing on Neuromorphic Hardware',
-        publication: 'Neuromorphic Computing and Engineering',
-        year: 2023,
+        title:
+          'A Bio-inspired Low-power Hybrid Analog/Digital Spiking Neural Networks for Pervasive Smart Cameras',
+        publication:
+          '2024 IEEE International Conference on Pervasive Computing and Communications Workshops and other Affiliated Events (PerCom Workshops)',
+        year: 2024,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:M3ejUd6NZC8C',
+        citations: 2,
+        scholarId: 'M3ejUd6NZC8C',
       },
     ],
     achievements: [
@@ -133,17 +184,38 @@ export const researchProjects: ResearchProject[] = [
     publications: [
       {
         title: 'FD-UWA: Full-duplex underwater acoustic comms via self-interference cancellation in space',
-        publication: '2020 IEEE 17th International Conference on Mobile Ad Hoc and Sensor Systems (MASS), pp. 256-264',
+        publication:
+          '2020 IEEE 17th International Conference on Mobile Ad Hoc and Sensor Systems (MASS)',
         year: 2020,
-        url: 'https://ieeexplore.ieee.org/abstract/document/9356050/',
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:d1gkVwhDpl0C',
         citations: 18,
+        scholarId: 'd1gkVwhDpl0C',
       },
       {
         title: 'Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space',
-        publication: 'Journal of Communications and Networks, 25(2), pp. 167-181',
+        publication: 'Journal of Communications and Networks 25(2), 167-181',
         year: 2023,
-        url: 'https://ieeexplore.ieee.org/abstract/document/10102781/',
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:MXK_kJrjxJIC',
         citations: 21,
+        scholarId: 'MXK_kJrjxJIC',
+      },
+      {
+        title: 'ML-based joint Doppler estimation and compensation in underwater acoustic communications',
+        publication:
+          'Proceedings of the 16th International Conference on Underwater Networks and Systems (WUWNet)',
+        year: 2022,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:eQOLeE2rZwMC',
+        citations: 17,
+        scholarId: 'eQOLeE2rZwMC',
+      },
+      {
+        title:
+          'Demo: ML-based Joint Doppler Estimation and Compensation in Underwater Acoustic Comms',
+        publication: 'ACM WUWNet Demo',
+        year: 2022,
+        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:Zph67rFs4hoC',
+        citations: 0,
+        scholarId: 'Zph67rFs4hoC',
       },
     ],
     achievements: [
