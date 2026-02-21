@@ -13,6 +13,9 @@ export default function Home() {
     'S-Parameters',
     'Hybrid Neural Networks',
     'Spiking Neural Networks',
+    'LLM for Engineering',
+    'RAG for Technical Knowledge',
+    'AI Agents',
     'Edge AI',
     'Analog AI',
     'Machine Learning',
@@ -196,7 +199,7 @@ export default function Home() {
                     AI-Assisted Signal Integrity Engineer
                   </h2>
                   <p className="text-lg sm:text-xl text-cyan-300 font-medium">
-                    Analog-Digital Hybrid Neural Network Researcher
+                    Analog-Digital Hybrid Neural Networks + LLM-Enhanced R&D
                   </p>
                 </motion.div>
 
@@ -205,8 +208,9 @@ export default function Home() {
                   variants={itemVariants}
                   className="text-lg sm:text-xl text-gray-300 mb-12 leading-relaxed"
                 >
-                  Bridging Physics-Based Modeling with Machine Learning for
-                  Next-Generation High-Speed Interconnect Systems
+                  I build engineering AI that starts with physics, learns from data,
+                  and uses LLMs as a fast research copilot for debugging, design reviews,
+                  and technical decision-making.
                 </motion.p>
 
                 {/* Key Achievement */}
@@ -215,10 +219,10 @@ export default function Home() {
                   className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-slate-900/50 to-slate-800/50 border border-blue-500/20 backdrop-blur-sm"
                 >
                   <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
-                    <span className="text-cyan-300 font-semibold">Senior R&D Engineer at TE Connectivity</span> specializing in AI-assisted S-parameter prediction, TDR signal interpretation, and Analog-Digital Hybrid Neural Networks.
+                    <span className="text-cyan-300 font-semibold">Senior R&amp;D Engineer at TE Connectivity</span> focused on AI-assisted S-parameter prediction, TDR interpretation, and hybrid neural-network systems. I also design LLM workflows that turn dense specs and papers into practical, engineer-friendly insights.
                   </p>
                   <p className="text-gray-300 text-xs sm:text-sm mt-4 font-mono text-blue-300">
-                    Developed ML pipeline achieving 4000× computational acceleration with 4% prediction error → $12.5M USD capital savings
+                    Think of it as giving hardware teams a GPS instead of a paper map: 4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
                   </p>
                 </motion.div>
 
@@ -363,11 +367,11 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl sm:text-3xl font-bold mb-6">
-              Let's Collaborate on{' '}
+              Let&apos;s Collaborate on{' '}
               <span className="text-blue-400">Next-Gen AI Solutions</span>
             </h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              Interested in discussing signal integrity, neural networks, or edge AI hardware?
+              Interested in signal integrity, hybrid neural networks, or practical LLM copilots for engineering teams?
             </p>
             <motion.a
               href="mailto:contact@example.com"
