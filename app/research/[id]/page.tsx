@@ -3,13 +3,24 @@ import { researchProjects } from '@/lib/research-data';
 import { notFound } from 'next/navigation';
 import { ProjectDetailClient } from './project-detail-client';
 
+function normalizeProjectId(id: string): string {
+  try {
+    return decodeURIComponent(id).trim().toLowerCase();
+  } catch {
+    return id.trim().toLowerCase();
+  }
+}
+
 export default async function ProjectDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const project = researchProjects.find((p) => p.id === id);
+  const normalizedId = normalizeProjectId(id);
+  const project = researchProjects.find(
+    (p) => normalizeProjectId(p.id) === normalizedId
+  );
 
   if (!project) {
     notFound();
