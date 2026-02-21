@@ -164,6 +164,32 @@ export default function Home() {
                   </span>
                 </motion.h1>
 
+                {/* Mobile: Portrait under name */}
+                <motion.div variants={itemVariants} className="md:hidden mb-8 flex justify-center">
+                  <div className="relative w-full max-w-[340px] h-[460px]">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl"
+                      animate={{ opacity: [0.5, 0.8, 0.5] }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    />
+                    <div className="relative rounded-2xl overflow-hidden border-2 border-blue-500/30 shadow-2xl">
+                      <Image
+                        src="/me.jpg"
+                        alt="Dr. Yung-Ting Hsieh"
+                        width={500}
+                        height={700}
+                        priority
+                        className="w-full h-full object-cover object-center"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* Subtitle */}
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="text-xl sm:text-2xl font-semibold text-blue-300 mb-2">
@@ -254,7 +280,7 @@ export default function Home() {
               {/* Right: Portrait Image */}
               <motion.div
                 variants={itemVariants}
-                className="flex justify-center"
+                className="hidden md:flex justify-center"
               >
                 <div className="relative w-full max-w-[480px] h-[680px] md:w-[500px] md:h-[700px]">
                   <motion.div
