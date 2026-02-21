@@ -1,111 +1,95 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
+import { useState } from 'react';
+
+const expertiseTags = [
+  'Signal Integrity',
+  'TDR',
+  'S-Parameters',
+  'Hybrid Neural Networks',
+  'Spiking Neural Networks',
+  'LLM for Engineering',
+  'RAG for Technical Knowledge',
+  'AI Agents',
+  'Edge AI',
+  'Analog AI',
+  'Machine Learning',
+  'TensorFlow',
+  'PyTorch',
+  'MEMS Simulation',
+];
+
+const socials = [
+  {
+    name: 'LinkedIn',
+    url: 'https://www.linkedin.com/in/yung-ting-hsieh-b0859a155',
+    label: 'in',
+  },
+  {
+    name: 'Google Scholar',
+    url: 'https://scholar.google.com.tw/citations?user=TSoiF94AAAAJ',
+    label: 'GS',
+  },
+  {
+    name: 'GitHub',
+    url: 'https://github.com/dryungtinghsieh-ui',
+    label: 'GH',
+  },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: 'easeOut',
+    },
+  },
+};
+
+const tagVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: (index: number) => ({
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delay: index * 0.04,
+      duration: 0.4,
+    },
+  }),
+  hover: {
+    scale: 1.05,
+    boxShadow: '0 0 20px rgba(59, 130, 246, 0.45)',
+    transition: { duration: 0.2 },
+  },
+};
 
 export default function Home() {
   const [hoveredTag, setHoveredTag] = useState<number | null>(null);
-
-  const expertiseTags = [
-    'Signal Integrity',
-    'TDR',
-    'S-Parameters',
-    'Hybrid Neural Networks',
-    'Spiking Neural Networks',
-    'LLM for Engineering',
-    'RAG for Technical Knowledge',
-    'AI Agents',
-    'Edge AI',
-    'Analog AI',
-    'Machine Learning',
-    'TensorFlow',
-    'PyTorch',
-    'MEMS Simulation',
-  ];
-
-  const highlights = [
-    { label: 'PhD, ECE', value: 'Rutgers (2026)', icon: '🎓' },
-    { label: 'Publications', value: '8 IEEE/ACM + 4 Journals', icon: '📚' },
-    { label: 'Patents', value: '2 US Patents', icon: '🔬' },
-    { label: 'Award', value: 'TE AI Cup Winner', icon: '🏆' },
-  ];
-
-  const socials = [
-    {
-      name: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/yung-ting-hsieh-b0859a155',
-      icon: '🔗',
-    },
-    {
-      name: 'Google Scholar',
-      url: 'https://scholar.google.com.tw/citations?user=TSoiF94AAAAJ',
-      icon: '📖',
-    },
-    {
-      name: 'GitHub',
-      url: 'https://github.com',
-      icon: '💻',
-    },
-  ];
-
-  // Neural network background animation
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: 'easeOut',
-      },
-    },
-  };
-
-  const tagVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: (i: number) => ({
-      opacity: 1,
-      scale: 1,
-      transition: {
-        delay: i * 0.05,
-        duration: 0.4,
-      },
-    }),
-    hover: {
-      scale: 1.1,
-      boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)',
-      transition: { duration: 0.2 },
-    },
-  };
+  const reduceMotion = useReducedMotion();
 
   return (
-    <main className="min-h-screen w-full bg-black text-white overflow-hidden">
-      {/* Animated Background Grid */}
+    <main className="min-h-screen w-full overflow-hidden bg-black text-white">
       <div className="fixed inset-0 pointer-events-none">
-        {/* Gradient mesh background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-black opacity-90" />
-
-        {/* Neural network grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-10" preserveAspectRatio="none">
+        <svg className="absolute inset-0 h-full w-full opacity-10" preserveAspectRatio="none">
           <defs>
-            <pattern
-              id="grid"
-              width="50"
-              height="50"
-              patternUnits="userSpaceOnUse"
-            >
+            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
               <path
                 d="M 50 0 L 0 0 0 50"
                 fill="none"
@@ -116,212 +100,174 @@ export default function Home() {
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
-
-        {/* Glowing gradient orbs */}
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
-          animate={{
-            y: [0, 30, 0],
-            x: [0, 20, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
-          animate={{
-            y: [0, -30, 0],
-            x: [0, -20, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        {!reduceMotion && (
+          <>
+            <motion.div
+              className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-blue-500 opacity-10 blur-3xl"
+              animate={{ y: [0, 30, 0], x: [0, 20, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-cyan-500 opacity-10 blur-3xl"
+              animate={{ y: [0, -30, 0], x: [0, -20, 0] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </>
+        )}
       </div>
 
-      {/* Content */}
       <div className="relative z-10">
-        {/* Hero Section */}
-        <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <section className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="max-w-6xl w-full"
+            className="w-full max-w-6xl"
             variants={containerVariants}
-            initial="hidden"
+            initial={reduceMotion ? false : 'hidden'}
             animate="visible"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-              {/* Left: Content */}
+            <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12">
               <div className="text-center md:text-left">
-                {/* Title */}
                 <motion.h1
                   variants={itemVariants}
-                  className="mb-6 text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight"
+                  className="mb-6 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl"
                 >
                   <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                     Dr. Yung-Ting Hsieh
                   </span>
                 </motion.h1>
 
-                {/* Mobile: Portrait under name */}
-                <motion.div variants={itemVariants} className="md:hidden mb-8 flex justify-center">
-                  <div className="relative w-full max-w-[340px] h-[460px]">
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl"
-                      animate={{ opacity: [0.5, 0.8, 0.5] }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: 'easeInOut',
-                      }}
-                    />
-                    <div className="relative rounded-2xl overflow-hidden border-2 border-blue-500/30 shadow-2xl">
+                <motion.div variants={itemVariants} className="mb-8 md:hidden">
+                  <div className="relative mx-auto h-[460px] w-full max-w-[340px]">
+                    {!reduceMotion && (
+                      <motion.div
+                        className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 blur-2xl"
+                        animate={{ opacity: [0.5, 0.8, 0.5] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    )}
+                    <div className="relative h-full overflow-hidden rounded-2xl border-2 border-blue-500/30 shadow-2xl">
                       <Image
                         src="/me.jpg"
                         alt="Dr. Yung-Ting Hsieh"
                         width={500}
                         height={700}
                         priority
-                        className="w-full h-full object-cover object-center"
+                        className="h-full w-full object-cover object-center"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
                   </div>
                 </motion.div>
 
-                {/* Subtitle */}
                 <motion.div variants={itemVariants} className="mb-8">
-                  <h2 className="text-xl sm:text-2xl font-semibold text-blue-300 mb-2">
+                  <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
                     AI-Assisted Signal Integrity Engineer
                   </h2>
-                  <p className="text-lg sm:text-xl text-cyan-300 font-medium">
+                  <p className="text-lg font-medium text-cyan-300 sm:text-xl">
                     Analog-Digital Hybrid Neural Networks + LLM-Enhanced R&D
                   </p>
                 </motion.div>
 
-                {/* Tagline */}
                 <motion.p
                   variants={itemVariants}
-                  className="text-lg sm:text-xl text-gray-300 mb-12 leading-relaxed"
+                  className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
                 >
-                  I build engineering AI that starts with physics, learns from data,
-                  and uses LLMs as a fast research copilot for debugging, design reviews,
-                  and technical decision-making.
+                  I build engineering AI that starts with physics, learns from data, and uses
+                  LLMs as a fast research copilot for debugging, design reviews, and technical
+                  decision-making.
                 </motion.p>
 
-                {/* Key Achievement */}
                 <motion.div
                   variants={itemVariants}
-                  className="mb-12 p-6 sm:p-8 rounded-xl bg-gradient-to-r from-slate-900/50 to-slate-800/50 border border-blue-500/20 backdrop-blur-sm"
+                  className="mb-12 rounded-xl border border-blue-500/20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 p-6 backdrop-blur-sm sm:p-8"
                 >
-                  <p className="text-gray-200 text-sm sm:text-base leading-relaxed">
-                    <span className="text-cyan-300 font-semibold">Senior R&amp;D Engineer at TE Connectivity</span> focused on AI-assisted S-parameter prediction, TDR interpretation, and hybrid neural-network systems. I also design LLM workflows that turn dense specs and papers into practical, engineer-friendly insights.
+                  <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
+                    <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
+                    focused on AI-assisted S-parameter prediction, TDR interpretation, and hybrid
+                    neural-network systems.
                   </p>
-                  <p className="text-gray-300 text-xs sm:text-sm mt-4 font-mono text-blue-300">
-                    Think of it as giving hardware teams a GPS instead of a paper map: 4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
+                  <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
+                    4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
                   </p>
                 </motion.div>
 
-                {/* CTA Buttons */}
                 <motion.div
                   variants={itemVariants}
-                  className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-12"
+                  className="mb-12 flex flex-col justify-center gap-4 sm:flex-row md:justify-start"
                 >
                   <motion.a
                     href="/research"
-                    whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(59, 130, 246, 0.5)' }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 font-semibold text-black transition-all duration-200 hover:shadow-lg"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-3 font-semibold text-black transition-all duration-200 hover:shadow-lg"
                   >
                     View Research Projects
                   </motion.a>
-
                   <motion.a
                     href="/cv.pdf"
-                    whileHover={{ scale: 1.05, borderColor: 'rgba(59, 130, 246, 0.8)' }}
-                    whileTap={{ scale: 0.95 }}
-                    className="hidden px-8 py-3 rounded-lg border border-blue-400/50 font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="rounded-lg border border-blue-400/50 px-8 py-3 font-semibold text-blue-300 transition-all duration-200 hover:text-blue-200"
                   >
                     Download CV
                   </motion.a>
-
                   <motion.a
                     href="mailto:dr.yungting.hsieh@gmail.com"
-                    whileHover={{ scale: 1.05, borderColor: 'rgba(34, 197, 94, 0.8)' }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-3 rounded-lg border border-green-500/50 font-semibold text-green-400 hover:text-green-300 transition-all duration-200"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="rounded-lg border border-green-500/50 px-8 py-3 font-semibold text-green-400 transition-all duration-200 hover:text-green-300"
                   >
                     Contact Me
                   </motion.a>
                 </motion.div>
 
-                {/* Social Links */}
-                <motion.div
-                  variants={itemVariants}
-                  className="flex gap-6 justify-center md:justify-start"
-                >
-                  {socials.map((social, i) => (
+                <motion.div variants={itemVariants} className="flex justify-center gap-4 md:justify-start">
+                  {socials.map((social) => (
                     <motion.a
-                      key={i}
+                      key={social.name}
                       href={social.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-2xl text-gray-400 hover:text-blue-400 transition-colors"
-                      whileHover={{ scale: 1.2, y: -5 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={reduceMotion ? undefined : { scale: 1.12, y: -2 }}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/30 text-sm font-semibold text-gray-300 transition-colors hover:text-blue-300"
                       title={social.name}
                     >
-                      {social.icon}
+                      {social.label}
                     </motion.a>
                   ))}
                 </motion.div>
               </div>
 
-              {/* Right: Portrait Image */}
-              <motion.div
-                variants={itemVariants}
-                className="hidden md:flex justify-center"
-              >
-                <div className="relative w-full max-w-[480px] h-[680px] md:w-[500px] md:h-[700px]">
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl blur-2xl"
-                    animate={{
-                      opacity: [0.5, 0.8, 0.5],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                  <div className="relative rounded-2xl overflow-hidden border-2 border-blue-500/30 shadow-2xl">
+              <motion.div variants={itemVariants} className="hidden justify-center md:flex">
+                <div className="relative h-[700px] w-[500px] max-w-[480px]">
+                  {!reduceMotion && (
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 blur-2xl"
+                      animate={{ opacity: [0.5, 0.8, 0.5] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  )}
+                  <div className="relative h-full overflow-hidden rounded-2xl border-2 border-blue-500/30 shadow-2xl">
                     <Image
                       src="/me.jpg"
                       alt="Dr. Yung-Ting Hsieh"
                       width={500}
                       height={700}
                       priority
-                      className="w-full h-full object-cover object-center"
+                      className="h-full w-full object-cover object-center"
                     />
-                    {/* Overlay gradient for polish */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                   </div>
                 </div>
               </motion.div>
             </div>
           </motion.div>
         </section>
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black via-slate-900/30 to-black">
-          <div className="max-w-6xl mx-auto">
+
+        <section className="bg-gradient-to-b from-black via-slate-900/30 to-black px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
             <motion.h2
-              initial={{ opacity: 0 }}
+              initial={reduceMotion ? false : { opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
-              className="text-3xl sm:text-4xl font-bold mb-12 text-center"
+              className="mb-12 text-center text-3xl font-bold sm:text-4xl"
             >
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 Technical Expertise
@@ -329,24 +275,24 @@ export default function Home() {
             </motion.h2>
 
             <motion.div
-              className="flex flex-wrap gap-3 justify-center"
+              className="flex flex-wrap justify-center gap-3"
               variants={containerVariants}
-              initial="hidden"
+              initial={reduceMotion ? false : 'hidden'}
               whileInView="visible"
               viewport={{ once: true, margin: '-100px' }}
             >
-              {expertiseTags.map((tag, i) => (
+              {expertiseTags.map((tag, index) => (
                 <motion.div
-                  key={i}
-                  custom={i}
+                  key={tag}
+                  custom={index}
                   variants={tagVariants}
-                  whileHover="hover"
-                  onHoverStart={() => setHoveredTag(i)}
+                  whileHover={reduceMotion ? undefined : 'hover'}
+                  onHoverStart={() => setHoveredTag(index)}
                   onHoverEnd={() => setHoveredTag(null)}
-                  className={`px-4 py-2 rounded-full border cursor-pointer transition-all duration-200 ${
-                    hoveredTag === i
-                      ? 'bg-blue-600/40 border-blue-400 text-blue-200'
-                      : 'bg-slate-900/40 border-blue-500/30 text-gray-300'
+                  className={`cursor-pointer rounded-full border px-4 py-2 transition-all duration-200 ${
+                    hoveredTag === index
+                      ? 'border-blue-400 bg-blue-600/40 text-blue-200'
+                      : 'border-blue-500/30 bg-slate-900/40 text-gray-300'
                   }`}
                 >
                   {tag}
@@ -356,28 +302,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer Divider */}
         <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
 
-        {/* CTA Footer */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 text-center">
+        <section className="px-4 py-16 text-center sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={reduceMotion ? false : { opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
-            <h3 className="text-2xl sm:text-3xl font-bold mb-6">
-              Let&apos;s Collaborate on{' '}
-              <span className="text-blue-400">Next-Gen AI Solutions</span>
+            <h3 className="mb-6 text-2xl font-bold sm:text-3xl">
+              Let&apos;s Collaborate on <span className="text-blue-400">Next-Gen AI Solutions</span>
             </h3>
-            <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              Interested in signal integrity, hybrid neural networks, or practical LLM copilots for engineering teams?
+            <p className="mx-auto mb-8 max-w-2xl text-gray-400">
+              Interested in signal integrity, hybrid neural networks, or practical LLM copilots for
+              engineering teams?
             </p>
             <motion.a
-              href="mailto:contact@example.com"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-8 py-3 rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 font-semibold text-black hover:shadow-lg transition-all"
+              href="mailto:dr.yungting.hsieh@gmail.com"
+              whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              className="inline-block rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 px-8 py-3 font-semibold text-black transition-all hover:shadow-lg"
             >
               Get In Touch
             </motion.a>

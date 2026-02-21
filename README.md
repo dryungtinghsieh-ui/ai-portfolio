@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Portfolio
 
-## Getting Started
+Personal research portfolio for **Dr. Yung-Ting Hsieh**, built with Next.js App Router.
 
-First, run the development server:
+## Highlights
+
+- Hero profile page with technical focus areas and contact links.
+- Research index page with project cards, publication summaries, and citation stats.
+- Dynamic project detail pages with per-project metadata for SEO/social sharing.
+- Google Scholar citation sync:
+  - Runtime API route at `app/api/scholar-citations/route.ts`
+  - Scheduled GitHub Action at `.github/workflows/update-citations.yml`
+  - Local updater script at `scripts/update-scholar-citations.mjs`
+
+## Tech Stack
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Framer Motion
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `npm run dev` - Start dev server
+- `npm run build` - Production build
+- `npm run start` - Run production server
+- `npm run lint` - Run ESLint
+- `npm run update:citations` - Pull latest citation counts and update `lib/research-data.ts`
 
-## Learn More
+## Citation Data Flow
 
-To learn more about Next.js, take a look at the following resources:
+1. Project pages use local citation values from `lib/research-data.ts` as fallback.
+2. `/api/scholar-citations` attempts to fetch total citations from Google Scholar.
+3. If API fetch fails, UI keeps fallback values and shows fallback status.
+4. Weekly GitHub Action updates local citation values automatically.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploy as a standard Next.js application (Vercel recommended).
