@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { researchProjects } from '@/lib/research-data';
 
 const containerVariants = {
@@ -152,6 +153,17 @@ export default function ResearchPage() {
                         boxShadow: '0 0 20px rgba(59, 130, 246, 0.2)',
                       }}
                     >
+                      {project.image && (
+                        <div className="mb-5 relative h-48 sm:h-56 w-full overflow-hidden rounded-lg border border-blue-500/20 bg-slate-900/60">
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      )}
+
                       {/* Project Title */}
                       <h3 className="text-xl sm:text-2xl font-bold mb-4 text-blue-300 group-hover:text-blue-200 transition-colors">
                         {project.title}

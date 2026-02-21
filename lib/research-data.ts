@@ -1,4 +1,4 @@
-export interface ResearchProject {
+﻿export interface ResearchProject {
   id: string;
   title: string;
   shortDescription: string;
@@ -22,9 +22,9 @@ export const researchProjects: ResearchProject[] = [
     id: 'ai-s-parameter-prediction',
     title: 'AI-Assisted S-Parameter Prediction',
     shortDescription:
-      'Machine learning framework for S-parameter prediction achieving 4000× computational acceleration',
+      'Like a GPS for high-speed circuits: AI predicts signal behavior in seconds instead of waiting hours for simulations.',
     fullDescription:
-      'Developed a comprehensive ML pipeline that predicts S-parameters for high-speed interconnect systems. This breakthrough approach reduced electromagnetic simulation time from hours to milliseconds, delivering exceptional accuracy with only 4% prediction error. The innovation resulted in $12.5M USD capital savings by enabling rapid design iterations without expensive physical prototyping.',
+      'When engineers design high-speed connectors, tiny signal reflections can break an entire product. Traditionally, teams run heavy electromagnetic simulations and wait a long time for each design trial. This project trains AI to preview the answer almost instantly. In plain terms, instead of repeatedly baking a whole cake to test one ingredient, we can taste a reliable sample first. That means faster design decisions, fewer costly dead-ends, and much quicker time-to-market while keeping engineering accuracy at production level.',
     image: '/research/ai-cup.jpg',
     technologies: [
       'TensorFlow',
@@ -35,24 +35,23 @@ export const researchProjects: ResearchProject[] = [
       'High-Speed Interconnects',
     ],
     achievements: [
-      '4000× computational acceleration over traditional EM simulators',
-      '4% prediction error maintains design reliability',
-      '$12.5M capital savings through faster iterations',
+      'Up to 4000x faster prediction than traditional full simulation workflows',
+      'Around 4% error while staying useful for real design decisions',
+      'About $12.5M saved through faster design iteration and reduced prototyping',
       'Deployed in production at TE Connectivity',
-      '🏆 Best AI Innovation Prize in TE AI Cup 2022-23',
-      '🌍 Won among 40 competing teams from 25 universities globally',
+      'Won Best AI Innovation Prize in TE AI Cup 2022-23',
+      'Ranked first among 40 teams from 25 universities worldwide',
     ],
     impact:
-      'Transformed design cycle from weeks to hours, enabling rapid prototyping and cost optimization',
+      'Turned a slow trial-and-error design cycle into a rapid feedback loop engineers can use daily.',
   },
-
   {
     id: 'hybrid-neural-networks',
     title: 'Ultra-low Power Analog Folded Neural Network for Cardiovascular Health Monitoring',
     shortDescription:
-      'Batteryless wearable ECG monitoring using serialized analog folded neural network for continuous health screening',
+      'A wearable heart guardian that can run with extremely low power and continuously check ECG signals.',
     fullDescription:
-      'Introduced an ultra-low power analog Folded Neural Network (FNN) for physiological signal processing in a batteryless fashion. By serializing computation, the proposed FNN provides significant benefits over traditional analog implementations, including lower space, reduced power consumption, and lower peak-to-average power ratio. The system leverages distributed sensing and analog computation to enable continuous ECG-based cardiovascular health monitoring on wearable devices without battery dependency. Extensive evaluation on ECG datasets demonstrates optimal performance at 6 layers with hidden size of 30, achieving accurate anomaly detection suitable for early diagnosis of myocardial infarction and cardiomyopathy/heart failure in both clinical and pre-clinical environments.',
+      'Most health wearables trade battery life for intelligence. This project redesigns that balance. We built an analog folded neural network that works like a compact, energy-sipping specialist for ECG patterns. Folded means the same hardware is reused cleverly over time, so we do more with less power and less chip area. For non-experts: imagine one skilled doctor examining patients one by one very efficiently instead of hiring a full hospital for every check. The result is continuous heart monitoring with tiny energy needs, opening the door to lighter, longer-lasting, and more practical preventive healthcare devices.',
     image: '/research/ecg_acqnmon-exp.jpg',
     technologies: [
       'Analog Neural Networks',
@@ -106,24 +105,23 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      'Batteryless operation through serialized computation',
-      'Optimized 6-layer architecture with hidden size 30',
-      'Enables continuous health monitoring on wearable devices',
-      'Superior accuracy in ECG-based cardiovascular anomaly detection',
-      'Minimal thermal noise and spatial requirements',
-      'Reduced peak-to-average power ratio vs. traditional analog implementations',
+      'Near-batteryless operating profile through serialized computation',
+      'Optimized 6-layer model (hidden size 30) for ECG anomaly screening',
+      'Continuous monitoring suitable for day-long wearable use',
+      'Strong detection performance for key cardiovascular warning patterns',
+      'Low thermal noise and compact on-chip footprint',
+      'Lower peak power compared with conventional analog neural implementations',
     ],
     impact:
-      'Transforms continuous cardiovascular health monitoring by enabling batteryless wearable devices for early disease detection',
+      'Makes always-on heart monitoring more realistic for everyday users, not just clinical environments.',
   },
-
   {
     id: 'spiking-neural-networks',
     title: 'Spiking Neural Networks for Signal Processing',
     shortDescription:
-      'Bio-inspired neuromorphic computing approach for ultra-low power signal analysis',
+      'Brain-inspired AI that fires only when needed, reducing power use for always-on sensing.',
     fullDescription:
-      'Developed spiking neural network (SNN) models that mimic biological neurons for signal processing tasks. SNNs offer natural temporal representation and spike-based communication, significantly reducing power consumption compared to artificial neural networks. Applications include signal integrity analysis, anomaly detection, and real-time data stream processing.',
+      'Regular neural networks compute constantly, even when nothing important is happening. Spiking neural networks behave more like real neurons: they stay quiet and activate only when meaningful events appear. For beginners, this is like motion-sensor lights compared with lights that are always on. We apply this idea to signal analysis so systems can watch streams in real time while using far less energy. That makes SNNs attractive for edge devices, smart cameras, and IoT sensors that must stay alert without draining batteries.',
     image: '/research/snn-exp.jpg',
     technologies: [
       'Spiking Neural Networks',
@@ -155,22 +153,20 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      '1000× power reduction vs. conventional DNNs',
+      'Up to 1000x lower energy use compared with conventional dense neural processing',
       'Real-time signal processing capability',
       'Demonstrated on Intel Loihi neuromorphic hardware',
-      'Unique temporal feature extraction',
+      'Captures time-based signal patterns that standard models often miss',
     ],
-    impact:
-      'Enables always-on signal monitoring on battery-powered devices',
+    impact: 'Enables practical always-on AI for low-power edge products.',
   },
-
   {
     id: 'underwater-acoustic-communications',
     title: 'Full-Duplex Underwater Acoustic Communications',
     shortDescription:
-      'Real-time two-way underwater robot conversations using acoustic self-interference cancellation in space',
+      'Lets underwater robots talk and listen at the same time, like a real conversation instead of walkie-talkie turns.',
     fullDescription:
-      'Revolutionary underwater communication system enabling robots and AUVs to talk and listen simultaneously. Like having a real-time conversation underwater, this system transmits and receives acoustic signals at the same time using advanced acoustic vector sensors and spatial interference cancellation. By eliminating self-echo through innovative signal processing techniques, it achieves true full-duplex communications—doubling channel efficiency compared to traditional half-duplex systems. Perfect for deep-sea exploration networks, autonomous underwater vehicle coordination, and ocean monitoring systems where real-time data exchange is critical.',
+      "Underwater communication is hard because radio waves do not travel well in water, so teams rely on sound. Traditional systems act like walkie-talkies: one side speaks, then waits. This research enables true full-duplex communication, where both sides talk and hear simultaneously. The core trick is canceling a device's own loud echo so it can still hear incoming signals. Think of trying to hear a friend while shouting in a tunnel; we build the anti-echo hearing aid that makes it possible. This significantly improves coordination speed for underwater robots, monitoring stations, and ocean exploration missions.",
     image: '/research/underwater-acoustic-exp.jpg',
     technologies: [
       'Acoustic Communications',
@@ -219,13 +215,13 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      '2× bandwidth efficiency vs. traditional half-duplex systems',
+      'Around 2x channel efficiency versus half-duplex underwater links',
       'Real-time bidirectional communication underwater',
       'Adaptive steering angle adjustment via integrated protocol',
       'Validated in real underwater acoustic channels',
-      'Supports advanced phased array beam forming',
+      'Supports advanced phased-array beamforming techniques',
     ],
     impact:
-      'Transforms underwater robotics enables simultaneous communication for coordinated deep-sea operations and real-time ocean monitoring networks',
+      'Turns underwater networking from turn-taking messaging into true real-time teamwork.',
   },
 ];
