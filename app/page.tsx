@@ -151,7 +151,7 @@ export default function Home() {
                         width={500}
                         height={700}
                         priority
-                        className="h-full w-full bg-slate-950 object-contain object-center"
+                        className="h-full w-full object-cover object-center"
                       />
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default function Home() {
                       width={500}
                       height={700}
                       priority
-                      className="h-full w-full bg-slate-950 object-contain object-center"
+                      className="h-full w-full object-cover object-center"
                     />
                   </div>
                 </div>
