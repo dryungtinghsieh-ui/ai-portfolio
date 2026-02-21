@@ -152,7 +152,7 @@ export default function Home() {
                         height={700}
                         priority
                         className="h-full w-full object-cover object-[42%_center]"
-                        style={{ objectPosition: '55% center' }}
+                        style={{ objectPosition: '60% center' }}
                       />
                     </div>
                   </div>
@@ -254,7 +254,7 @@ export default function Home() {
                       height={700}
                       priority
                       className="h-full w-full object-cover object-[42%_center]"
-                      style={{ objectPosition: '55% center' }}
+                      style={{ objectPosition: '60% center' }}
                     />
                   </div>
                 </div>
