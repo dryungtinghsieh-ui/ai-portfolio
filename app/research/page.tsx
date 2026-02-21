@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { researchProjects } from '@/lib/research-data';
@@ -29,6 +30,37 @@ const itemVariants = {
 };
 
 export default function ResearchPage() {
+  const fallbackCitations = researchProjects.reduce(
+    (acc, project) =>
+      acc +
+      (project.publications?.reduce((pubAcc, pub) => pubAcc + (pub.citations || 0), 0) || 0),
+    0
+  );
+  const [totalCitations, setTotalCitations] = useState<number>(fallbackCitations);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCitations = async () => {
+      try {
+        const response = await fetch('/api/scholar-citations', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (isMounted && typeof data.totalCitations === 'number') {
+          setTotalCitations(data.totalCitations);
+        }
+      } catch {
+        // Keep fallback citations if remote fetch fails.
+      }
+    };
+
+    fetchCitations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <main className="min-h-screen w-full bg-black text-white overflow-hidden">
       {/* Animated Background */}
@@ -294,7 +326,7 @@ export default function ResearchPage() {
                   label: 'Patents Filed',
                   value: 2,
                 },
-                { label: 'Impact', value: '8M+' },
+                { label: 'Citations', value: totalCitations.toLocaleString() },
               ].map((stat, i) => (
                 <motion.div
                   key={i}
@@ -323,7 +355,7 @@ export default function ResearchPage() {
               Interested in Collaboration?
             </h3>
             <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-              Let's discuss research opportunities, technical partnerships, or AI-driven solutions for your engineering challenges.
+              Let&apos;s discuss research opportunities, technical partnerships, or AI-driven solutions for your engineering challenges.
             </p>
             <motion.a
               href="mailto:contact@example.com"
