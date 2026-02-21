@@ -13,6 +13,12 @@
     citations?: number;
     scholarId?: string;
   }[];
+  references?: {
+    title: string;
+    url: string;
+    source: string;
+    year?: number;
+  }[];
   achievements?: string[];
   impact?: string;
 }
@@ -35,10 +41,10 @@ export const researchProjects: ResearchProject[] = [
       'Deep Learning',
       'High-Speed Interconnects',
     ],
-    publications: [
+    references: [
       {
         title: 'Rutgers ECE Team Won Best AI Innovation Prize in TE AI Cup 2022-23',
-        publication: 'Rutgers University ECE Newsletter 2023',
+        source: 'Rutgers University ECE Newsletter 2023',
         year: 2024,
         url: 'https://ece.rutgers.edu/sites/default/files/2024-06/ECE_Newsletter_2023.pdf',
       },

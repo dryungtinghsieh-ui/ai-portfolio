@@ -277,6 +277,49 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               </motion.div>
             )}
 
+            {/* References */}
+            {project.references && project.references.length > 0 && (
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={itemVariants}
+                className="mb-12"
+              >
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6">
+                  References
+                </h2>
+                <div className="space-y-4">
+                  {project.references.map((ref, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="p-4 rounded-lg bg-slate-900/30 border border-blue-500/20 hover:border-blue-500/50 transition-all"
+                    >
+                      <h3 className="font-semibold text-blue-300 text-base sm:text-lg mb-2">
+                        {ref.title}
+                      </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-400 mb-2">
+                        <p>{ref.source}</p>
+                        {ref.year && (
+                          <p className="text-cyan-400 font-semibold mt-2 sm:mt-0">{ref.year}</p>
+                        )}
+                      </div>
+                      <a
+                        href={ref.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-3 text-blue-400 hover:text-blue-300 transition-colors text-sm underline"
+                      >
+                        Open Reference ??
+                      </a>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
             {/* Related Projects */}
             <motion.div
               initial="hidden"
