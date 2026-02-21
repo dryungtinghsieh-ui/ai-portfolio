@@ -229,6 +229,32 @@ export default function ResearchPage() {
                         </div>
                       )}
 
+                      {/* References */}
+                      {project.references && project.references.length > 0 && (
+                        <div className="mb-6">
+                          <p className="text-xs font-semibold text-cyan-400 mb-2 uppercase tracking-wider">
+                            References ({project.references.length})
+                          </p>
+                          <ul className="text-xs text-gray-400 space-y-1">
+                            {project.references.slice(0, 2).map((ref, i) => (
+                              <li key={i} className="flex items-start">
+                                <span className="mr-2 text-blue-400">•</span>
+                                <span>
+                                  {ref.title}
+                                  {ref.year ? ` (${ref.year})` : ''}
+                                </span>
+                              </li>
+                            ))}
+                            {project.references.length > 2 && (
+                              <li className="text-blue-400">
+                                +{project.references.length - 2} more reference
+                                {project.references.length > 3 ? 's' : ''}
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+
                       {/* View Details Button */}
                       <motion.div
                         className="flex items-center text-blue-400 font-semibold text-sm group-hover:text-blue-300 transition-colors"
