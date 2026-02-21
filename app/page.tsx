@@ -214,7 +214,7 @@ export default function Home() {
                     href="/cv.pdf"
                     whileHover={{ scale: 1.05, borderColor: 'rgba(59, 130, 246, 0.8)' }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-8 py-3 rounded-lg border border-blue-400/50 font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200"
+                    className="hidden px-8 py-3 rounded-lg border border-blue-400/50 font-semibold text-blue-300 hover:text-blue-200 transition-all duration-200"
                   >
                     Download CV
                   </motion.a>
