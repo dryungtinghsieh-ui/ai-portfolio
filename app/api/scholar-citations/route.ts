@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const revalidate = 60 * 60 * 12;
+export const revalidate = 43200;
 
 const SCHOLAR_PROFILE_URL =
   'https://scholar.google.com/citations?user=TSoiF94AAAAJ&hl=en';
