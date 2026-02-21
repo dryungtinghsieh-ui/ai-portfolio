@@ -41,15 +41,6 @@ export const researchProjects: ResearchProject[] = [
       '🏆 Best AI Innovation Prize in TE AI Cup 2022-23',
       '🌍 Won among 40 competing teams from 25 universities globally',
     ],
-    publications: [
-      {
-        title: 'Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space',
-        publication: 'Journal of Communications and Networks, 25(2), pp. 167-181',
-        year: 2023,
-        url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:d1gkVwhDpl0C',
-        citations: 21,
-      },
-    ],
     impact:
       'Transformed design cycle from weeks to hours, enabling rapid prototyping and cost optimization',
   },
