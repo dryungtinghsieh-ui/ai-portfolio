@@ -312,7 +312,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                         rel="noopener noreferrer"
                         className="inline-block mt-3 text-blue-400 hover:text-blue-300 transition-colors text-sm underline"
                       >
-                        Open Reference ??
+                        Open Reference &rarr;
                       </a>
                     </motion.div>
                   ))}
