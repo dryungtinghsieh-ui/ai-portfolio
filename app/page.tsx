@@ -79,6 +79,17 @@ const tagVariants = {
   },
 };
 
+const ctaBaseClass =
+  'rounded-xl px-8 py-3 font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)]';
+const ctaPrimaryClass =
+  'bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-slate-50';
+const ctaSecondaryClass =
+  'bg-gradient-to-br from-[#1D4ED8] to-[#2563EB] text-slate-100';
+const ctaTertiaryClass =
+  'bg-gradient-to-br from-[#1E40AF] to-[#1D4ED8] text-slate-100';
+const ctaQuaternaryClass =
+  'bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-slate-100';
+
 export default function Home() {
   const [hoveredTag, setHoveredTag] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
@@ -198,7 +209,7 @@ export default function Home() {
                     href="/fun/microstrip"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-3 font-semibold text-cyan-50 transition-all duration-200 hover:shadow-lg"
+                    className={`${ctaBaseClass} ${ctaSecondaryClass}`}
                   >
                     Microstrip Fun Project
                   </motion.a>
@@ -206,7 +217,7 @@ export default function Home() {
                     href="/research"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 font-semibold text-blue-50 transition-all duration-200 hover:shadow-lg"
+                    className={`${ctaBaseClass} ${ctaPrimaryClass}`}
                   >
                     View Research Projects
                   </motion.a>
@@ -214,7 +225,7 @@ export default function Home() {
                     href="/cv.pdf"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 py-3 font-semibold text-violet-50 transition-all duration-200 hover:shadow-lg"
+                    className={`${ctaBaseClass} ${ctaTertiaryClass}`}
                   >
                     Download CV
                   </motion.a>
@@ -222,7 +233,7 @@ export default function Home() {
                     href="mailto:dr.yungting.hsieh@gmail.com"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-3 font-semibold text-emerald-50 transition-all duration-200 hover:shadow-lg"
+                    className={`${ctaBaseClass} ${ctaQuaternaryClass}`}
                   >
                     Contact Me
                   </motion.a>
