@@ -221,6 +221,7 @@ export default function Home() {
                   >
                     View Research Projects
                   </motion.a>
+                  {/* Temporarily hidden per request
                   <motion.a
                     href="/cv.pdf"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
@@ -229,6 +230,7 @@ export default function Home() {
                   >
                     Download CV
                   </motion.a>
+                  */}
                   <motion.a
                     href="mailto:dr.yungting.hsieh@gmail.com"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
