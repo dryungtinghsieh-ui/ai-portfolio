@@ -198,7 +198,7 @@ export default function Home() {
                     href="/fun/microstrip"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-cyan-500/30 to-blue-500/25 px-8 py-3 font-semibold text-cyan-200 transition-all duration-200 hover:shadow-lg hover:text-cyan-100"
+                    className="rounded-lg bg-gradient-to-r from-cyan-600 to-blue-600 px-8 py-3 font-semibold text-cyan-50 transition-all duration-200 hover:shadow-lg"
                   >
                     Microstrip Fun Project
                   </motion.a>
@@ -206,7 +206,7 @@ export default function Home() {
                     href="/research"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 px-8 py-3 font-semibold text-black transition-all duration-200 hover:shadow-lg"
+                    className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 font-semibold text-blue-50 transition-all duration-200 hover:shadow-lg"
                   >
                     View Research Projects
                   </motion.a>
@@ -214,7 +214,7 @@ export default function Home() {
                     href="/cv.pdf"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg border border-blue-400/50 px-8 py-3 font-semibold text-blue-300 transition-all duration-200 hover:text-blue-200"
+                    className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 py-3 font-semibold text-violet-50 transition-all duration-200 hover:shadow-lg"
                   >
                     Download CV
                   </motion.a>
@@ -222,7 +222,7 @@ export default function Home() {
                     href="mailto:dr.yungting.hsieh@gmail.com"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg border border-green-500/50 px-8 py-3 font-semibold text-green-400 transition-all duration-200 hover:text-green-300"
+                    className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-3 font-semibold text-emerald-50 transition-all duration-200 hover:shadow-lg"
                   >
                     Contact Me
                   </motion.a>
