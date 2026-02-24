@@ -218,6 +218,14 @@ export default function Home() {
                   >
                     Contact Me
                   </motion.a>
+                  <motion.a
+                    href="/fun/microstrip"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="rounded-lg border border-cyan-400/50 px-8 py-3 font-semibold text-cyan-300 transition-all duration-200 hover:text-cyan-200"
+                  >
+                    Microstrip Fun Project
+                  </motion.a>
                 </motion.div>
 
                 <motion.div variants={itemVariants} className="flex justify-center gap-4 md:justify-start">
