@@ -82,13 +82,13 @@ const tagVariants = {
 const ctaBaseClass =
   'rounded-xl px-8 py-3 font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)]';
 const ctaPrimaryClass =
-  'bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-slate-50';
+  'border border-[#1D4ED8] bg-[#1D4ED8] text-slate-50 hover:bg-[#2563EB]';
 const ctaSecondaryClass =
-  'bg-gradient-to-br from-[#1D4ED8] to-[#2563EB] text-slate-100';
+  'border border-[#1E3A8A] bg-[#1E3A8A] text-slate-100 hover:bg-[#1D4ED8]';
 const ctaTertiaryClass =
-  'bg-gradient-to-br from-[#1E40AF] to-[#1D4ED8] text-slate-100';
+  'border border-[#3B82F6] bg-transparent text-[#BFDBFE] hover:bg-[#1E3A8A]/30';
 const ctaQuaternaryClass =
-  'bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-slate-100';
+  'border border-[#0EA5E9] bg-[#0EA5E9] text-slate-950 hover:bg-[#38BDF8]';
 
 export default function Home() {
   const [hoveredTag, setHoveredTag] = useState<number | null>(null);
