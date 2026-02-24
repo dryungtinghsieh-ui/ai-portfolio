@@ -21,6 +21,8 @@ export default function MicrostripFunPage() {
           <iframe
             title="Microstrip Designer"
             src="/fun/microstrip/index.html"
+            loading="eager"
+            allowFullScreen
             className="h-[85vh] w-full border-0"
           />
         </div>

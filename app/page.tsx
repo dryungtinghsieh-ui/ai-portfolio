@@ -195,6 +195,14 @@ export default function Home() {
                   className="mb-12 flex flex-col justify-center gap-4 sm:flex-row md:justify-start"
                 >
                   <motion.a
+                    href="/fun/microstrip"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className="rounded-lg border border-cyan-400/50 px-8 py-3 font-semibold text-cyan-300 transition-all duration-200 hover:text-cyan-200"
+                  >
+                    Microstrip Fun Project
+                  </motion.a>
+                  <motion.a
                     href="/research"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
@@ -217,14 +225,6 @@ export default function Home() {
                     className="rounded-lg border border-green-500/50 px-8 py-3 font-semibold text-green-400 transition-all duration-200 hover:text-green-300"
                   >
                     Contact Me
-                  </motion.a>
-                  <motion.a
-                    href="/fun/microstrip"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg border border-cyan-400/50 px-8 py-3 font-semibold text-cyan-300 transition-all duration-200 hover:text-cyan-200"
-                  >
-                    Microstrip Fun Project
                   </motion.a>
                 </motion.div>
 
