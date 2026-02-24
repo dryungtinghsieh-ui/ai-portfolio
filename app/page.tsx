@@ -198,7 +198,7 @@ export default function Home() {
                     href="/fun/microstrip"
                     whileHover={reduceMotion ? undefined : { scale: 1.04 }}
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className="rounded-lg border border-cyan-400/50 px-8 py-3 font-semibold text-cyan-300 transition-all duration-200 hover:text-cyan-200"
+                    className="rounded-lg bg-gradient-to-r from-cyan-500/30 to-blue-500/25 px-8 py-3 font-semibold text-cyan-200 transition-all duration-200 hover:shadow-lg hover:text-cyan-100"
                   >
                     Microstrip Fun Project
                   </motion.a>
