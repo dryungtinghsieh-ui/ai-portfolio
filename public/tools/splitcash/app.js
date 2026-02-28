@@ -1,15 +1,18 @@
 (function () {
+  const REMOTE_REFRESH_MS = 5000;
+
   const state = {
     roomCode: "",
     roomSecret: "",
     roomId: "",
     displayName: "",
-    storageMode: "local",
+    storageMode: "firebase",
     members: [],
     expenses: [],
     payments: [],
     saveTimer: null,
     syncInFlight: false,
+    refreshTimer: null,
     lastLoadedFingerprint: "",
   };
 
@@ -48,6 +51,10 @@
     hydrateRoomForm();
     bindEvents();
     render();
+    updateRoomStatus(
+      hasFirebaseConfig() ? "等待進入房間" : "缺少 Firebase 設定",
+      hasFirebaseConfig() ? "Firebase room sync" : "Firebase not configured"
+    );
   }
 
   function bindEvents() {
@@ -58,6 +65,7 @@
     els.expenseForm.addEventListener("submit", handleExpenseSubmit);
     els.exportButton.addEventListener("click", exportRoomData);
     els.importInput.addEventListener("change", importRoomData);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
   }
 
   function hydrateRoomForm() {
@@ -69,6 +77,12 @@
 
   async function handleRoomSubmit(event) {
     event.preventDefault();
+
+    if (!hasFirebaseConfig()) {
+      updateRoomStatus("缺少 Firebase 設定", "Firebase not configured");
+      showToast("請先在 firebase-config.js 填入 Firebase 設定");
+      return;
+    }
 
     const roomCode = els.roomCodeInput.value.trim();
     const roomSecret = els.roomSecretInput.value.trim();
@@ -88,20 +102,14 @@
     state.roomSecret = roomSecret;
     state.roomId = await sha256Hex(roomCode.toLowerCase());
     state.displayName = displayName;
-    state.storageMode = firebaseConfig ? "firebase" : "local";
     persistRoomMeta();
     updateRoomStatus("載入房間資料中", state.roomCode);
 
     try {
       const payload = await loadRoomPayload();
-      state.members = Array.isArray(payload.members) ? payload.members : [];
-      state.expenses = Array.isArray(payload.expenses) ? payload.expenses : [];
-      state.payments = Array.isArray(payload.payments) ? payload.payments : [];
-      state.lastLoadedFingerprint = stableFingerprint(payload);
-      updateRoomStatus(
-        state.storageMode === "firebase" ? "Firebase 已同步" : "使用本機儲存",
-        state.roomCode
-      );
+      applyPayload(payload);
+      updateRoomStatus("Firebase 已同步", state.roomCode);
+      startRemoteRefresh();
       render();
       showToast("已進入房間");
     } catch (error) {
@@ -573,6 +581,7 @@
   }
 
   function leaveRoom() {
+    stopRemoteRefresh();
     state.roomCode = "";
     state.roomSecret = "";
     state.roomId = "";
@@ -583,13 +592,21 @@
     state.lastLoadedFingerprint = "";
     sessionStorage.removeItem("splitcash-meta");
     els.roomSecretInput.value = "";
-    updateRoomStatus("尚未進入房間", "Local only");
+    updateRoomStatus(
+      hasFirebaseConfig() ? "等待進入房間" : "缺少 Firebase 設定",
+      hasFirebaseConfig() ? "Firebase room sync" : "Firebase not configured"
+    );
     render();
   }
 
   function ensureActiveRoom() {
-    if (!state.roomCode || !state.roomSecret) {
+    if (!state.roomCode || !state.roomSecret || !state.roomId) {
       showToast("請先進入房間");
+      return false;
+    }
+
+    if (!hasFirebaseConfig()) {
+      showToast("請先設定 Firebase");
       return false;
     }
 
@@ -643,43 +660,71 @@
   }
 
   async function loadRoomPayload() {
-    if (state.storageMode === "firebase") {
-      const encrypted = await loadRemotePayload();
-      if (!encrypted) {
-        return { members: [], expenses: [], payments: [] };
-      }
-      return decryptPayload(encrypted);
-    }
-
-    const encrypted = localStorage.getItem(localStorageKey());
+    const encrypted = await loadRemotePayload();
     if (!encrypted) {
       return { members: [], expenses: [], payments: [] };
     }
-    return decryptPayload(JSON.parse(encrypted));
+    return decryptPayload(encrypted);
   }
 
   async function saveRoomPayload(payload) {
     const fingerprint = stableFingerprint(payload);
-    if (fingerprint === state.lastLoadedFingerprint && state.storageMode !== "firebase") {
+    const encrypted = await encryptPayload(payload);
+
+    updateRoomStatus("同步中", state.roomCode);
+    await saveRemotePayload(encrypted);
+    state.lastLoadedFingerprint = fingerprint;
+    updateRoomStatus("Firebase 已同步", state.roomCode);
+  }
+
+  function applyPayload(payload) {
+    state.members = Array.isArray(payload.members) ? payload.members : [];
+    state.expenses = Array.isArray(payload.expenses) ? payload.expenses : [];
+    state.payments = Array.isArray(payload.payments) ? payload.payments : [];
+    state.lastLoadedFingerprint = stableFingerprint(payload);
+  }
+
+  function startRemoteRefresh() {
+    stopRemoteRefresh();
+    state.refreshTimer = window.setInterval(() => {
+      refreshFromRemote(false);
+    }, REMOTE_REFRESH_MS);
+  }
+
+  function stopRemoteRefresh() {
+    if (state.refreshTimer) {
+      window.clearInterval(state.refreshTimer);
+      state.refreshTimer = null;
+    }
+  }
+
+  async function refreshFromRemote(showStatus) {
+    if (!ensureActiveRoom() || state.syncInFlight) {
       return;
     }
 
-    const encrypted = await encryptPayload(payload);
-
-    if (state.storageMode === "firebase") {
-      updateRoomStatus("同步中", state.roomCode);
-      await saveRemotePayload(encrypted);
+    try {
+      if (showStatus) {
+        updateRoomStatus("檢查遠端更新", state.roomCode);
+      }
+      const payload = await loadRoomPayload();
+      const nextFingerprint = stableFingerprint(payload);
+      if (nextFingerprint !== state.lastLoadedFingerprint) {
+        applyPayload(payload);
+        render();
+        showToast("已同步房間最新資料");
+      }
       updateRoomStatus("Firebase 已同步", state.roomCode);
-    } else {
-      localStorage.setItem(localStorageKey(), JSON.stringify(encrypted));
-      updateRoomStatus("使用本機儲存", state.roomCode);
+    } catch (error) {
+      console.error(error);
+      updateRoomStatus("同步失敗", state.roomCode);
     }
-
-    state.lastLoadedFingerprint = fingerprint;
   }
 
-  function localStorageKey() {
-    return `splitcash-room-${state.roomId}`;
+  function handleVisibilityChange() {
+    if (!document.hidden) {
+      refreshFromRemote(true);
+    }
   }
 
   async function encryptPayload(payload) {
@@ -746,10 +791,6 @@
   }
 
   async function saveRemotePayload(encrypted) {
-    if (state.syncInFlight) {
-      return;
-    }
-
     state.syncInFlight = true;
     try {
       const response = await fetch(firestoreDocumentUrl(), {
@@ -775,6 +816,10 @@
   function firestoreDocumentUrl() {
     const base = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/rooms/${state.roomId}`;
     return `${base}?key=${encodeURIComponent(firebaseConfig.apiKey)}`;
+  }
+
+  function hasFirebaseConfig() {
+    return Boolean(firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId);
   }
 
   async function sha256Hex(value) {
