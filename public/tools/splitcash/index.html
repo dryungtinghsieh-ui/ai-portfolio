@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SplitCash</title>
+    <meta
+      name="description"
+      content="私人朋友間分帳工具，支援登記付款、均分品項、加密房間資料與結算建議。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Private Room Ledger</p>
+          <h1>SplitCash</h1>
+          <p class="hero-copy">
+            給朋友之間記帳用的小工具。知道房間代碼與密碼的人可以一起記錄誰先付錢、哪些人要均分，最後直接算出誰該給誰。
+          </p>
+        </div>
+        <div class="hero-badge">
+          <span id="sync-status">尚未進入房間</span>
+          <strong id="room-status">Local only</strong>
+        </div>
+      </header>
+
+      <main class="app-grid">
+        <section class="panel room-panel">
+          <div class="panel-head">
+            <h2>房間</h2>
+            <button id="leave-room-button" class="ghost-button" type="button">離開房間</button>
+          </div>
+          <form id="room-form" class="stack-form">
+            <label>
+              房間代碼
+              <input id="room-code-input" name="roomCode" type="text" placeholder="例如 tainan-trip" required />
+            </label>
+            <label>
+              房間密碼
+              <input id="room-secret-input" name="roomSecret" type="password" placeholder="至少 8 碼" required />
+            </label>
+            <label>
+              顯示名稱
+              <input id="display-name-input" name="displayName" type="text" placeholder="你在這間房的稱呼" />
+            </label>
+            <div class="actions">
+              <button type="submit">進入房間</button>
+              <button id="copy-share-link-button" class="ghost-button" type="button">複製分享連結</button>
+            </div>
+          </form>
+          <p class="hint">
+            分享連結只包含房間代碼，不包含密碼。資料會先在瀏覽器端加密，再存到本機或 Firebase。
+          </p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>成員</h2>
+            <span id="member-count">0 人</span>
+          </div>
+          <form id="member-form" class="inline-form">
+            <input id="member-name-input" name="memberName" type="text" placeholder="新增成員名稱" required />
+            <button type="submit">新增</button>
+          </form>
+          <div id="member-list" class="chip-list empty-state">還沒有成員</div>
+        </section>
+
+        <section class="panel wide-panel">
+          <div class="panel-head">
+            <h2>新增支出</h2>
+            <span id="expense-count">0 筆</span>
+          </div>
+          <form id="expense-form" class="expense-form">
+            <label>
+              品項
+              <input id="expense-title-input" name="title" type="text" placeholder="例如 晚餐、計程車" required />
+            </label>
+            <label>
+              金額
+              <input id="expense-amount-input" name="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" required />
+            </label>
+            <label>
+              誰先付
+              <select id="expense-payer-select" name="payerId" required>
+                <option value="">請先建立成員</option>
+              </select>
+            </label>
+            <fieldset>
+              <legend>一起均分的人</legend>
+              <div id="participant-options" class="checkbox-grid empty-state">請先建立成員</div>
+            </fieldset>
+            <label class="wide-field">
+              備註
+              <input id="expense-note-input" name="note" type="text" placeholder="可留空" />
+            </label>
+            <button type="submit">登記支出</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>結算</h2>
+            <span id="total-spent">$0.00</span>
+          </div>
+          <div id="summary-cards" class="summary-cards"></div>
+          <div id="settlement-list" class="settlement-list empty-state">還沒有可計算的結算結果</div>
+        </section>
+
+        <section class="panel wide-panel">
+          <div class="panel-head">
+            <h2>支出明細</h2>
+            <div class="actions">
+              <button id="export-button" class="ghost-button" type="button">匯出 JSON</button>
+              <label class="ghost-button upload-button">
+                匯入 JSON
+                <input id="import-input" type="file" accept="application/json" hidden />
+              </label>
+            </div>
+          </div>
+          <div id="expense-list" class="expense-list empty-state">尚未登記任何支出</div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="./firebase-config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

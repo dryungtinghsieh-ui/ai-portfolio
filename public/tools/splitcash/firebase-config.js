@@ -1,0 +1,1 @@
+window.SPLITCASH_FIREBASE_CONFIG = null;
