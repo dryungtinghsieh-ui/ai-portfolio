@@ -150,6 +150,10 @@ h1 {
   font-size: 0.92rem;
 }
 
+.subhead {
+  margin-top: 20px;
+}
+
 .stack-form,
 .expense-form {
   display: grid;
@@ -330,6 +334,22 @@ button:hover,
   padding: 16px;
 }
 
+.settlement-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.settlement-action {
+  flex-shrink: 0;
+}
+
+.payment-history {
+  display: grid;
+  gap: 12px;
+}
+
 .settlement-item strong,
 .expense-item strong {
   display: block;
@@ -411,7 +431,8 @@ button:hover,
 
   .inline-form,
   .actions,
-  .expense-item footer {
+  .expense-item footer,
+  .settlement-row {
     flex-direction: column;
     align-items: stretch;
   }

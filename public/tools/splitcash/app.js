@@ -7,6 +7,7 @@
     storageMode: "local",
     members: [],
     expenses: [],
+    payments: [],
     saveTimer: null,
     syncInFlight: false,
     lastLoadedFingerprint: "",
@@ -32,6 +33,7 @@
     totalSpent: document.getElementById("total-spent"),
     summaryCards: document.getElementById("summary-cards"),
     settlementList: document.getElementById("settlement-list"),
+    paymentHistory: document.getElementById("payment-history"),
     expenseList: document.getElementById("expense-list"),
     exportButton: document.getElementById("export-button"),
     importInput: document.getElementById("import-input"),
@@ -39,6 +41,7 @@
   };
 
   const firebaseConfig = window.SPLITCASH_FIREBASE_CONFIG;
+
   init();
 
   function init() {
@@ -66,11 +69,20 @@
 
   async function handleRoomSubmit(event) {
     event.preventDefault();
+
     const roomCode = els.roomCodeInput.value.trim();
     const roomSecret = els.roomSecretInput.value.trim();
     const displayName = els.displayNameInput.value.trim();
-    if (!roomCode || !roomSecret) return showToast("請輸入房間代碼與密碼");
-    if (roomSecret.length < 8) return showToast("房間密碼至少 8 碼");
+
+    if (!roomCode || !roomSecret) {
+      showToast("請輸入房間代碼與密碼");
+      return;
+    }
+
+    if (roomSecret.length < 8) {
+      showToast("房間密碼至少 8 碼");
+      return;
+    }
 
     state.roomCode = roomCode;
     state.roomSecret = roomSecret;
@@ -84,6 +96,7 @@
       const payload = await loadRoomPayload();
       state.members = Array.isArray(payload.members) ? payload.members : [];
       state.expenses = Array.isArray(payload.expenses) ? payload.expenses : [];
+      state.payments = Array.isArray(payload.payments) ? payload.payments : [];
       state.lastLoadedFingerprint = stableFingerprint(payload);
       updateRoomStatus(
         state.storageMode === "firebase" ? "Firebase 已同步" : "使用本機儲存",
@@ -100,13 +113,26 @@
 
   function handleMemberSubmit(event) {
     event.preventDefault();
-    if (!ensureActiveRoom()) return;
-    const name = els.memberNameInput.value.trim();
-    if (!name) return;
-    if (state.members.some((member) => member.name.toLowerCase() === name.toLowerCase())) {
-      return showToast("成員名稱重複");
+    if (!ensureActiveRoom()) {
+      return;
     }
-    state.members.push({ id: createId(), name, createdAt: new Date().toISOString() });
+
+    const name = els.memberNameInput.value.trim();
+    if (!name) {
+      return;
+    }
+
+    if (state.members.some((member) => member.name.toLowerCase() === name.toLowerCase())) {
+      showToast("成員名稱重複");
+      return;
+    }
+
+    state.members.push({
+      id: createId(),
+      name,
+      createdAt: new Date().toISOString(),
+    });
+
     els.memberNameInput.value = "";
     render();
     queueSave();
@@ -114,8 +140,14 @@
 
   function handleExpenseSubmit(event) {
     event.preventDefault();
-    if (!ensureActiveRoom()) return;
-    if (state.members.length === 0) return showToast("請先新增成員");
+    if (!ensureActiveRoom()) {
+      return;
+    }
+
+    if (state.members.length === 0) {
+      showToast("請先新增成員");
+      return;
+    }
 
     const form = new FormData(els.expenseForm);
     const title = String(form.get("title") || "").trim();
@@ -124,9 +156,20 @@
     const note = String(form.get("note") || "").trim();
     const participantIds = getSelectedParticipants();
 
-    if (!title || !Number.isFinite(amount) || amount <= 0) return showToast("請輸入有效的品項與金額");
-    if (!payerId) return showToast("請選擇付款人");
-    if (participantIds.length === 0) return showToast("至少要選 1 位均分成員");
+    if (!title || !Number.isFinite(amount) || amount <= 0) {
+      showToast("請輸入有效的品項與金額");
+      return;
+    }
+
+    if (!payerId) {
+      showToast("請選擇付款人");
+      return;
+    }
+
+    if (participantIds.length === 0) {
+      showToast("至少要選 1 位均分成員");
+      return;
+    }
 
     state.expenses.unshift({
       id: createId(),
@@ -137,16 +180,25 @@
       note,
       createdAt: new Date().toISOString(),
     });
+
     els.expenseForm.reset();
     render();
     queueSave();
   }
 
   function removeMember(memberId) {
-    const used = state.expenses.some(
+    const usedByExpense = state.expenses.some(
       (expense) => expense.payerId === memberId || expense.participantIds.includes(memberId)
     );
-    if (used) return showToast("這位成員已出現在支出紀錄內，不能直接刪除");
+    const usedByPayment = state.payments.some(
+      (payment) => payment.fromId === memberId || payment.toId === memberId
+    );
+
+    if (usedByExpense || usedByPayment) {
+      showToast("這位成員已出現在紀錄內，不能直接刪除");
+      return;
+    }
+
     state.members = state.members.filter((member) => member.id !== memberId);
     render();
     queueSave();
@@ -158,16 +210,61 @@
     queueSave();
   }
 
+  function recordSettlement(fromId, toId, amountCents) {
+    if (!ensureActiveRoom()) {
+      return;
+    }
+
+    state.payments.unshift({
+      id: createId(),
+      fromId,
+      toId,
+      amountCents,
+      createdAt: new Date().toISOString(),
+    });
+
+    render();
+    queueSave();
+    showToast("已標記為結算完成");
+  }
+
+  function removePayment(paymentId) {
+    state.payments = state.payments.filter((payment) => payment.id !== paymentId);
+    render();
+    queueSave();
+    showToast("已取消這筆結算");
+  }
+
+  function getSelectedParticipants() {
+    return Array.from(
+      els.participantOptions.querySelectorAll('input[type="checkbox"]:checked')
+    ).map((input) => input.value);
+  }
+
   function computeBalances() {
     const balances = new Map(state.members.map((member) => [member.id, 0]));
+
     for (const expense of state.expenses) {
-      if (!balances.has(expense.payerId) || expense.participantIds.length === 0) continue;
+      if (!balances.has(expense.payerId) || expense.participantIds.length === 0) {
+        continue;
+      }
+
       const split = expense.amountCents / expense.participantIds.length;
       for (const participantId of expense.participantIds) {
         balances.set(participantId, (balances.get(participantId) || 0) - split);
       }
       balances.set(expense.payerId, (balances.get(expense.payerId) || 0) + expense.amountCents);
     }
+
+    for (const payment of state.payments) {
+      if (!balances.has(payment.fromId) || !balances.has(payment.toId)) {
+        continue;
+      }
+
+      balances.set(payment.fromId, (balances.get(payment.fromId) || 0) + payment.amountCents);
+      balances.set(payment.toId, (balances.get(payment.toId) || 0) - payment.amountCents);
+    }
+
     return state.members.map((member) => ({
       ...member,
       balanceCents: normalizeCents(balances.get(member.id) || 0),
@@ -177,29 +274,42 @@
   function computeSettlements(balanceRows) {
     const creditors = balanceRows
       .filter((row) => row.balanceCents > 0)
-      .map((row) => ({ name: row.name, amountCents: row.balanceCents }))
+      .map((row) => ({ id: row.id, name: row.name, amountCents: row.balanceCents }))
       .sort((a, b) => b.amountCents - a.amountCents);
+
     const debtors = balanceRows
       .filter((row) => row.balanceCents < 0)
-      .map((row) => ({ name: row.name, amountCents: Math.abs(row.balanceCents) }))
+      .map((row) => ({ id: row.id, name: row.name, amountCents: Math.abs(row.balanceCents) }))
       .sort((a, b) => b.amountCents - a.amountCents);
+
     const settlements = [];
     let creditorIndex = 0;
     let debtorIndex = 0;
+
     while (creditorIndex < creditors.length && debtorIndex < debtors.length) {
       const creditor = creditors[creditorIndex];
       const debtor = debtors[debtorIndex];
       const transfer = Math.min(creditor.amountCents, debtor.amountCents);
+
       settlements.push({
+        fromId: debtor.id,
         from: debtor.name,
+        toId: creditor.id,
         to: creditor.name,
         amountCents: normalizeCents(transfer),
       });
+
       creditor.amountCents = normalizeCents(creditor.amountCents - transfer);
       debtor.amountCents = normalizeCents(debtor.amountCents - transfer);
-      if (creditor.amountCents === 0) creditorIndex += 1;
-      if (debtor.amountCents === 0) debtorIndex += 1;
+
+      if (creditor.amountCents === 0) {
+        creditorIndex += 1;
+      }
+      if (debtor.amountCents === 0) {
+        debtorIndex += 1;
+      }
     }
+
     return settlements;
   }
 
@@ -218,16 +328,22 @@
       els.memberList.textContent = "還沒有成員";
       return;
     }
+
     els.memberList.className = "chip-list";
     els.memberList.innerHTML = state.members
       .map(
-        (member) =>
-          `<article class="member-chip"><strong>${escapeHtml(member.name)}</strong><button type="button" data-remove-member="${member.id}">刪除</button></article>`
+        (member) => `
+          <article class="member-chip">
+            <strong>${escapeHtml(member.name)}</strong>
+            <button type="button" data-remove-member="${member.id}">刪除</button>
+          </article>
+        `
       )
       .join("");
-    Array.from(els.memberList.querySelectorAll("[data-remove-member]")).forEach((button) =>
-      button.addEventListener("click", () => removeMember(button.dataset.removeMember))
-    );
+
+    Array.from(els.memberList.querySelectorAll("[data-remove-member]")).forEach((button) => {
+      button.addEventListener("click", () => removeMember(button.dataset.removeMember));
+    });
   }
 
   function renderParticipantOptions() {
@@ -236,11 +352,16 @@
       els.participantOptions.textContent = "請先建立成員";
       return;
     }
+
     els.participantOptions.className = "checkbox-grid";
     els.participantOptions.innerHTML = state.members
       .map(
-        (member) =>
-          `<label class="participant-option"><input type="checkbox" value="${member.id}" checked /><span>${escapeHtml(member.name)}</span></label>`
+        (member) => `
+          <label class="participant-option">
+            <input type="checkbox" value="${member.id}" checked />
+            <span>${escapeHtml(member.name)}</span>
+          </label>
+        `
       )
       .join("");
   }
@@ -250,6 +371,7 @@
       els.expensePayerSelect.innerHTML = '<option value="">請先建立成員</option>';
       return;
     }
+
     els.expensePayerSelect.innerHTML = [
       '<option value="">選擇付款人</option>',
       ...state.members.map(
@@ -265,25 +387,43 @@
       els.expenseList.textContent = "尚未登記任何支出";
       return;
     }
+
     els.expenseList.className = "expense-list";
     els.expenseList.innerHTML = state.expenses
       .map((expense) => {
         const payer = findMemberName(expense.payerId);
         const participants = expense.participantIds.map(findMemberName).join("、");
         const perHead = normalizeCents(expense.amountCents / expense.participantIds.length);
-        return `<article class="expense-item"><strong>${escapeHtml(expense.title)} <span>${formatCurrency(expense.amountCents)}</span></strong>${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}<div class="expense-meta"><span>付款人：${escapeHtml(payer)}</span><span>均分：${escapeHtml(participants)}</span><span>每人：${formatCurrency(perHead)}</span></div><footer><small>${formatDate(expense.createdAt)}</small><button type="button" data-remove-expense="${expense.id}">刪除</button></footer></article>`;
+        return `
+          <article class="expense-item">
+            <strong>${escapeHtml(expense.title)} <span>${formatCurrency(expense.amountCents)}</span></strong>
+            ${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}
+            <div class="expense-meta">
+              <span>付款人：${escapeHtml(payer)}</span>
+              <span>均分：${escapeHtml(participants)}</span>
+              <span>每人：${formatCurrency(perHead)}</span>
+            </div>
+            <footer>
+              <small>${formatDate(expense.createdAt)}</small>
+              <button type="button" data-remove-expense="${expense.id}">刪除</button>
+            </footer>
+          </article>
+        `;
       })
       .join("");
-    Array.from(els.expenseList.querySelectorAll("[data-remove-expense]")).forEach((button) =>
-      button.addEventListener("click", () => removeExpense(button.dataset.removeExpense))
-    );
+
+    Array.from(els.expenseList.querySelectorAll("[data-remove-expense]")).forEach((button) => {
+      button.addEventListener("click", () => removeExpense(button.dataset.removeExpense));
+    });
   }
 
   function renderSummary() {
     const balances = computeBalances();
     const settlements = computeSettlements(balances);
     const total = state.expenses.reduce((sum, expense) => sum + expense.amountCents, 0);
+
     els.totalSpent.textContent = formatCurrency(total);
+
     if (balances.length === 0) {
       els.summaryCards.className = "summary-cards empty-state";
       els.summaryCards.textContent = "新增成員後會在這裡顯示每個人的淨額";
@@ -291,29 +431,95 @@
       els.summaryCards.className = "summary-cards";
       els.summaryCards.innerHTML = balances
         .map((row) => {
-          const className =
-            row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
+          const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
           const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
-          return `<article class="summary-card"><strong>${escapeHtml(row.name)}</strong><div>${label}</div><div class="${className}">${formatSignedCurrency(row.balanceCents)}</div></article>`;
+          return `
+            <article class="summary-card">
+              <strong>${escapeHtml(row.name)}</strong>
+              <div>${label}</div>
+              <div class="${className}">${formatSignedCurrency(row.balanceCents)}</div>
+            </article>
+          `;
         })
         .join("");
     }
+
     if (settlements.length === 0) {
       els.settlementList.className = "settlement-list empty-state";
-      els.settlementList.textContent = "還沒有可計算的結算結果";
+      els.settlementList.textContent = "目前沒有待結算款項";
+    } else {
+      els.settlementList.className = "settlement-list";
+      els.settlementList.innerHTML = settlements
+        .map(
+          (item) => `
+            <article class="settlement-item">
+              <div class="settlement-row">
+                <div>
+                  <strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong>
+                  <div>${formatCurrency(item.amountCents)}</div>
+                </div>
+                <button
+                  type="button"
+                  class="settlement-action"
+                  data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}"
+                >
+                  標記已結算
+                </button>
+              </div>
+            </article>
+          `
+        )
+        .join("");
+
+      Array.from(els.settlementList.querySelectorAll("[data-record-settlement]")).forEach(
+        (button) => {
+          button.addEventListener("click", () => {
+            const [fromId, toId, amountCents] = button.dataset.recordSettlement.split("|");
+            recordSettlement(fromId, toId, Number(amountCents));
+          });
+        }
+      );
+    }
+
+    renderPaymentHistory();
+  }
+
+  function renderPaymentHistory() {
+    if (state.payments.length === 0) {
+      els.paymentHistory.className = "payment-history empty-state";
+      els.paymentHistory.textContent = "還沒有已結清的紀錄";
       return;
     }
-    els.settlementList.className = "settlement-list";
-    els.settlementList.innerHTML = settlements
+
+    els.paymentHistory.className = "payment-history";
+    els.paymentHistory.innerHTML = state.payments
       .map(
-        (item) =>
-          `<article class="settlement-item"><strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong><div>${formatCurrency(item.amountCents)}</div></article>`
+        (payment) => `
+          <article class="expense-item">
+            <strong>${escapeHtml(findMemberName(payment.fromId))} -> ${escapeHtml(findMemberName(payment.toId))}</strong>
+            <div class="expense-meta">
+              <span>已結算：${formatCurrency(payment.amountCents)}</span>
+              <span>${formatDate(payment.createdAt)}</span>
+            </div>
+            <footer>
+              <small>這筆會沖銷兩人之間的款項</small>
+              <button type="button" data-remove-payment="${payment.id}">取消結算</button>
+            </footer>
+          </article>
+        `
       )
       .join("");
+
+    Array.from(els.paymentHistory.querySelectorAll("[data-remove-payment]")).forEach((button) => {
+      button.addEventListener("click", () => removePayment(button.dataset.removePayment));
+    });
   }
 
   function exportRoomData() {
-    if (!ensureActiveRoom()) return;
+    if (!ensureActiveRoom()) {
+      return;
+    }
+
     const blob = new Blob(
       [
         JSON.stringify(
@@ -322,6 +528,7 @@
             exportedAt: new Date().toISOString(),
             members: state.members,
             expenses: state.expenses,
+            payments: state.payments,
           },
           null,
           2
@@ -329,6 +536,7 @@
       ],
       { type: "application/json" }
     );
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -339,15 +547,20 @@
 
   async function importRoomData(event) {
     const [file] = event.target.files || [];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
+
     if (!ensureActiveRoom()) {
       event.target.value = "";
       return;
     }
+
     try {
       const parsed = JSON.parse(await file.text());
       state.members = Array.isArray(parsed.members) ? parsed.members : [];
       state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
+      state.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
       render();
       queueSave(true);
       showToast("已匯入資料");
@@ -366,6 +579,7 @@
     state.displayName = "";
     state.members = [];
     state.expenses = [];
+    state.payments = [];
     state.lastLoadedFingerprint = "";
     sessionStorage.removeItem("splitcash-meta");
     els.roomSecretInput.value = "";
@@ -378,19 +592,17 @@
       showToast("請先進入房間");
       return false;
     }
-    return true;
-  }
 
-  function getSelectedParticipants() {
-    return Array.from(
-      els.participantOptions.querySelectorAll('input[type="checkbox"]:checked')
-    ).map((input) => input.value);
+    return true;
   }
 
   function persistRoomMeta() {
     sessionStorage.setItem(
       "splitcash-meta",
-      JSON.stringify({ roomCode: state.roomCode, displayName: state.displayName })
+      JSON.stringify({
+        roomCode: state.roomCode,
+        displayName: state.displayName,
+      })
     );
   }
 
@@ -403,36 +615,57 @@
   }
 
   function queueSave(immediate) {
-    if (!ensureActiveRoom()) return;
-    if (state.saveTimer) window.clearTimeout(state.saveTimer);
+    if (!ensureActiveRoom()) {
+      return;
+    }
+
+    if (state.saveTimer) {
+      window.clearTimeout(state.saveTimer);
+    }
+
     const persist = () =>
-      saveRoomPayload({ members: state.members, expenses: state.expenses }).catch((error) => {
+      saveRoomPayload({
+        members: state.members,
+        expenses: state.expenses,
+        payments: state.payments,
+      }).catch((error) => {
         console.error(error);
         updateRoomStatus("同步失敗", state.roomCode);
         showToast("資料儲存失敗");
       });
+
     if (immediate) {
       persist();
       return;
     }
+
     state.saveTimer = window.setTimeout(persist, 450);
   }
 
   async function loadRoomPayload() {
     if (state.storageMode === "firebase") {
       const encrypted = await loadRemotePayload();
-      if (!encrypted) return { members: [], expenses: [] };
+      if (!encrypted) {
+        return { members: [], expenses: [], payments: [] };
+      }
       return decryptPayload(encrypted);
     }
+
     const encrypted = localStorage.getItem(localStorageKey());
-    if (!encrypted) return { members: [], expenses: [] };
+    if (!encrypted) {
+      return { members: [], expenses: [], payments: [] };
+    }
     return decryptPayload(JSON.parse(encrypted));
   }
 
   async function saveRoomPayload(payload) {
     const fingerprint = stableFingerprint(payload);
-    if (fingerprint === state.lastLoadedFingerprint && state.storageMode !== "firebase") return;
+    if (fingerprint === state.lastLoadedFingerprint && state.storageMode !== "firebase") {
+      return;
+    }
+
     const encrypted = await encryptPayload(payload);
+
     if (state.storageMode === "firebase") {
       updateRoomStatus("同步中", state.roomCode);
       await saveRemotePayload(encrypted);
@@ -441,6 +674,7 @@
       localStorage.setItem(localStorageKey(), JSON.stringify(encrypted));
       updateRoomStatus("使用本機儲存", state.roomCode);
     }
+
     state.lastLoadedFingerprint = fingerprint;
   }
 
@@ -453,7 +687,10 @@
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const plaintext = new TextEncoder().encode(JSON.stringify(payload));
     const cipherBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
-    return { iv: bufferToBase64(iv), payload: bufferToBase64(new Uint8Array(cipherBuffer)) };
+    return {
+      iv: bufferToBase64(iv),
+      payload: bufferToBase64(new Uint8Array(cipherBuffer)),
+    };
   }
 
   async function decryptPayload(encrypted) {
@@ -472,6 +709,7 @@
       false,
       ["deriveKey"]
     );
+
     return crypto.subtle.deriveKey(
       {
         name: "PBKDF2",
@@ -488,15 +726,30 @@
 
   async function loadRemotePayload() {
     const response = await fetch(firestoreDocumentUrl(), { method: "GET" });
-    if (response.status === 404) return null;
-    if (!response.ok) throw new Error(`Firestore load failed: ${response.status}`);
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      throw new Error(`Firestore load failed: ${response.status}`);
+    }
+
     const json = await response.json();
-    if (!json.fields?.payload?.stringValue || !json.fields?.iv?.stringValue) return null;
-    return { payload: json.fields.payload.stringValue, iv: json.fields.iv.stringValue };
+    if (!json.fields?.payload?.stringValue || !json.fields?.iv?.stringValue) {
+      return null;
+    }
+
+    return {
+      payload: json.fields.payload.stringValue,
+      iv: json.fields.iv.stringValue,
+    };
   }
 
   async function saveRemotePayload(encrypted) {
-    if (state.syncInFlight) return;
+    if (state.syncInFlight) {
+      return;
+    }
+
     state.syncInFlight = true;
     try {
       const response = await fetch(firestoreDocumentUrl(), {
@@ -510,7 +763,10 @@
           },
         }),
       });
-      if (!response.ok) throw new Error(`Firestore save failed: ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error(`Firestore save failed: ${response.status}`);
+      }
     } finally {
       state.syncInFlight = false;
     }
@@ -530,7 +786,11 @@
 
   function copyShareLink() {
     const roomCode = els.roomCodeInput.value.trim();
-    if (!roomCode) return showToast("請先輸入房間代碼");
+    if (!roomCode) {
+      showToast("請先輸入房間代碼");
+      return;
+    }
+
     const url = new URL(window.location.href);
     url.searchParams.set("room", roomCode);
     navigator.clipboard
@@ -548,7 +808,9 @@
     els.toast.textContent = message;
     els.toast.classList.add("visible");
     window.clearTimeout(showToast.timer);
-    showToast.timer = window.setTimeout(() => els.toast.classList.remove("visible"), 2400);
+    showToast.timer = window.setTimeout(() => {
+      els.toast.classList.remove("visible");
+    }, 2400);
   }
 
   function findMemberName(memberId) {
@@ -577,19 +839,28 @@
 
   function formatSignedCurrency(amountCents) {
     const absolute = formatCurrency(Math.abs(amountCents));
-    if (amountCents > 0) return `+${absolute}`;
-    if (amountCents < 0) return `-${absolute}`;
+    if (amountCents > 0) {
+      return `+${absolute}`;
+    }
+    if (amountCents < 0) {
+      return `-${absolute}`;
+    }
     return absolute;
   }
 
   function formatDate(value) {
-    return new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium", timeStyle: "short" }).format(
-      new Date(value)
-    );
+    return new Intl.DateTimeFormat("zh-TW", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(value));
   }
 
   function stableFingerprint(payload) {
-    return JSON.stringify({ members: payload.members || [], expenses: payload.expenses || [] });
+    return JSON.stringify({
+      members: payload.members || [],
+      expenses: payload.expenses || [],
+      payments: payload.payments || [],
+    });
   }
 
   function escapeHtml(value) {
@@ -603,14 +874,18 @@
 
   function bufferToBase64(uint8Array) {
     let binary = "";
-    for (const byte of uint8Array) binary += String.fromCharCode(byte);
+    for (const byte of uint8Array) {
+      binary += String.fromCharCode(byte);
+    }
     return btoa(binary);
   }
 
   function base64ToUint8Array(base64) {
     const binary = atob(base64);
     const bytes = new Uint8Array(binary.length);
-    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
     return bytes;
   }
 })();
