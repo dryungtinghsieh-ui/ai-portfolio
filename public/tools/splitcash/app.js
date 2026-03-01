@@ -68,8 +68,6 @@ const els = {
   settlementList: document.getElementById("settlement-list"),
   paymentHistory: document.getElementById("payment-history"),
   expenseList: document.getElementById("expense-list"),
-  exportButton: document.getElementById("export-button"),
-  importInput: document.getElementById("import-input"),
   toast: document.getElementById("toast"),
 };
 
@@ -90,8 +88,6 @@ function bindEvents() {
   els.leaveRoomButton.addEventListener("click", leaveRoom);
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
-  els.exportButton.addEventListener("click", exportRoomData);
-  els.importInput.addEventListener("change", importRoomData);
 }
 
 function hydrateRoomForm() {
@@ -657,58 +653,6 @@ async function confirmDeleteRoom(roomId, roomLabel) {
   } catch (error) {
     console.error(error);
     showToast(`刪除房間失敗: ${error.code || error.message || "unknown"}`);
-  }
-}
-
-function exportRoomData() {
-  if (!ensureActiveRoom()) return;
-
-  const blob = new Blob(
-    [
-      JSON.stringify(
-        {
-          roomCode: state.roomCode,
-          exportedAt: new Date().toISOString(),
-          members: state.members,
-          expenses: state.expenses,
-          payments: state.payments,
-        },
-        null,
-        2
-      ),
-    ],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${state.roomCode || "splitcash"}-backup.json`;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-async function importRoomData(event) {
-  const [file] = event.target.files || [];
-  if (!file) return;
-  if (!ensureActiveRoom()) {
-    event.target.value = "";
-    return;
-  }
-
-  try {
-    const parsed = JSON.parse(await file.text());
-    state.members = Array.isArray(parsed.members) ? parsed.members : [];
-    state.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : [];
-    state.payments = Array.isArray(parsed.payments) ? parsed.payments : [];
-    render();
-    queueSave(true);
-    showToast("已匯入資料");
-  } catch (error) {
-    console.error(error);
-    showToast("匯入失敗，請確認 JSON 格式");
-  } finally {
-    event.target.value = "";
   }
 }
 

@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260301b" />
+    <link rel="stylesheet" href="./styles.css?v=20260301c" />
   </head>
   <body>
     <div class="page-shell">
@@ -129,13 +129,6 @@
         <section id="history-section" class="panel wide-panel app-section is-hidden">
           <div class="panel-head">
             <h2>支出紀錄</h2>
-            <div class="actions">
-              <button id="export-button" class="ghost-button" type="button">匯出 JSON</button>
-              <label class="ghost-button upload-button">
-                匯入 JSON
-                <input id="import-input" type="file" accept="application/json" hidden />
-              </label>
-            </div>
           </div>
           <div id="expense-list" class="expense-list empty-state">新增後就會顯示支出紀錄</div>
         </section>
@@ -145,6 +138,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260301b"></script>
+    <script type="module" src="./app.js?v=20260301c"></script>
   </body>
 </html>
