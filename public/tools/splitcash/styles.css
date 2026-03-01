@@ -539,11 +539,38 @@ button:hover,
   .inline-form,
   .actions,
   .room-item,
-  .room-item-actions,
   .expense-item footer,
   .settlement-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  button,
+  .ghost-button,
+  .upload-button {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+  }
+
+  .actions {
+    gap: 8px;
+  }
+
+  .actions button,
+  .actions .ghost-button {
+    width: 100%;
+  }
+
+  .room-item-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+  }
+
+  .room-item-actions button {
+    width: 100%;
   }
 
   h1 {
