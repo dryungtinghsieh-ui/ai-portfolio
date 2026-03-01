@@ -49,6 +49,7 @@ const els = {
   leaveRoomButton: document.getElementById("leave-room-button"),
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
+  appGrid: document.getElementById("app-grid"),
   roomListPanel: document.getElementById("room-list-panel"),
   memberSection: document.getElementById("member-section"),
   expenseSection: document.getElementById("expense-section"),
@@ -383,6 +384,10 @@ function updateAppVisibility() {
 
   if (els.leaveRoomButton) {
     els.leaveRoomButton.hidden = !hasActiveRoom;
+  }
+
+  if (els.appGrid) {
+    els.appGrid.classList.toggle("room-only", !hasActiveRoom);
   }
 }
 

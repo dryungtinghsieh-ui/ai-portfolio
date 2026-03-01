@@ -39,7 +39,7 @@ body::before {
 }
 
 .page-shell {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1240px, calc(100% - 32px));
   margin: 0 auto;
   padding: 32px 0 60px;
 }
@@ -49,8 +49,8 @@ body::before {
   justify-content: space-between;
   gap: 20px;
   align-items: flex-start;
-  padding: 28px;
-  margin-bottom: 24px;
+  padding: 30px 32px;
+  margin-bottom: 28px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 30px;
   background: linear-gradient(135deg, rgba(255, 253, 248, 0.94), rgba(245, 255, 252, 0.8));
@@ -116,6 +116,10 @@ h1 {
   gap: 18px;
 }
 
+.app-grid.room-only {
+  align-items: start;
+}
+
 .panel {
   grid-column: span 4;
   padding: 24px;
@@ -130,7 +134,63 @@ h1 {
 }
 
 .room-panel {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(140deg, rgba(255, 248, 238, 0.94), rgba(240, 251, 248, 0.88));
+}
+
+.app-grid.room-only .room-panel {
+  grid-column: 3 / span 8;
+  width: min(100%, 820px);
+  justify-self: center;
+  padding: 30px;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 32%),
+    linear-gradient(145deg, rgba(255, 248, 238, 0.98), rgba(240, 251, 248, 0.94));
+}
+
+.app-grid.room-only .room-panel::before {
+  content: "";
+  position: absolute;
+  inset: auto -10% -35% auto;
+  width: 280px;
+  height: 280px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.12), transparent 68%);
+  pointer-events: none;
+}
+
+.app-grid.room-only .panel-head {
+  margin-bottom: 22px;
+}
+
+.app-grid.room-only .stack-form {
+  gap: 16px;
+}
+
+.app-grid.room-only .actions {
+  gap: 12px;
+}
+
+.app-grid.room-only .actions button,
+.app-grid.room-only .actions .ghost-button {
+  flex: 1 1 180px;
+  justify-content: center;
+}
+
+.app-grid.room-only .hint {
+  max-width: 54ch;
+  margin-top: 18px;
+}
+
+.app-grid.room-only .room-list {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.app-grid.room-only .room-item,
+.app-grid.room-only .empty-state {
+  background: rgba(255, 255, 255, 0.68);
 }
 
 .app-section.is-hidden {
@@ -448,6 +508,11 @@ button:hover,
   .panel,
   .wide-panel {
     grid-column: 1 / -1;
+  }
+
+  .app-grid.room-only .room-panel {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .hero {
