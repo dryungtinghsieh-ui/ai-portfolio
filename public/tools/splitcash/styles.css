@@ -557,9 +557,13 @@ button:hover,
     gap: 8px;
   }
 
+  .app-grid.room-only .actions button,
+  .app-grid.room-only .actions .ghost-button,
   .actions button,
   .actions .ghost-button {
     flex: 0 0 auto;
+    min-height: 52px;
+    padding: 10px 14px;
     width: 100%;
   }
 
