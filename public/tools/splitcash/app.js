@@ -161,6 +161,8 @@ async function handleRoomSubmit(event) {
     applyPayload(payload);
     if (!exists) {
       await saveRoomPayload(payload);
+    } else {
+      await ensureRoomMetadata();
     }
     startRoomSubscription();
     updateRoomStatus("Firebase 房間同步中", state.roomCode);
@@ -374,13 +376,13 @@ function renderRoomList() {
     .map(
       (room) => `
         <article class="room-item">
-          <div>
-            <strong>${escapeHtml(room.roomCode)}</strong>
+          <div class="room-item-main">
+            <strong>${escapeHtml(room.label)}</strong>
             <div class="room-meta">${escapeHtml(room.updatedAtLabel)}</div>
           </div>
           <div class="room-item-actions">
-            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.roomCode)}">登入</button>
-            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.roomCode)}">刪除</button>
+            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.loginCode)}">登入</button>
+            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.label)}">刪除</button>
           </div>
         </article>
       `
@@ -393,8 +395,8 @@ function renderRoomList() {
 
   Array.from(els.roomListPanel.querySelectorAll("[data-room-delete]")).forEach((button) => {
     button.addEventListener("click", () => {
-      const [roomId, roomCode] = button.dataset.roomDelete.split("|");
-      confirmDeleteRoom(roomId, roomCode);
+      const [roomId, roomLabel] = button.dataset.roomDelete.split("|");
+      confirmDeleteRoom(roomId, roomLabel);
     });
   });
 }
@@ -604,13 +606,13 @@ function selectRoom(roomCode) {
   els.roomForm.requestSubmit();
 }
 
-async function confirmDeleteRoom(roomId, roomCode) {
+async function confirmDeleteRoom(roomId, roomLabel) {
   if (!state.db) {
     showToast("Firebase 尚未初始化");
     return;
   }
 
-  const confirmed = window.confirm(`確定要刪除房間「${roomCode}」嗎？這會永久刪掉整份帳本。`);
+  const confirmed = window.confirm(`確定要刪除房間「${roomLabel}」嗎？這會永久刪掉整份帳本。`);
   if (!confirmed) {
     return;
   }
@@ -789,6 +791,21 @@ async function saveRoomPayload(payload) {
   updateRoomStatus("Firebase 房間同步中", state.roomCode);
 }
 
+async function ensureRoomMetadata() {
+  if (!ensureActiveRoom()) {
+    return;
+  }
+
+  await setDoc(
+    roomDocRef(),
+    {
+      roomCode: state.roomCode,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+}
+
 function startRoomSubscription() {
   if (state.unsubscribeRoom) {
     state.unsubscribeRoom();
@@ -834,9 +851,16 @@ function startRoomListSubscription() {
     (snapshot) => {
       state.rooms = snapshot.docs.map((roomDoc) => {
         const data = roomDoc.data();
+        const savedCode = typeof data.roomCode === "string" ? data.roomCode.trim() : "";
+        const looksHashed = /^[a-f0-9]{64}$/i.test(savedCode || roomDoc.id);
+        const isCurrentRoom = roomDoc.id === state.roomId && state.roomCode;
+        const loginCode = savedCode || (isCurrentRoom ? state.roomCode : "");
+        const label = savedCode || (isCurrentRoom ? state.roomCode : looksHashed ? "舊版房間" : roomDoc.id);
+
         return {
           id: roomDoc.id,
-          roomCode: data.roomCode || roomDoc.id,
+          label,
+          loginCode,
           updatedAtLabel: formatTimestamp(data.updatedAt),
         };
       });

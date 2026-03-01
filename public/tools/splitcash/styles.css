@@ -284,13 +284,20 @@ button:hover,
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  align-items: center;
+  align-items: flex-start;
   padding: 14px;
+}
+
+.room-item-main {
+  min-width: 0;
+  flex: 1;
 }
 
 .room-item strong {
   display: block;
   margin-bottom: 4px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .room-meta {
@@ -303,6 +310,7 @@ button:hover,
   gap: 8px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .member-chip {
