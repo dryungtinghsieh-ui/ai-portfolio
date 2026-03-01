@@ -272,6 +272,35 @@ fieldset {
   border-radius: 18px;
 }
 
+.field-hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.split-mode-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.split-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--ink);
+}
+
+.split-mode-option input {
+  width: auto;
+  margin: 0;
+}
+
 legend {
   padding: 0 8px;
   font-size: 0.88rem;
@@ -428,15 +457,32 @@ button:hover,
 }
 
 .participant-option {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
 }
 
-.participant-option input {
+.participant-option input[type="checkbox"] {
   width: auto;
   margin: 0;
+}
+
+.participant-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.share-amount-input {
+  min-width: 0;
+  text-align: right;
+}
+
+.share-amount-input:disabled {
+  opacity: 0.45;
 }
 
 .summary-cards {
@@ -607,6 +653,11 @@ button:hover,
 
   .room-item-actions button {
     width: 100%;
+  }
+
+  .split-mode-toggle,
+  .participant-option {
+    grid-template-columns: 1fr;
   }
 
   h1 {

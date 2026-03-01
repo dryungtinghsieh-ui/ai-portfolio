@@ -6,7 +6,7 @@
     <title>SplitCash</title>
     <meta
       name="description"
-      content="給朋友之間記帳用的小工具。資料會先在瀏覽器端加密，再同步到 Firebase。"
+      content="私人共享記帳工具，使用 Firebase 同步房間資料，適合旅遊、聚餐與小團隊分帳。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260301d" />
+    <link rel="stylesheet" href="./styles.css?v=20260301e" />
   </head>
   <body>
     <div class="page-shell">
@@ -23,7 +23,8 @@
           <p class="eyebrow">Private Room Ledger</p>
           <h1>SplitCash</h1>
           <p class="hero-copy">
-            給朋友之間記帳用的小工具。資料會先在瀏覽器端加密，再同步到 Firebase，讓知道房間代碼與密碼的人看到同一份帳本。
+            給私下分帳用的小工具。每個房間都用密碼保護，資料會透過 Firebase 即時同步，適合旅遊、
+            聚餐、室友和小型團隊記帳。
           </p>
         </div>
         <div class="hero-badge">
@@ -110,9 +111,23 @@
                 <option value="">請先建立成員</option>
               </select>
             </label>
+            <fieldset class="wide-field">
+              <legend>分攤方式</legend>
+              <div class="split-mode-toggle">
+                <label class="split-mode-option">
+                  <input type="radio" name="splitMode" value="equal" checked />
+                  <span>平均分</span>
+                </label>
+                <label class="split-mode-option">
+                  <input type="radio" name="splitMode" value="custom" />
+                  <span>自訂金額</span>
+                </label>
+              </div>
+            </fieldset>
             <fieldset>
               <legend>一起分攤的人</legend>
               <div id="participant-options" class="checkbox-grid empty-state">請先建立成員</div>
+              <p id="split-mode-hint" class="field-hint">平均分會把總金額平分給勾選的人。</p>
             </fieldset>
             <label class="wide-field">
               備註
@@ -147,6 +162,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260301d"></script>
+    <script type="module" src="./app.js?v=20260301e"></script>
   </body>
 </html>

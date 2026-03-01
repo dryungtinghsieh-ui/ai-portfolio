@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged,
@@ -66,6 +66,7 @@ const els = {
   expenseForm: document.getElementById("expense-form"),
   expensePayerSelect: document.getElementById("expense-payer-select"),
   participantOptions: document.getElementById("participant-options"),
+  splitModeHint: document.getElementById("split-mode-hint"),
   expenseCount: document.getElementById("expense-count"),
   totalSpent: document.getElementById("total-spent"),
   summaryCards: document.getElementById("summary-cards"),
@@ -92,6 +93,7 @@ function bindEvents() {
   els.leaveRoomButton.addEventListener("click", leaveRoom);
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
+  els.expenseForm.addEventListener("change", handleExpenseFormChange);
 }
 
 function hydrateRoomForm() {
@@ -102,7 +104,7 @@ function hydrateRoomForm() {
 
 function initializeFirebase() {
   if (!hasFirebaseConfig()) {
-    updateRoomStatus("缺少 Firebase 設定", "Firebase not configured");
+    updateRoomStatus("蝻箏? Firebase 閮剖?", "Firebase not configured");
     return;
   }
 
@@ -120,7 +122,7 @@ function initializeFirebase() {
       }
       window.clearTimeout(timeoutId);
       unsubscribe();
-      updateRoomStatus("已匿名登入", "Firebase auth ready");
+      updateRoomStatus("撌脣???, "Firebase auth ready");
       resolve(user);
       startRoomListSubscription();
     });
@@ -128,8 +130,8 @@ function initializeFirebase() {
 
   signInAnonymously(state.auth).catch((error) => {
     console.error(error);
-    updateRoomStatus("匿名登入失敗", error.code || "Firebase auth error");
-    showToast(`Firebase 匿名登入失敗: ${error.code || "unknown"}`);
+    updateRoomStatus("?踹??餃憭望?", error.code || "Firebase auth error");
+    showToast(`Firebase ?踹??餃憭望?: ${error.code || "unknown"}`);
   });
 }
 
@@ -137,7 +139,7 @@ async function handleRoomSubmit(event) {
   event.preventDefault();
 
   if (!hasFirebaseConfig()) {
-    showToast("請先設定 Firebase");
+    showToast("隢?閮剖? Firebase");
     return;
   }
 
@@ -145,12 +147,12 @@ async function handleRoomSubmit(event) {
   const roomSecret = els.roomSecretInput.value.trim();
 
   if (!roomCode || !roomSecret) {
-    showToast("請填房間代碼與房間密碼");
+    showToast("隢‵?輸?隞?Ⅳ???蝣?);
     return;
   }
 
   if (roomSecret.length < 8) {
-    showToast("房間密碼至少 8 碼");
+    showToast("?輸?撖Ⅳ?喳? 8 蝣?);
     return;
   }
 
@@ -158,7 +160,7 @@ async function handleRoomSubmit(event) {
   state.roomSecret = roomSecret;
   state.roomId = await sha256Hex(roomCode.toLowerCase());
   persistRoomMeta();
-  updateRoomStatus("載入房間資料中", state.roomCode);
+  updateRoomStatus("頛?輸?鞈?銝?, state.roomCode);
 
   try {
     await ensureFirebaseSession();
@@ -170,13 +172,13 @@ async function handleRoomSubmit(event) {
       await ensureRoomMetadata();
     }
     startRoomSubscription();
-    updateRoomStatus("Firebase 房間同步中", state.roomCode);
+    updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
     render();
-    showToast("已進入房間");
+    showToast("撌脤脣?輸?");
   } catch (error) {
     console.error(error);
-    updateRoomStatus("房間載入失敗", error.code || state.roomCode || "Room error");
-    showToast(`房間載入失敗: ${error.code || error.message || "unknown"}`);
+    updateRoomStatus("?輸?頛憭望?", error.code || state.roomCode || "Room error");
+    showToast(`?輸?頛憭望?: ${error.code || error.message || "unknown"}`);
   }
 }
 
@@ -187,7 +189,7 @@ function handleMemberSubmit(event) {
   const name = els.memberNameInput.value.trim();
   if (!name) return;
   if (state.members.some((member) => member.name.toLowerCase() === name.toLowerCase())) {
-    showToast("成員名稱已存在");
+    showToast("??迂撌脣???);
     return;
   }
 
@@ -212,8 +214,10 @@ function handleExpenseSubmit(event) {
   const form = new FormData(els.expenseForm);
   const title = String(form.get("title") || "").trim();
   const amount = Number(form.get("amount"));
+  const amountCents = toCents(amount);
   const payerId = String(form.get("payerId") || "");
   const note = String(form.get("note") || "").trim();
+  const splitMode = getSelectedSplitMode();
   const participantIds = getSelectedParticipants();
 
   if (!title || !Number.isFinite(amount) || amount <= 0) {
@@ -229,12 +233,19 @@ function handleExpenseSubmit(event) {
     return;
   }
 
+  const customShares = splitMode === "custom" ? getCustomShareAllocations(amountCents) : null;
+  if (splitMode === "custom" && !customShares) {
+    return;
+  }
+
   state.expenses.unshift({
     id: createId(),
     title,
-    amountCents: toCents(amount),
+    amountCents,
     payerId,
     participantIds,
+    splitMode,
+    customShares,
     note,
     createdAt: new Date().toISOString(),
   });
@@ -252,7 +263,7 @@ function removeMember(memberId) {
     (payment) => payment.fromId === memberId || payment.toId === memberId
   );
   if (usedByExpense || usedByPayment) {
-    showToast("成員已出現在支出或結算紀錄中，無法直接刪除");
+    showToast("?撌脣?曉?臬??蝞??葉嚗瘜?亙??);
     return;
   }
 
@@ -280,14 +291,14 @@ function recordSettlement(fromId, toId, amountCents) {
 
   render();
   queueSave();
-  showToast("已標記為已結算");
+  showToast("撌脫?閮撌脩?蝞?);
 }
 
 function removePayment(paymentId) {
   state.payments = state.payments.filter((payment) => payment.id !== paymentId);
   render();
   queueSave();
-  showToast("已取消結算紀錄");
+  showToast("撌脣?瘨?蝞???);
 }
 
 function getSelectedParticipants() {
@@ -296,14 +307,81 @@ function getSelectedParticipants() {
   ).map((input) => input.value);
 }
 
+function getSelectedSplitMode() {
+  return els.expenseForm.querySelector('input[name="splitMode"]:checked')?.value || "equal";
+}
+
+function handleExpenseFormChange(event) {
+  if (
+    event.target instanceof HTMLInputElement &&
+    (event.target.name === "splitMode" || event.target.type === "checkbox")
+  ) {
+    syncSplitModeUI();
+  }
+}
+
+function getCustomShareAllocations(totalAmountCents) {
+  const selectedIds = getSelectedParticipants();
+  const shares = selectedIds.map((memberId) => {
+    const input = els.participantOptions.querySelector(`[data-share-input="${memberId}"]`);
+    const amount = Number(input?.value || 0);
+    return {
+      memberId,
+      amountCents: toCents(amount),
+    };
+  });
+
+  if (shares.some((share) => !Number.isFinite(share.amountCents) || share.amountCents <= 0)) {
+    showToast("自訂分攤時，每位勾選成員都要填大於 0 的金額");
+    return null;
+  }
+
+  const totalShares = shares.reduce((sum, share) => sum + share.amountCents, 0);
+  if (totalShares !== totalAmountCents) {
+    showToast("自訂分攤總和必須等於支出金額");
+    return null;
+  }
+
+  return shares;
+}
+
+function buildEqualShares(totalAmountCents, participantIds) {
+  if (!participantIds.length) {
+    return [];
+  }
+
+  const base = Math.floor(totalAmountCents / participantIds.length);
+  let remainder = totalAmountCents - base * participantIds.length;
+
+  return participantIds.map((memberId) => {
+    const amountCents = base + (remainder > 0 ? 1 : 0);
+    remainder = Math.max(0, remainder - 1);
+    return { memberId, amountCents };
+  });
+}
+
+function getExpenseShares(expense) {
+  if (expense.splitMode === "custom" && Array.isArray(expense.customShares) && expense.customShares.length > 0) {
+    return expense.customShares
+      .filter((share) => share && share.memberId)
+      .map((share) => ({
+        memberId: share.memberId,
+        amountCents: normalizeCents(share.amountCents || 0),
+      }));
+  }
+
+  return buildEqualShares(expense.amountCents, Array.isArray(expense.participantIds) ? expense.participantIds : []);
+}
+
 function computeBalances() {
   const balances = new Map(state.members.map((member) => [member.id, 0]));
 
   for (const expense of state.expenses) {
-    if (!balances.has(expense.payerId) || expense.participantIds.length === 0) continue;
-    const split = expense.amountCents / expense.participantIds.length;
-    for (const participantId of expense.participantIds) {
-      balances.set(participantId, (balances.get(participantId) || 0) - split);
+    const shares = getExpenseShares(expense);
+    if (!balances.has(expense.payerId) || shares.length === 0) continue;
+
+    for (const share of shares) {
+      balances.set(share.memberId, (balances.get(share.memberId) || 0) - share.amountCents);
     }
     balances.set(expense.payerId, (balances.get(expense.payerId) || 0) + expense.amountCents);
   }
@@ -319,7 +397,6 @@ function computeBalances() {
     balanceCents: normalizeCents(balances.get(member.id) || 0),
   }));
 }
-
 function computeSettlements(balanceRows) {
   const creditors = balanceRows
     .filter((row) => row.balanceCents > 0)
@@ -414,7 +491,7 @@ function renderRoomList() {
 
   if (state.rooms.length === 0) {
     els.roomListPanel.className = "room-list empty-state";
-    els.roomListPanel.textContent = "目前還沒有房間";
+    els.roomListPanel.textContent = "?桀??????;
     return;
   }
 
@@ -428,8 +505,8 @@ function renderRoomList() {
             <div class="room-meta">${escapeHtml(room.updatedAtLabel)}</div>
           </div>
           <div class="room-item-actions">
-            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.loginCode)}">登入</button>
-            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.label)}">刪除</button>
+            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.loginCode)}">?餃</button>
+            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.label)}">?芷</button>
           </div>
         </article>
       `
@@ -449,10 +526,10 @@ function renderRoomList() {
 }
 
 function renderMembers() {
-  els.memberCount.textContent = `${state.members.length} 人`;
+  els.memberCount.textContent = `${state.members.length} 鈭槁;
   if (state.members.length === 0) {
     els.memberList.className = "chip-list empty-state";
-    els.memberList.textContent = "還沒有成員";
+    els.memberList.textContent = "??????;
     return;
   }
 
@@ -462,7 +539,7 @@ function renderMembers() {
       (member) => `
         <article class="member-chip">
           <strong>${escapeHtml(member.name)}</strong>
-          <button type="button" data-remove-member="${member.id}">刪除</button>
+          <button type="button" data-remove-member="${member.id}">?芷</button>
         </article>
       `
     )
@@ -477,6 +554,7 @@ function renderParticipantOptions() {
   if (state.members.length === 0) {
     els.participantOptions.className = "checkbox-grid empty-state";
     els.participantOptions.textContent = "請先建立成員";
+    syncSplitModeUI();
     return;
   }
 
@@ -485,12 +563,26 @@ function renderParticipantOptions() {
     .map(
       (member) => `
         <label class="participant-option">
-          <input type="checkbox" value="${member.id}" checked />
-          <span>${escapeHtml(member.name)}</span>
+          <span class="participant-main">
+            <input type="checkbox" value="${member.id}" checked />
+            <span>${escapeHtml(member.name)}</span>
+          </span>
+          <input
+            class="share-amount-input"
+            data-share-input="${member.id}"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            disabled
+          />
         </label>
       `
     )
     .join("");
+
+  syncSplitModeUI();
 }
 
 function renderPayerOptions() {
@@ -506,7 +598,6 @@ function renderPayerOptions() {
     ),
   ].join("");
 }
-
 function renderExpenses() {
   els.expenseCount.textContent = `${state.expenses.length} 筆`;
   if (state.expenses.length === 0) {
@@ -519,16 +610,24 @@ function renderExpenses() {
   els.expenseList.innerHTML = state.expenses
     .map((expense) => {
       const payer = findMemberName(expense.payerId);
-      const participants = expense.participantIds.map(findMemberName).join("、");
-      const perHead = normalizeCents(expense.amountCents / expense.participantIds.length);
+      const shares = getExpenseShares(expense);
+      const isCustomSplit = expense.splitMode === "custom" && shares.length > 0;
+      const participants = (expense.participantIds || []).map(findMemberName).join("、");
+      const splitSummary = isCustomSplit
+        ? shares
+            .map((share) => `${findMemberName(share.memberId)} ${formatCurrency(share.amountCents)}`)
+            .join("、")
+        : participants;
+      const firstShare = shares[0]?.amountCents || 0;
+
       return `
         <article class="expense-item">
           <strong>${escapeHtml(expense.title)} <span>${formatCurrency(expense.amountCents)}</span></strong>
           ${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}
           <div class="expense-meta">
             <span>付款人：${escapeHtml(payer)}</span>
-            <span>均分成員：${escapeHtml(participants)}</span>
-            <span>每人：${formatCurrency(perHead)}</span>
+            <span>${isCustomSplit ? "自訂分攤：" : "平均分攤："}${escapeHtml(splitSummary)}</span>
+            <span>${isCustomSplit ? "分攤方式：自訂金額" : `每人：${formatCurrency(firstShare)}`}</span>
           </div>
           <footer>
             <small>${formatDate(expense.createdAt)}</small>
@@ -543,7 +642,6 @@ function renderExpenses() {
     button.addEventListener("click", () => removeExpense(button.dataset.removeExpense));
   });
 }
-
 function renderSummary() {
   const balances = computeBalances();
   const settlements = computeSettlements(balances);
@@ -553,13 +651,13 @@ function renderSummary() {
 
   if (balances.length === 0) {
     els.summaryCards.className = "summary-cards empty-state";
-    els.summaryCards.textContent = "新增成員後會在這裡顯示每個人的淨額";
+    els.summaryCards.textContent = "?啣??敺??券ㄐ憿舐內瘥犖?楊憿?;
   } else {
     els.summaryCards.className = "summary-cards";
     els.summaryCards.innerHTML = balances
       .map((row) => {
         const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
-        const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
+        const label = row.balanceCents > 0 ? "?" : row.balanceCents < 0 ? "??" : "撌脣像銵?;
         return `
           <article class="summary-card">
             <strong>${escapeHtml(row.name)}</strong>
@@ -573,7 +671,7 @@ function renderSummary() {
 
   if (settlements.length === 0) {
     els.settlementList.className = "settlement-list empty-state";
-    els.settlementList.textContent = "目前沒有待結算款項";
+    els.settlementList.textContent = "?桀?瘝?敺?蝞狡??;
   } else {
     els.settlementList.className = "settlement-list";
     els.settlementList.innerHTML = settlements
@@ -590,8 +688,7 @@ function renderSummary() {
                 class="settlement-action"
                 data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}"
               >
-                標記已結算
-              </button>
+                璅?撌脩?蝞?              </button>
             </div>
           </article>
         `
@@ -625,11 +722,11 @@ function renderPaymentHistory() {
         <article class="expense-item">
           <strong>${escapeHtml(findMemberName(payment.fromId))} -> ${escapeHtml(findMemberName(payment.toId))}</strong>
           <div class="expense-meta">
-            <span>已結算：${formatCurrency(payment.amountCents)}</span>
+            <span>結算金額：${formatCurrency(payment.amountCents)}</span>
             <span>${formatDate(payment.createdAt)}</span>
           </div>
           <footer>
-            <small>如果按錯，可以取消這筆結算</small>
+            <small>刪除後會重新回到待結算狀態</small>
             <button type="button" data-remove-payment="${payment.id}">取消結算</button>
           </footer>
         </article>
@@ -642,11 +739,33 @@ function renderPaymentHistory() {
   });
 }
 
+function syncSplitModeUI() {
+  const isCustomMode = getSelectedSplitMode() === "custom";
+  const participantCheckboxes = els.participantOptions.querySelectorAll('input[type="checkbox"]');
+
+  participantCheckboxes.forEach((checkbox) => {
+    const shareInput = els.participantOptions.querySelector(`[data-share-input="${checkbox.value}"]`);
+    if (!(shareInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    shareInput.disabled = !isCustomMode || !checkbox.checked;
+    if (!checkbox.checked) {
+      shareInput.value = "";
+    }
+  });
+
+  if (els.splitModeHint) {
+    els.splitModeHint.textContent = isCustomMode
+      ? "自訂金額時，勾選成員的金額總和必須等於支出總額。"
+      : "平均分會把總金額平分給勾選的人。";
+  }
+}
 function selectRoom(roomCode) {
   els.roomCodeInput.value = roomCode;
   if (!els.roomSecretInput.value.trim()) {
     els.roomSecretInput.focus();
-    showToast("已帶入房間名稱，請輸入房間密碼再登入");
+    showToast("撌脣葆?交??蝔梧?隢撓?交??蝣澆??餃");
     return;
   }
 
@@ -655,11 +774,11 @@ function selectRoom(roomCode) {
 
 async function confirmDeleteRoom(roomId, roomLabel) {
   if (!state.db) {
-    showToast("Firebase 尚未初始化");
+    showToast("Firebase 撠????);
     return;
   }
 
-  const confirmed = window.confirm(`確定要刪除房間「${roomLabel}」嗎？這會永久刪掉整份帳本。`);
+  const confirmed = window.confirm(`蝣箏?閬?斗??{roomLabel}??嚗?瘞訾??芣??港遢撣單?);
   if (!confirmed) {
     return;
   }
@@ -669,10 +788,10 @@ async function confirmDeleteRoom(roomId, roomLabel) {
     if (roomId === state.roomId) {
       leaveRoom();
     }
-    showToast("房間已刪除");
+    showToast("?輸?撌脣??);
   } catch (error) {
     console.error(error);
-    showToast(`刪除房間失敗: ${error.code || error.message || "unknown"}`);
+    showToast(`?芷?輸?憭望?: ${error.code || error.message || "unknown"}`);
   }
 }
 
@@ -692,7 +811,7 @@ function leaveRoom() {
   sessionStorage.removeItem("splitcash-meta");
   els.roomSecretInput.value = "";
   updateRoomStatus(
-    hasFirebaseConfig() ? "已匿名登入" : "缺少 Firebase 設定",
+    hasFirebaseConfig() ? "撌脣??? : "蝻箏? Firebase 閮剖?",
     hasFirebaseConfig() ? "Firebase auth ready" : "Firebase not configured"
   );
   render();
@@ -700,7 +819,7 @@ function leaveRoom() {
 
 function ensureActiveRoom() {
   if (!state.roomCode || !state.roomSecret || !state.roomId || !state.db) {
-    showToast("請先登入房間");
+    showToast("隢??餃?輸?");
     return false;
   }
   return true;
@@ -729,8 +848,8 @@ function queueSave(immediate) {
       payments: state.payments,
     }).catch((error) => {
       console.error(error);
-      updateRoomStatus("同步失敗", error.code || state.roomCode);
-      showToast(`同步失敗: ${error.code || error.message || "unknown"}`);
+      updateRoomStatus("?郊憭望?", error.code || state.roomCode);
+      showToast(`?郊憭望?: ${error.code || error.message || "unknown"}`);
     });
 
   if (immediate) {
@@ -771,7 +890,7 @@ async function loadRoomRecord() {
 
 async function saveRoomPayload(payload) {
   const encrypted = await encryptPayload(payload);
-  updateRoomStatus("同步中", state.roomCode);
+  updateRoomStatus("?郊銝?, state.roomCode);
   await setDoc(
     roomDocRef(),
     {
@@ -783,7 +902,7 @@ async function saveRoomPayload(payload) {
     { merge: true }
   );
   state.lastLoadedFingerprint = stableFingerprint(payload);
-  updateRoomStatus("Firebase 房間同步中", state.roomCode);
+  updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
 }
 
 async function ensureRoomMetadata() {
@@ -819,15 +938,15 @@ function startRoomSubscription() {
         if (fingerprint === state.lastLoadedFingerprint) return;
         applyPayload(payload);
         render();
-        updateRoomStatus("Firebase 房間同步中", state.roomCode);
+        updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
       } catch (error) {
         console.error(error);
       }
     },
     (error) => {
       console.error(error);
-      updateRoomStatus("同步失敗", error.code || state.roomCode);
-      showToast(`即時同步失敗: ${error.code || error.message || "unknown"}`);
+      updateRoomStatus("?郊憭望?", error.code || state.roomCode);
+      showToast(`?單??郊憭望?: ${error.code || error.message || "unknown"}`);
     }
   );
 }
@@ -850,7 +969,7 @@ function startRoomListSubscription() {
         const looksHashed = /^[a-f0-9]{64}$/i.test(savedCode || roomDoc.id);
         const isCurrentRoom = roomDoc.id === state.roomId && state.roomCode;
         const loginCode = savedCode || (isCurrentRoom ? state.roomCode : "");
-        const label = savedCode || (isCurrentRoom ? state.roomCode : looksHashed ? "舊版房間" : roomDoc.id);
+        const label = savedCode || (isCurrentRoom ? state.roomCode : looksHashed ? "???輸?" : roomDoc.id);
 
         return {
           id: roomDoc.id,
@@ -863,18 +982,24 @@ function startRoomListSubscription() {
     },
     (error) => {
       console.error(error);
-      showToast(`房間列表載入失敗: ${error.code || error.message || "unknown"}`);
+      showToast(`?輸??”頛憭望?: ${error.code || error.message || "unknown"}`);
     }
   );
 }
 
 function applyPayload(payload) {
   state.members = Array.isArray(payload.members) ? payload.members : [];
-  state.expenses = Array.isArray(payload.expenses) ? payload.expenses : [];
+  state.expenses = Array.isArray(payload.expenses)
+    ? payload.expenses.map((expense) => ({
+        ...expense,
+        splitMode: expense.splitMode === "custom" ? "custom" : "equal",
+        participantIds: Array.isArray(expense.participantIds) ? expense.participantIds : [],
+        customShares: Array.isArray(expense.customShares) ? expense.customShares : null,
+      }))
+    : [];
   state.payments = Array.isArray(payload.payments) ? payload.payments : [];
   state.lastLoadedFingerprint = stableFingerprint(payload);
 }
-
 async function encryptPayload(payload) {
   const key = await deriveCryptoKey();
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -931,7 +1056,7 @@ async function sha256Hex(value) {
 function copyShareLink() {
   const roomCode = els.roomCodeInput.value.trim();
   if (!roomCode) {
-    showToast("請先輸入房間代碼");
+    showToast("隢?頛詨?輸?隞?Ⅳ");
     return;
   }
 
@@ -939,8 +1064,8 @@ function copyShareLink() {
   url.searchParams.set("room", roomCode);
   navigator.clipboard
     .writeText(url.toString())
-    .then(() => showToast("分享連結已複製"))
-    .catch(() => showToast("無法複製分享連結"));
+    .then(() => showToast("?澈???撌脰?鋆?))
+    .catch(() => showToast("?⊥?銴ˊ?澈???"));
 }
 
 function updateRoomStatus(syncStatus, roomStatus) {
@@ -958,7 +1083,7 @@ function showToast(message) {
 }
 
 function findMemberName(memberId) {
-  return state.members.find((member) => member.id === memberId)?.name || "已刪除成員";
+  return state.members.find((member) => member.id === memberId)?.name || "撌脣?斗???;
 }
 
 function createId() {
@@ -997,7 +1122,7 @@ function formatDate(value) {
 
 function formatTimestamp(value) {
   if (!value) {
-    return "尚未更新";
+    return "撠?湔";
   }
   if (typeof value.toDate === "function") {
     return formatDate(value.toDate());
@@ -1036,3 +1161,9 @@ function base64ToUint8Array(base64) {
   }
   return bytes;
 }
+
+
+
+
+
+
