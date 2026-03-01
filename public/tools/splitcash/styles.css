@@ -31,7 +31,8 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(rgba(27, 39, 36, 0.04) 1px, transparent 1px),
+  background-image:
+    linear-gradient(rgba(27, 39, 36, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(27, 39, 36, 0.04) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent 85%);
@@ -234,6 +235,12 @@ button:hover,
   color: var(--ink);
 }
 
+.danger-button {
+  background: rgba(180, 35, 24, 0.12);
+  color: var(--danger);
+  box-shadow: none;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -251,7 +258,9 @@ button:hover,
 .checkbox-grid,
 .summary-cards,
 .settlement-list,
-.expense-list {
+.expense-list,
+.room-list,
+.payment-history {
   display: grid;
   gap: 12px;
 }
@@ -264,10 +273,36 @@ button:hover,
 .participant-option,
 .summary-card,
 .settlement-item,
-.expense-item {
+.expense-item,
+.room-item {
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.62);
+}
+
+.room-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+}
+
+.room-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.room-meta {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.room-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .member-chip {
@@ -343,11 +378,6 @@ button:hover,
 
 .settlement-action {
   flex-shrink: 0;
-}
-
-.payment-history {
-  display: grid;
-  gap: 12px;
 }
 
 .settlement-item strong,
@@ -431,6 +461,8 @@ button:hover,
 
   .inline-form,
   .actions,
+  .room-item,
+  .room-item-actions,
   .expense-item footer,
   .settlement-row {
     flex-direction: column;

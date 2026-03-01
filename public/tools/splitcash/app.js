@@ -5,19 +5,29 @@ import {
   signInAnonymously,
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 import {
+  collection,
+  deleteDoc,
   doc,
   getDoc,
   getFirestore,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const EMPTY_ROOM_PAYLOAD = {
+  members: [],
+  expenses: [],
+  payments: [],
+};
 
 const state = {
   roomCode: "",
   roomSecret: "",
   roomId: "",
-  displayName: "",
+  rooms: [],
   members: [],
   expenses: [],
   payments: [],
@@ -27,6 +37,7 @@ const state = {
   db: null,
   authReadyPromise: null,
   unsubscribeRoom: null,
+  unsubscribeRoomList: null,
   lastLoadedFingerprint: "",
 };
 
@@ -34,11 +45,11 @@ const els = {
   roomForm: document.getElementById("room-form"),
   roomCodeInput: document.getElementById("room-code-input"),
   roomSecretInput: document.getElementById("room-secret-input"),
-  displayNameInput: document.getElementById("display-name-input"),
   copyShareLinkButton: document.getElementById("copy-share-link-button"),
   leaveRoomButton: document.getElementById("leave-room-button"),
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
+  roomListPanel: document.getElementById("room-list-panel"),
   memberForm: document.getElementById("member-form"),
   memberNameInput: document.getElementById("member-name-input"),
   memberList: document.getElementById("member-list"),
@@ -82,7 +93,6 @@ function hydrateRoomForm() {
   const saved = loadRoomMeta();
   const shared = new URL(window.location.href).searchParams.get("room") || "";
   els.roomCodeInput.value = shared || saved.roomCode || "";
-  els.displayNameInput.value = saved.displayName || "";
 }
 
 function initializeFirebase() {
@@ -94,13 +104,20 @@ function initializeFirebase() {
   state.app = initializeApp(firebaseConfig);
   state.auth = getAuth(state.app);
   state.db = getFirestore(state.app);
-  state.authReadyPromise = new Promise((resolve) => {
+  state.authReadyPromise = new Promise((resolve, reject) => {
+    const timeoutId = window.setTimeout(() => {
+      reject(new Error("Firebase auth timeout"));
+    }, 15000);
+
     const unsubscribe = onAuthStateChanged(state.auth, (user) => {
-      if (user) {
-        updateRoomStatus("已匿名登入", "Firebase auth ready");
-        unsubscribe();
-        resolve(user);
+      if (!user) {
+        return;
       }
+      window.clearTimeout(timeoutId);
+      unsubscribe();
+      updateRoomStatus("已匿名登入", "Firebase auth ready");
+      resolve(user);
+      startRoomListSubscription();
     });
   });
 
@@ -121,10 +138,9 @@ async function handleRoomSubmit(event) {
 
   const roomCode = els.roomCodeInput.value.trim();
   const roomSecret = els.roomSecretInput.value.trim();
-  const displayName = els.displayNameInput.value.trim();
 
   if (!roomCode || !roomSecret) {
-    showToast("請輸入房間代碼與密碼");
+    showToast("請填房間代碼與房間密碼");
     return;
   }
 
@@ -136,22 +152,24 @@ async function handleRoomSubmit(event) {
   state.roomCode = roomCode;
   state.roomSecret = roomSecret;
   state.roomId = await sha256Hex(roomCode.toLowerCase());
-  state.displayName = displayName;
   persistRoomMeta();
   updateRoomStatus("載入房間資料中", state.roomCode);
 
   try {
     await ensureFirebaseSession();
-    const payload = await loadRoomPayload();
+    const { exists, payload } = await loadRoomRecord();
     applyPayload(payload);
+    if (!exists) {
+      await saveRoomPayload(payload);
+    }
     startRoomSubscription();
-    updateRoomStatus("Firebase 已同步", state.roomCode);
+    updateRoomStatus("Firebase 房間同步中", state.roomCode);
     render();
     showToast("已進入房間");
   } catch (error) {
     console.error(error);
-    updateRoomStatus("房間載入失敗", state.roomCode || "Room error");
-    showToast("無法載入房間，請檢查 Firestore 規則與房間密碼");
+    updateRoomStatus("房間載入失敗", error.code || state.roomCode || "Room error");
+    showToast(`房間載入失敗: ${error.code || error.message || "unknown"}`);
   }
 }
 
@@ -162,11 +180,15 @@ function handleMemberSubmit(event) {
   const name = els.memberNameInput.value.trim();
   if (!name) return;
   if (state.members.some((member) => member.name.toLowerCase() === name.toLowerCase())) {
-    showToast("成員名稱重複");
+    showToast("成員名稱已存在");
     return;
   }
 
-  state.members.push({ id: createId(), name, createdAt: new Date().toISOString() });
+  state.members.push({
+    id: createId(),
+    name,
+    createdAt: new Date().toISOString(),
+  });
   els.memberNameInput.value = "";
   render();
   queueSave();
@@ -176,7 +198,7 @@ function handleExpenseSubmit(event) {
   event.preventDefault();
   if (!ensureActiveRoom()) return;
   if (state.members.length === 0) {
-    showToast("請先新增成員");
+    showToast("請先建立成員");
     return;
   }
 
@@ -188,7 +210,7 @@ function handleExpenseSubmit(event) {
   const participantIds = getSelectedParticipants();
 
   if (!title || !Number.isFinite(amount) || amount <= 0) {
-    showToast("請輸入有效的品項與金額");
+    showToast("請填正確的品項與金額");
     return;
   }
   if (!payerId) {
@@ -196,7 +218,7 @@ function handleExpenseSubmit(event) {
     return;
   }
   if (participantIds.length === 0) {
-    showToast("至少要選 1 位均分成員");
+    showToast("至少要選 1 位分攤成員");
     return;
   }
 
@@ -223,7 +245,7 @@ function removeMember(memberId) {
     (payment) => payment.fromId === memberId || payment.toId === memberId
   );
   if (usedByExpense || usedByPayment) {
-    showToast("這位成員已出現在紀錄內，不能直接刪除");
+    showToast("成員已出現在支出或結算紀錄中，無法直接刪除");
     return;
   }
 
@@ -251,14 +273,14 @@ function recordSettlement(fromId, toId, amountCents) {
 
   render();
   queueSave();
-  showToast("已標記為結算完成");
+  showToast("已標記為已結算");
 }
 
 function removePayment(paymentId) {
   state.payments = state.payments.filter((payment) => payment.id !== paymentId);
   render();
   queueSave();
-  showToast("已取消這筆結算");
+  showToast("已取消結算紀錄");
 }
 
 function getSelectedParticipants() {
@@ -328,11 +350,53 @@ function computeSettlements(balanceRows) {
 }
 
 function render() {
+  renderRoomList();
   renderMembers();
   renderParticipantOptions();
   renderPayerOptions();
   renderExpenses();
   renderSummary();
+}
+
+function renderRoomList() {
+  if (!els.roomListPanel) {
+    return;
+  }
+
+  if (state.rooms.length === 0) {
+    els.roomListPanel.className = "room-list empty-state";
+    els.roomListPanel.textContent = "目前還沒有房間";
+    return;
+  }
+
+  els.roomListPanel.className = "room-list";
+  els.roomListPanel.innerHTML = state.rooms
+    .map(
+      (room) => `
+        <article class="room-item">
+          <div>
+            <strong>${escapeHtml(room.roomCode)}</strong>
+            <div class="room-meta">${escapeHtml(room.updatedAtLabel)}</div>
+          </div>
+          <div class="room-item-actions">
+            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.roomCode)}">登入</button>
+            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.roomCode)}">刪除</button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  Array.from(els.roomListPanel.querySelectorAll("[data-room-login]")).forEach((button) => {
+    button.addEventListener("click", () => selectRoom(button.dataset.roomLogin));
+  });
+
+  Array.from(els.roomListPanel.querySelectorAll("[data-room-delete]")).forEach((button) => {
+    button.addEventListener("click", () => {
+      const [roomId, roomCode] = button.dataset.roomDelete.split("|");
+      confirmDeleteRoom(roomId, roomCode);
+    });
+  });
 }
 
 function renderMembers() {
@@ -398,7 +462,7 @@ function renderExpenses() {
   els.expenseCount.textContent = `${state.expenses.length} 筆`;
   if (state.expenses.length === 0) {
     els.expenseList.className = "expense-list empty-state";
-    els.expenseList.textContent = "尚未登記任何支出";
+    els.expenseList.textContent = "新增後就會顯示支出紀錄";
     return;
   }
 
@@ -414,7 +478,7 @@ function renderExpenses() {
           ${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}
           <div class="expense-meta">
             <span>付款人：${escapeHtml(payer)}</span>
-            <span>均分：${escapeHtml(participants)}</span>
+            <span>均分成員：${escapeHtml(participants)}</span>
             <span>每人：${formatCurrency(perHead)}</span>
           </div>
           <footer>
@@ -435,6 +499,7 @@ function renderSummary() {
   const balances = computeBalances();
   const settlements = computeSettlements(balances);
   const total = state.expenses.reduce((sum, expense) => sum + expense.amountCents, 0);
+
   els.totalSpent.textContent = formatCurrency(total);
 
   if (balances.length === 0) {
@@ -500,7 +565,7 @@ function renderSummary() {
 function renderPaymentHistory() {
   if (state.payments.length === 0) {
     els.paymentHistory.className = "payment-history empty-state";
-    els.paymentHistory.textContent = "還沒有已結清的紀錄";
+    els.paymentHistory.textContent = "還沒有已結算紀錄";
     return;
   }
 
@@ -515,7 +580,7 @@ function renderPaymentHistory() {
             <span>${formatDate(payment.createdAt)}</span>
           </div>
           <footer>
-            <small>這筆會沖銷兩人之間的款項</small>
+            <small>如果按錯，可以取消這筆結算</small>
             <button type="button" data-remove-payment="${payment.id}">取消結算</button>
           </footer>
         </article>
@@ -526,6 +591,40 @@ function renderPaymentHistory() {
   Array.from(els.paymentHistory.querySelectorAll("[data-remove-payment]")).forEach((button) => {
     button.addEventListener("click", () => removePayment(button.dataset.removePayment));
   });
+}
+
+function selectRoom(roomCode) {
+  els.roomCodeInput.value = roomCode;
+  if (!els.roomSecretInput.value.trim()) {
+    els.roomSecretInput.focus();
+    showToast("已帶入房間名稱，請輸入房間密碼再登入");
+    return;
+  }
+
+  els.roomForm.requestSubmit();
+}
+
+async function confirmDeleteRoom(roomId, roomCode) {
+  if (!state.db) {
+    showToast("Firebase 尚未初始化");
+    return;
+  }
+
+  const confirmed = window.confirm(`確定要刪除房間「${roomCode}」嗎？這會永久刪掉整份帳本。`);
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await deleteDoc(doc(state.db, "rooms", roomId));
+    if (roomId === state.roomId) {
+      leaveRoom();
+    }
+    showToast("房間已刪除");
+  } catch (error) {
+    console.error(error);
+    showToast(`刪除房間失敗: ${error.code || error.message || "unknown"}`);
+  }
 }
 
 function exportRoomData() {
@@ -585,10 +684,10 @@ function leaveRoom() {
     state.unsubscribeRoom();
     state.unsubscribeRoom = null;
   }
+
   state.roomCode = "";
   state.roomSecret = "";
   state.roomId = "";
-  state.displayName = "";
   state.members = [];
   state.expenses = [];
   state.payments = [];
@@ -604,17 +703,14 @@ function leaveRoom() {
 
 function ensureActiveRoom() {
   if (!state.roomCode || !state.roomSecret || !state.roomId || !state.db) {
-    showToast("請先進入房間");
+    showToast("請先登入房間");
     return false;
   }
   return true;
 }
 
 function persistRoomMeta() {
-  sessionStorage.setItem(
-    "splitcash-meta",
-    JSON.stringify({ roomCode: state.roomCode, displayName: state.displayName })
-  );
+  sessionStorage.setItem("splitcash-meta", JSON.stringify({ roomCode: state.roomCode }));
 }
 
 function loadRoomMeta() {
@@ -636,8 +732,8 @@ function queueSave(immediate) {
       payments: state.payments,
     }).catch((error) => {
       console.error(error);
-      updateRoomStatus("同步失敗", state.roomCode);
-      showToast("資料儲存失敗");
+      updateRoomStatus("同步失敗", error.code || state.roomCode);
+      showToast(`同步失敗: ${error.code || error.message || "unknown"}`);
     });
 
   if (immediate) {
@@ -659,18 +755,21 @@ function roomDocRef() {
   return doc(state.db, "rooms", state.roomId);
 }
 
-async function loadRoomPayload() {
+async function loadRoomRecord() {
   const snapshot = await getDoc(roomDocRef());
   if (!snapshot.exists()) {
-    return { members: [], expenses: [], payments: [] };
+    return { exists: false, payload: { ...EMPTY_ROOM_PAYLOAD } };
   }
 
   const data = snapshot.data();
   if (!data.payload || !data.iv) {
-    return { members: [], expenses: [], payments: [] };
+    return { exists: true, payload: { ...EMPTY_ROOM_PAYLOAD } };
   }
 
-  return decryptPayload({ payload: data.payload, iv: data.iv });
+  return {
+    exists: true,
+    payload: await decryptPayload({ payload: data.payload, iv: data.iv }),
+  };
 }
 
 async function saveRoomPayload(payload) {
@@ -679,6 +778,7 @@ async function saveRoomPayload(payload) {
   await setDoc(
     roomDocRef(),
     {
+      roomCode: state.roomCode,
       payload: encrypted.payload,
       iv: encrypted.iv,
       updatedAt: serverTimestamp(),
@@ -686,7 +786,7 @@ async function saveRoomPayload(payload) {
     { merge: true }
   );
   state.lastLoadedFingerprint = stableFingerprint(payload);
-  updateRoomStatus("Firebase 已同步", state.roomCode);
+  updateRoomStatus("Firebase 房間同步中", state.roomCode);
 }
 
 function startRoomSubscription() {
@@ -707,15 +807,44 @@ function startRoomSubscription() {
         if (fingerprint === state.lastLoadedFingerprint) return;
         applyPayload(payload);
         render();
-        updateRoomStatus("Firebase 已同步", state.roomCode);
+        updateRoomStatus("Firebase 房間同步中", state.roomCode);
       } catch (error) {
         console.error(error);
       }
     },
     (error) => {
       console.error(error);
-      updateRoomStatus("同步失敗", state.roomCode);
-      showToast("即時同步失敗，請檢查 Firestore 規則");
+      updateRoomStatus("同步失敗", error.code || state.roomCode);
+      showToast(`即時同步失敗: ${error.code || error.message || "unknown"}`);
+    }
+  );
+}
+
+function startRoomListSubscription() {
+  if (!state.db) {
+    return;
+  }
+  if (state.unsubscribeRoomList) {
+    state.unsubscribeRoomList();
+  }
+
+  const roomsQuery = query(collection(state.db, "rooms"), orderBy("updatedAt", "desc"));
+  state.unsubscribeRoomList = onSnapshot(
+    roomsQuery,
+    (snapshot) => {
+      state.rooms = snapshot.docs.map((roomDoc) => {
+        const data = roomDoc.data();
+        return {
+          id: roomDoc.id,
+          roomCode: data.roomCode || roomDoc.id,
+          updatedAtLabel: formatTimestamp(data.updatedAt),
+        };
+      });
+      renderRoomList();
+    },
+    (error) => {
+      console.error(error);
+      showToast(`房間列表載入失敗: ${error.code || error.message || "unknown"}`);
     }
   );
 }
@@ -792,7 +921,7 @@ function copyShareLink() {
   navigator.clipboard
     .writeText(url.toString())
     .then(() => showToast("分享連結已複製"))
-    .catch(() => showToast("無法複製連結"));
+    .catch(() => showToast("無法複製分享連結"));
 }
 
 function updateRoomStatus(syncStatus, roomStatus) {
@@ -810,7 +939,7 @@ function showToast(message) {
 }
 
 function findMemberName(memberId) {
-  return state.members.find((member) => member.id === memberId)?.name || "未知成員";
+  return state.members.find((member) => member.id === memberId)?.name || "已刪除成員";
 }
 
 function createId() {
@@ -845,6 +974,16 @@ function formatDate(value) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
+}
+
+function formatTimestamp(value) {
+  if (!value) {
+    return "尚未更新";
+  }
+  if (typeof value.toDate === "function") {
+    return formatDate(value.toDate());
+  }
+  return formatDate(value);
 }
 
 function stableFingerprint(payload) {

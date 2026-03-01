@@ -6,7 +6,7 @@
     <title>SplitCash</title>
     <meta
       name="description"
-      content="私人朋友間分帳工具，支援登記付款、均分品項、瀏覽器端加密後同步到 Firebase。"
+      content="給朋友之間記帳用的小工具。資料先在瀏覽器端加密，再同步到 Firebase。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,7 +27,7 @@
           </p>
         </div>
         <div class="hero-badge">
-          <span id="sync-status">等待進入房間</span>
+          <span id="sync-status">等待連線</span>
           <strong id="room-status">Firebase room sync</strong>
         </div>
       </header>
@@ -47,18 +47,19 @@
               房間密碼
               <input id="room-secret-input" name="roomSecret" type="password" placeholder="至少 8 碼" required />
             </label>
-            <label>
-              顯示名稱
-              <input id="display-name-input" name="displayName" type="text" placeholder="你在這間房的稱呼" />
-            </label>
             <div class="actions">
               <button type="submit">進入房間</button>
               <button id="copy-share-link-button" class="ghost-button" type="button">複製分享連結</button>
             </div>
           </form>
           <p class="hint">
-            進房前會先匿名登入 Firebase。房間內容在瀏覽器端先加密後才寫到 Firestore。
+            不需要填自己的稱呼。可直接從下方房間列表選擇房間，再輸入密碼登入。
           </p>
+
+          <div class="panel-head subhead">
+            <h2>可用房間</h2>
+          </div>
+          <div id="room-list-panel" class="room-list empty-state">房間列表載入中</div>
         </section>
 
         <section class="panel">
@@ -85,7 +86,16 @@
             </label>
             <label>
               金額
-              <input id="expense-amount-input" name="amount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" required />
+              <input
+                id="expense-amount-input"
+                name="amount"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                required
+              />
             </label>
             <label>
               誰先付
@@ -94,14 +104,14 @@
               </select>
             </label>
             <fieldset>
-              <legend>一起均分的人</legend>
+              <legend>一起分攤的人</legend>
               <div id="participant-options" class="checkbox-grid empty-state">請先建立成員</div>
             </fieldset>
             <label class="wide-field">
               備註
               <input id="expense-note-input" name="note" type="text" placeholder="可留空" />
             </label>
-            <button type="submit">登記支出</button>
+            <button type="submit">新增支出</button>
           </form>
         </section>
 
@@ -111,16 +121,16 @@
             <span id="total-spent">$0.00</span>
           </div>
           <div id="summary-cards" class="summary-cards"></div>
-          <div id="settlement-list" class="settlement-list empty-state">還沒有可計算的結算結果</div>
+          <div id="settlement-list" class="settlement-list empty-state">目前沒有待結算款項</div>
           <div class="panel-head subhead">
             <h2>已結算紀錄</h2>
           </div>
-          <div id="payment-history" class="payment-history empty-state">還沒有已結清的紀錄</div>
+          <div id="payment-history" class="payment-history empty-state">還沒有已結算紀錄</div>
         </section>
 
         <section class="panel wide-panel">
           <div class="panel-head">
-            <h2>支出明細</h2>
+            <h2>支出紀錄</h2>
             <div class="actions">
               <button id="export-button" class="ghost-button" type="button">匯出 JSON</button>
               <label class="ghost-button upload-button">
@@ -129,7 +139,7 @@
               </label>
             </div>
           </div>
-          <div id="expense-list" class="expense-list empty-state">尚未登記任何支出</div>
+          <div id="expense-list" class="expense-list empty-state">新增後就會顯示支出紀錄</div>
         </section>
       </main>
     </div>
