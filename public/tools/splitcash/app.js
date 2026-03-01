@@ -1,9 +1,5 @@
 ﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInAnonymously,
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 import {
   collection,
   deleteDoc,
@@ -17,12 +13,7 @@ import {
   setDoc,
 } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-const EMPTY_ROOM_PAYLOAD = {
-  members: [],
-  expenses: [],
-  payments: [],
-};
-
+const EMPTY_ROOM_PAYLOAD = { members: [], expenses: [], payments: [] };
 const state = {
   roomCode: "",
   roomSecret: "",
@@ -40,7 +31,6 @@ const state = {
   unsubscribeRoomList: null,
   lastLoadedFingerprint: "",
 };
-
 const els = {
   roomForm: document.getElementById("room-form"),
   roomCodeInput: document.getElementById("room-code-input"),
@@ -75,7 +65,6 @@ const els = {
   expenseList: document.getElementById("expense-list"),
   toast: document.getElementById("toast"),
 };
-
 const firebaseConfig = window.SPLITCASH_FIREBASE_CONFIG;
 
 init();
@@ -104,7 +93,7 @@ function hydrateRoomForm() {
 
 function initializeFirebase() {
   if (!hasFirebaseConfig()) {
-    updateRoomStatus("蝻箏? Firebase 閮剖?", "Firebase not configured");
+    updateRoomStatus("缺少 Firebase 設定", "Firebase not configured");
     return;
   }
 
@@ -112,17 +101,12 @@ function initializeFirebase() {
   state.auth = getAuth(state.app);
   state.db = getFirestore(state.app);
   state.authReadyPromise = new Promise((resolve, reject) => {
-    const timeoutId = window.setTimeout(() => {
-      reject(new Error("Firebase auth timeout"));
-    }, 15000);
-
+    const timeoutId = window.setTimeout(() => reject(new Error("Firebase auth timeout")), 15000);
     const unsubscribe = onAuthStateChanged(state.auth, (user) => {
-      if (!user) {
-        return;
-      }
+      if (!user) return;
       window.clearTimeout(timeoutId);
       unsubscribe();
-      updateRoomStatus("撌脣???, "Firebase auth ready");
+      updateRoomStatus("已匿名登入", "Firebase auth ready");
       resolve(user);
       startRoomListSubscription();
     });
@@ -130,29 +114,26 @@ function initializeFirebase() {
 
   signInAnonymously(state.auth).catch((error) => {
     console.error(error);
-    updateRoomStatus("?踹??餃憭望?", error.code || "Firebase auth error");
-    showToast(`Firebase ?踹??餃憭望?: ${error.code || "unknown"}`);
+    updateRoomStatus("Firebase 登入失敗", error.code || "Firebase auth error");
+    showToast(`Firebase 登入失敗: ${error.code || "unknown"}`);
   });
 }
 
 async function handleRoomSubmit(event) {
   event.preventDefault();
-
   if (!hasFirebaseConfig()) {
-    showToast("隢?閮剖? Firebase");
+    showToast("請先設定 Firebase");
     return;
   }
 
   const roomCode = els.roomCodeInput.value.trim();
   const roomSecret = els.roomSecretInput.value.trim();
-
   if (!roomCode || !roomSecret) {
-    showToast("隢‵?輸?隞?Ⅳ???蝣?);
+    showToast("請輸入房間代碼與密碼");
     return;
   }
-
   if (roomSecret.length < 8) {
-    showToast("?輸?撖Ⅳ?喳? 8 蝣?);
+    showToast("房間密碼至少需要 8 碼");
     return;
   }
 
@@ -160,7 +141,7 @@ async function handleRoomSubmit(event) {
   state.roomSecret = roomSecret;
   state.roomId = await sha256Hex(roomCode.toLowerCase());
   persistRoomMeta();
-  updateRoomStatus("頛?輸?鞈?銝?, state.roomCode);
+  updateRoomStatus("登入房間中", state.roomCode);
 
   try {
     await ensureFirebaseSession();
@@ -172,37 +153,30 @@ async function handleRoomSubmit(event) {
       await ensureRoomMetadata();
     }
     startRoomSubscription();
-    updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
+    updateRoomStatus("同步完成", state.roomCode);
     render();
-    showToast("撌脤脣?輸?");
+    showToast("已進入房間");
   } catch (error) {
     console.error(error);
-    updateRoomStatus("?輸?頛憭望?", error.code || state.roomCode || "Room error");
-    showToast(`?輸?頛憭望?: ${error.code || error.message || "unknown"}`);
+    updateRoomStatus("房間登入失敗", error.code || state.roomCode || "Room error");
+    showToast(`房間登入失敗: ${error.code || error.message || "unknown"}`);
   }
 }
 
 function handleMemberSubmit(event) {
   event.preventDefault();
   if (!ensureActiveRoom()) return;
-
   const name = els.memberNameInput.value.trim();
   if (!name) return;
   if (state.members.some((member) => member.name.toLowerCase() === name.toLowerCase())) {
-    showToast("??迂撌脣???);
+    showToast("成員名稱已存在");
     return;
   }
-
-  state.members.push({
-    id: createId(),
-    name,
-    createdAt: new Date().toISOString(),
-  });
+  state.members.push({ id: createId(), name, createdAt: new Date().toISOString() });
   els.memberNameInput.value = "";
   render();
   queueSave();
 }
-
 function handleExpenseSubmit(event) {
   event.preventDefault();
   if (!ensureActiveRoom()) return;
@@ -234,9 +208,7 @@ function handleExpenseSubmit(event) {
   }
 
   const customShares = splitMode === "custom" ? getCustomShareAllocations(amountCents) : null;
-  if (splitMode === "custom" && !customShares) {
-    return;
-  }
+  if (splitMode === "custom" && !customShares) return;
 
   state.expenses.unshift({
     id: createId(),
@@ -255,18 +227,26 @@ function handleExpenseSubmit(event) {
   queueSave();
 }
 
+function handleExpenseFormChange(event) {
+  if (
+    event.target instanceof HTMLInputElement &&
+    (event.target.name === "splitMode" || event.target.type === "checkbox")
+  ) {
+    syncSplitModeUI();
+  }
+}
+
 function removeMember(memberId) {
   const usedByExpense = state.expenses.some(
-    (expense) => expense.payerId === memberId || expense.participantIds.includes(memberId)
+    (expense) => expense.payerId === memberId || getExpenseShares(expense).some((share) => share.memberId === memberId)
   );
   const usedByPayment = state.payments.some(
     (payment) => payment.fromId === memberId || payment.toId === memberId
   );
   if (usedByExpense || usedByPayment) {
-    showToast("?撌脣?曉?臬??蝞??葉嚗瘜?亙??);
+    showToast("成員已出現在支出或結算紀錄中，無法直接刪除");
     return;
   }
-
   state.members = state.members.filter((member) => member.id !== memberId);
   render();
   queueSave();
@@ -280,44 +260,25 @@ function removeExpense(expenseId) {
 
 function recordSettlement(fromId, toId, amountCents) {
   if (!ensureActiveRoom()) return;
-
-  state.payments.unshift({
-    id: createId(),
-    fromId,
-    toId,
-    amountCents,
-    createdAt: new Date().toISOString(),
-  });
-
+  state.payments.unshift({ id: createId(), fromId, toId, amountCents, createdAt: new Date().toISOString() });
   render();
   queueSave();
-  showToast("撌脫?閮撌脩?蝞?);
+  showToast("已記錄結算");
 }
 
 function removePayment(paymentId) {
   state.payments = state.payments.filter((payment) => payment.id !== paymentId);
   render();
   queueSave();
-  showToast("撌脣?瘨?蝞???);
+  showToast("已取消結算紀錄");
 }
 
 function getSelectedParticipants() {
-  return Array.from(
-    els.participantOptions.querySelectorAll('input[type="checkbox"]:checked')
-  ).map((input) => input.value);
+  return Array.from(els.participantOptions.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
 }
 
 function getSelectedSplitMode() {
   return els.expenseForm.querySelector('input[name="splitMode"]:checked')?.value || "equal";
-}
-
-function handleExpenseFormChange(event) {
-  if (
-    event.target instanceof HTMLInputElement &&
-    (event.target.name === "splitMode" || event.target.type === "checkbox")
-  ) {
-    syncSplitModeUI();
-  }
 }
 
 function getCustomShareAllocations(totalAmountCents) {
@@ -325,10 +286,7 @@ function getCustomShareAllocations(totalAmountCents) {
   const shares = selectedIds.map((memberId) => {
     const input = els.participantOptions.querySelector(`[data-share-input="${memberId}"]`);
     const amount = Number(input?.value || 0);
-    return {
-      memberId,
-      amountCents: toCents(amount),
-    };
+    return { memberId, amountCents: toCents(amount) };
   });
 
   if (shares.some((share) => !Number.isFinite(share.amountCents) || share.amountCents <= 0)) {
@@ -346,13 +304,9 @@ function getCustomShareAllocations(totalAmountCents) {
 }
 
 function buildEqualShares(totalAmountCents, participantIds) {
-  if (!participantIds.length) {
-    return [];
-  }
-
+  if (!participantIds.length) return [];
   const base = Math.floor(totalAmountCents / participantIds.length);
   let remainder = totalAmountCents - base * participantIds.length;
-
   return participantIds.map((memberId) => {
     const amountCents = base + (remainder > 0 ? 1 : 0);
     remainder = Math.max(0, remainder - 1);
@@ -364,75 +318,47 @@ function getExpenseShares(expense) {
   if (expense.splitMode === "custom" && Array.isArray(expense.customShares) && expense.customShares.length > 0) {
     return expense.customShares
       .filter((share) => share && share.memberId)
-      .map((share) => ({
-        memberId: share.memberId,
-        amountCents: normalizeCents(share.amountCents || 0),
-      }));
+      .map((share) => ({ memberId: share.memberId, amountCents: normalizeCents(share.amountCents || 0) }));
   }
-
   return buildEqualShares(expense.amountCents, Array.isArray(expense.participantIds) ? expense.participantIds : []);
 }
 
 function computeBalances() {
   const balances = new Map(state.members.map((member) => [member.id, 0]));
-
   for (const expense of state.expenses) {
     const shares = getExpenseShares(expense);
     if (!balances.has(expense.payerId) || shares.length === 0) continue;
-
     for (const share of shares) {
       balances.set(share.memberId, (balances.get(share.memberId) || 0) - share.amountCents);
     }
     balances.set(expense.payerId, (balances.get(expense.payerId) || 0) + expense.amountCents);
   }
-
   for (const payment of state.payments) {
     if (!balances.has(payment.fromId) || !balances.has(payment.toId)) continue;
     balances.set(payment.fromId, (balances.get(payment.fromId) || 0) + payment.amountCents);
     balances.set(payment.toId, (balances.get(payment.toId) || 0) - payment.amountCents);
   }
-
-  return state.members.map((member) => ({
-    ...member,
-    balanceCents: normalizeCents(balances.get(member.id) || 0),
-  }));
+  return state.members.map((member) => ({ ...member, balanceCents: normalizeCents(balances.get(member.id) || 0) }));
 }
-function computeSettlements(balanceRows) {
-  const creditors = balanceRows
-    .filter((row) => row.balanceCents > 0)
-    .map((row) => ({ id: row.id, name: row.name, amountCents: row.balanceCents }))
-    .sort((a, b) => b.amountCents - a.amountCents);
-  const debtors = balanceRows
-    .filter((row) => row.balanceCents < 0)
-    .map((row) => ({ id: row.id, name: row.name, amountCents: Math.abs(row.balanceCents) }))
-    .sort((a, b) => b.amountCents - a.amountCents);
 
+function computeSettlements(balanceRows) {
+  const creditors = balanceRows.filter((row) => row.balanceCents > 0).map((row) => ({ id: row.id, name: row.name, amountCents: row.balanceCents })).sort((a, b) => b.amountCents - a.amountCents);
+  const debtors = balanceRows.filter((row) => row.balanceCents < 0).map((row) => ({ id: row.id, name: row.name, amountCents: Math.abs(row.balanceCents) })).sort((a, b) => b.amountCents - a.amountCents);
   const settlements = [];
   let creditorIndex = 0;
   let debtorIndex = 0;
-
   while (creditorIndex < creditors.length && debtorIndex < debtors.length) {
     const creditor = creditors[creditorIndex];
     const debtor = debtors[debtorIndex];
     const transfer = Math.min(creditor.amountCents, debtor.amountCents);
-
-    settlements.push({
-      fromId: debtor.id,
-      from: debtor.name,
-      toId: creditor.id,
-      to: creditor.name,
-      amountCents: normalizeCents(transfer),
-    });
-
+    settlements.push({ fromId: debtor.id, from: debtor.name, toId: creditor.id, to: creditor.name, amountCents: normalizeCents(transfer) });
     creditor.amountCents = normalizeCents(creditor.amountCents - transfer);
     debtor.amountCents = normalizeCents(debtor.amountCents - transfer);
     if (creditor.amountCents === 0) creditorIndex += 1;
     if (debtor.amountCents === 0) debtorIndex += 1;
   }
-
   return settlements;
 }
-
 function render() {
   updateAppVisibility();
   renderRoomList();
@@ -445,78 +371,42 @@ function render() {
 
 function updateAppVisibility() {
   const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
-  const sections = [
-    els.memberSection,
-    els.expenseSection,
-    els.summarySection,
-    els.historySection,
-  ];
-
-  sections.forEach((section) => {
-    if (!section) {
-      return;
-    }
-    section.classList.toggle("is-hidden", !hasActiveRoom);
+  [els.memberSection, els.expenseSection, els.summarySection, els.historySection].forEach((section) => {
+    if (section) section.classList.toggle("is-hidden", !hasActiveRoom);
   });
-
-  if (els.leaveRoomButton) {
-    els.leaveRoomButton.hidden = !hasActiveRoom;
-  }
-
-  if (els.roomEntrySection) {
-    els.roomEntrySection.hidden = hasActiveRoom;
-  }
-
-  if (els.roomDiscoverySection) {
-    els.roomDiscoverySection.hidden = hasActiveRoom;
-  }
-
-  if (els.activeRoomSummary) {
-    els.activeRoomSummary.hidden = !hasActiveRoom;
-  }
-
-  if (els.activeRoomCode) {
-    els.activeRoomCode.textContent = hasActiveRoom ? state.roomCode : "-";
-  }
-
-  if (els.appGrid) {
-    els.appGrid.classList.toggle("room-only", !hasActiveRoom);
-  }
+  els.leaveRoomButton.hidden = !hasActiveRoom;
+  els.roomEntrySection.hidden = hasActiveRoom;
+  els.roomDiscoverySection.hidden = hasActiveRoom;
+  els.activeRoomSummary.hidden = !hasActiveRoom;
+  els.activeRoomCode.textContent = hasActiveRoom ? state.roomCode : "-";
+  els.appGrid.classList.toggle("room-only", !hasActiveRoom);
 }
 
 function renderRoomList() {
-  if (!els.roomListPanel) {
-    return;
-  }
-
+  if (!els.roomListPanel) return;
   if (state.rooms.length === 0) {
     els.roomListPanel.className = "room-list empty-state";
-    els.roomListPanel.textContent = "?桀??????;
+    els.roomListPanel.textContent = "房間列表載入中";
     return;
   }
 
   els.roomListPanel.className = "room-list";
-  els.roomListPanel.innerHTML = state.rooms
-    .map(
-      (room) => `
-        <article class="room-item">
-          <div class="room-item-main">
-            <strong>${escapeHtml(room.label)}</strong>
-            <div class="room-meta">${escapeHtml(room.updatedAtLabel)}</div>
-          </div>
-          <div class="room-item-actions">
-            <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.loginCode)}">?餃</button>
-            <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.label)}">?芷</button>
-          </div>
-        </article>
-      `
-    )
-    .join("");
+  els.roomListPanel.innerHTML = state.rooms.map((room) => `
+    <article class="room-item">
+      <div class="room-item-main">
+        <strong>${escapeHtml(room.label)}</strong>
+        <div class="room-meta">${escapeHtml(room.updatedAtLabel)}</div>
+      </div>
+      <div class="room-item-actions">
+        <button type="button" class="ghost-button" data-room-login="${escapeHtml(room.loginCode)}">登入</button>
+        <button type="button" class="danger-button" data-room-delete="${room.id}|${escapeHtml(room.label)}">刪除</button>
+      </div>
+    </article>
+  `).join("");
 
   Array.from(els.roomListPanel.querySelectorAll("[data-room-login]")).forEach((button) => {
     button.addEventListener("click", () => selectRoom(button.dataset.roomLogin));
   });
-
   Array.from(els.roomListPanel.querySelectorAll("[data-room-delete]")).forEach((button) => {
     button.addEventListener("click", () => {
       const [roomId, roomLabel] = button.dataset.roomDelete.split("|");
@@ -526,25 +416,19 @@ function renderRoomList() {
 }
 
 function renderMembers() {
-  els.memberCount.textContent = `${state.members.length} 鈭槁;
+  els.memberCount.textContent = `${state.members.length} 人`;
   if (state.members.length === 0) {
     els.memberList.className = "chip-list empty-state";
-    els.memberList.textContent = "??????;
+    els.memberList.textContent = "還沒有成員";
     return;
   }
-
   els.memberList.className = "chip-list";
-  els.memberList.innerHTML = state.members
-    .map(
-      (member) => `
-        <article class="member-chip">
-          <strong>${escapeHtml(member.name)}</strong>
-          <button type="button" data-remove-member="${member.id}">?芷</button>
-        </article>
-      `
-    )
-    .join("");
-
+  els.memberList.innerHTML = state.members.map((member) => `
+    <article class="member-chip">
+      <strong>${escapeHtml(member.name)}</strong>
+      <button type="button" data-remove-member="${member.id}">刪除</button>
+    </article>
+  `).join("");
   Array.from(els.memberList.querySelectorAll("[data-remove-member]")).forEach((button) => {
     button.addEventListener("click", () => removeMember(button.dataset.removeMember));
   });
@@ -559,29 +443,15 @@ function renderParticipantOptions() {
   }
 
   els.participantOptions.className = "checkbox-grid";
-  els.participantOptions.innerHTML = state.members
-    .map(
-      (member) => `
-        <label class="participant-option">
-          <span class="participant-main">
-            <input type="checkbox" value="${member.id}" checked />
-            <span>${escapeHtml(member.name)}</span>
-          </span>
-          <input
-            class="share-amount-input"
-            data-share-input="${member.id}"
-            type="number"
-            inputmode="decimal"
-            min="0"
-            step="0.01"
-            placeholder="0.00"
-            disabled
-          />
-        </label>
-      `
-    )
-    .join("");
-
+  els.participantOptions.innerHTML = state.members.map((member) => `
+    <label class="participant-option">
+      <span class="participant-main">
+        <input type="checkbox" value="${member.id}" checked />
+        <span>${escapeHtml(member.name)}</span>
+      </span>
+      <input class="share-amount-input" data-share-input="${member.id}" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" disabled />
+    </label>
+  `).join("");
   syncSplitModeUI();
 }
 
@@ -590,14 +460,9 @@ function renderPayerOptions() {
     els.expensePayerSelect.innerHTML = '<option value="">請先建立成員</option>';
     return;
   }
-
-  els.expensePayerSelect.innerHTML = [
-    '<option value="">選擇付款人</option>',
-    ...state.members.map(
-      (member) => `<option value="${member.id}">${escapeHtml(member.name)}</option>`
-    ),
-  ].join("");
+  els.expensePayerSelect.innerHTML = ['<option value="">選擇付款人</option>', ...state.members.map((member) => `<option value="${member.id}">${escapeHtml(member.name)}</option>`)].join("");
 }
+
 function renderExpenses() {
   els.expenseCount.textContent = `${state.expenses.length} 筆`;
   if (state.expenses.length === 0) {
@@ -607,133 +472,96 @@ function renderExpenses() {
   }
 
   els.expenseList.className = "expense-list";
-  els.expenseList.innerHTML = state.expenses
-    .map((expense) => {
-      const payer = findMemberName(expense.payerId);
-      const shares = getExpenseShares(expense);
-      const isCustomSplit = expense.splitMode === "custom" && shares.length > 0;
-      const participants = (expense.participantIds || []).map(findMemberName).join("、");
-      const splitSummary = isCustomSplit
-        ? shares
-            .map((share) => `${findMemberName(share.memberId)} ${formatCurrency(share.amountCents)}`)
-            .join("、")
-        : participants;
-      const firstShare = shares[0]?.amountCents || 0;
-
-      return `
-        <article class="expense-item">
-          <strong>${escapeHtml(expense.title)} <span>${formatCurrency(expense.amountCents)}</span></strong>
-          ${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}
-          <div class="expense-meta">
-            <span>付款人：${escapeHtml(payer)}</span>
-            <span>${isCustomSplit ? "自訂分攤：" : "平均分攤："}${escapeHtml(splitSummary)}</span>
-            <span>${isCustomSplit ? "分攤方式：自訂金額" : `每人：${formatCurrency(firstShare)}`}</span>
-          </div>
-          <footer>
-            <small>${formatDate(expense.createdAt)}</small>
-            <button type="button" data-remove-expense="${expense.id}">刪除</button>
-          </footer>
-        </article>
-      `;
-    })
-    .join("");
+  els.expenseList.innerHTML = state.expenses.map((expense) => {
+    const payer = findMemberName(expense.payerId);
+    const shares = getExpenseShares(expense);
+    const isCustomSplit = expense.splitMode === "custom" && shares.length > 0;
+    const participants = (expense.participantIds || []).map(findMemberName).join("、");
+    const splitSummary = isCustomSplit ? shares.map((share) => `${findMemberName(share.memberId)} ${formatCurrency(share.amountCents)}`).join("、") : participants;
+    const firstShare = shares[0]?.amountCents || 0;
+    return `
+      <article class="expense-item">
+        <strong>${escapeHtml(expense.title)} <span>${formatCurrency(expense.amountCents)}</span></strong>
+        ${expense.note ? `<div>${escapeHtml(expense.note)}</div>` : ""}
+        <div class="expense-meta">
+          <span>付款人：${escapeHtml(payer)}</span>
+          <span>${isCustomSplit ? "自訂分攤：" : "平均分攤："}${escapeHtml(splitSummary)}</span>
+          <span>${isCustomSplit ? "分攤方式：自訂金額" : `每人：${formatCurrency(firstShare)}`}</span>
+        </div>
+        <footer>
+          <small>${formatDate(expense.createdAt)}</small>
+          <button type="button" data-remove-expense="${expense.id}">刪除</button>
+        </footer>
+      </article>
+    `;
+  }).join("");
 
   Array.from(els.expenseList.querySelectorAll("[data-remove-expense]")).forEach((button) => {
     button.addEventListener("click", () => removeExpense(button.dataset.removeExpense));
   });
 }
+
 function renderSummary() {
   const balances = computeBalances();
   const settlements = computeSettlements(balances);
   const total = state.expenses.reduce((sum, expense) => sum + expense.amountCents, 0);
-
   els.totalSpent.textContent = formatCurrency(total);
 
   if (balances.length === 0) {
     els.summaryCards.className = "summary-cards empty-state";
-    els.summaryCards.textContent = "?啣??敺??券ㄐ憿舐內瘥犖?楊憿?;
+    els.summaryCards.textContent = "新增成員後會在這裡顯示每個人的淨額";
   } else {
     els.summaryCards.className = "summary-cards";
-    els.summaryCards.innerHTML = balances
-      .map((row) => {
-        const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
-        const label = row.balanceCents > 0 ? "?" : row.balanceCents < 0 ? "??" : "撌脣像銵?;
-        return `
-          <article class="summary-card">
-            <strong>${escapeHtml(row.name)}</strong>
-            <div>${label}</div>
-            <div class="${className}">${formatSignedCurrency(row.balanceCents)}</div>
-          </article>
-        `;
-      })
-      .join("");
+    els.summaryCards.innerHTML = balances.map((row) => {
+      const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
+      const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
+      return `<article class="summary-card"><strong>${escapeHtml(row.name)}</strong><div>${label}</div><div class="${className}">${formatSignedCurrency(row.balanceCents)}</div></article>`;
+    }).join("");
   }
 
   if (settlements.length === 0) {
     els.settlementList.className = "settlement-list empty-state";
-    els.settlementList.textContent = "?桀?瘝?敺?蝞狡??;
+    els.settlementList.textContent = "目前沒有待結算款項";
   } else {
     els.settlementList.className = "settlement-list";
-    els.settlementList.innerHTML = settlements
-      .map(
-        (item) => `
-          <article class="settlement-item">
-            <div class="settlement-row">
-              <div>
-                <strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong>
-                <div>${formatCurrency(item.amountCents)}</div>
-              </div>
-              <button
-                type="button"
-                class="settlement-action"
-                data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}"
-              >
-                璅?撌脩?蝞?              </button>
-            </div>
-          </article>
-        `
-      )
-      .join("");
-
-    Array.from(els.settlementList.querySelectorAll("[data-record-settlement]")).forEach(
-      (button) => {
-        button.addEventListener("click", () => {
-          const [fromId, toId, amountCents] = button.dataset.recordSettlement.split("|");
-          recordSettlement(fromId, toId, Number(amountCents));
-        });
-      }
-    );
+    els.settlementList.innerHTML = settlements.map((item) => `
+      <article class="settlement-item">
+        <div class="settlement-row">
+          <div><strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong><div>${formatCurrency(item.amountCents)}</div></div>
+          <button type="button" class="settlement-action" data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}">記錄已結算</button>
+        </div>
+      </article>
+    `).join("");
+    Array.from(els.settlementList.querySelectorAll("[data-record-settlement]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        const [fromId, toId, amountCents] = button.dataset.recordSettlement.split("|");
+        recordSettlement(fromId, toId, Number(amountCents));
+      });
+    });
   }
 
   renderPaymentHistory();
 }
-
 function renderPaymentHistory() {
   if (state.payments.length === 0) {
     els.paymentHistory.className = "payment-history empty-state";
     els.paymentHistory.textContent = "還沒有已結算紀錄";
     return;
   }
-
   els.paymentHistory.className = "payment-history";
-  els.paymentHistory.innerHTML = state.payments
-    .map(
-      (payment) => `
-        <article class="expense-item">
-          <strong>${escapeHtml(findMemberName(payment.fromId))} -> ${escapeHtml(findMemberName(payment.toId))}</strong>
-          <div class="expense-meta">
-            <span>結算金額：${formatCurrency(payment.amountCents)}</span>
-            <span>${formatDate(payment.createdAt)}</span>
-          </div>
-          <footer>
-            <small>刪除後會重新回到待結算狀態</small>
-            <button type="button" data-remove-payment="${payment.id}">取消結算</button>
-          </footer>
-        </article>
-      `
-    )
-    .join("");
-
+  els.paymentHistory.innerHTML = state.payments.map((payment) => `
+    <article class="expense-item">
+      <strong>${escapeHtml(findMemberName(payment.fromId))} -> ${escapeHtml(findMemberName(payment.toId))}</strong>
+      <div class="expense-meta">
+        <span>結算金額：${formatCurrency(payment.amountCents)}</span>
+        <span>${formatDate(payment.createdAt)}</span>
+      </div>
+      <footer>
+        <small>刪除後會重新回到待結算狀態</small>
+        <button type="button" data-remove-payment="${payment.id}">取消結算</button>
+      </footer>
+    </article>
+  `).join("");
   Array.from(els.paymentHistory.querySelectorAll("[data-remove-payment]")).forEach((button) => {
     button.addEventListener("click", () => removePayment(button.dataset.removePayment));
   });
@@ -742,56 +570,43 @@ function renderPaymentHistory() {
 function syncSplitModeUI() {
   const isCustomMode = getSelectedSplitMode() === "custom";
   const participantCheckboxes = els.participantOptions.querySelectorAll('input[type="checkbox"]');
-
   participantCheckboxes.forEach((checkbox) => {
     const shareInput = els.participantOptions.querySelector(`[data-share-input="${checkbox.value}"]`);
-    if (!(shareInput instanceof HTMLInputElement)) {
-      return;
-    }
-
+    if (!(shareInput instanceof HTMLInputElement)) return;
     shareInput.disabled = !isCustomMode || !checkbox.checked;
-    if (!checkbox.checked) {
-      shareInput.value = "";
-    }
+    if (!checkbox.checked) shareInput.value = "";
   });
-
   if (els.splitModeHint) {
     els.splitModeHint.textContent = isCustomMode
       ? "自訂金額時，勾選成員的金額總和必須等於支出總額。"
       : "平均分會把總金額平分給勾選的人。";
   }
 }
+
 function selectRoom(roomCode) {
   els.roomCodeInput.value = roomCode;
   if (!els.roomSecretInput.value.trim()) {
     els.roomSecretInput.focus();
-    showToast("撌脣葆?交??蝔梧?隢撓?交??蝣澆??餃");
+    showToast("請先輸入房間密碼，再登入房間");
     return;
   }
-
   els.roomForm.requestSubmit();
 }
 
 async function confirmDeleteRoom(roomId, roomLabel) {
   if (!state.db) {
-    showToast("Firebase 撠????);
+    showToast("Firebase 尚未初始化");
     return;
   }
-
-  const confirmed = window.confirm(`蝣箏?閬?斗??{roomLabel}??嚗?瘞訾??芣??港遢撣單?);
-  if (!confirmed) {
-    return;
-  }
-
+  const confirmed = window.confirm(`確定要刪除房間「${roomLabel}」嗎？這會永久刪掉整份帳本。`);
+  if (!confirmed) return;
   try {
     await deleteDoc(doc(state.db, "rooms", roomId));
-    if (roomId === state.roomId) {
-      leaveRoom();
-    }
-    showToast("?輸?撌脣??);
+    if (roomId === state.roomId) leaveRoom();
+    showToast("房間已刪除");
   } catch (error) {
     console.error(error);
-    showToast(`?芷?輸?憭望?: ${error.code || error.message || "unknown"}`);
+    showToast(`刪除房間失敗: ${error.code || error.message || "unknown"}`);
   }
 }
 
@@ -800,7 +615,6 @@ function leaveRoom() {
     state.unsubscribeRoom();
     state.unsubscribeRoom = null;
   }
-
   state.roomCode = "";
   state.roomSecret = "";
   state.roomId = "";
@@ -810,16 +624,13 @@ function leaveRoom() {
   state.lastLoadedFingerprint = "";
   sessionStorage.removeItem("splitcash-meta");
   els.roomSecretInput.value = "";
-  updateRoomStatus(
-    hasFirebaseConfig() ? "撌脣??? : "蝻箏? Firebase 閮剖?",
-    hasFirebaseConfig() ? "Firebase auth ready" : "Firebase not configured"
-  );
+  updateRoomStatus(hasFirebaseConfig() ? "已匿名登入" : "缺少 Firebase 設定", hasFirebaseConfig() ? "Firebase auth ready" : "Firebase not configured");
   render();
 }
 
 function ensureActiveRoom() {
   if (!state.roomCode || !state.roomSecret || !state.roomId || !state.db) {
-    showToast("隢??餃?輸?");
+    showToast("請先登入房間");
     return false;
   }
   return true;
@@ -840,30 +651,20 @@ function loadRoomMeta() {
 function queueSave(immediate) {
   if (!ensureActiveRoom()) return;
   if (state.saveTimer) window.clearTimeout(state.saveTimer);
-
-  const persist = () =>
-    saveRoomPayload({
-      members: state.members,
-      expenses: state.expenses,
-      payments: state.payments,
-    }).catch((error) => {
-      console.error(error);
-      updateRoomStatus("?郊憭望?", error.code || state.roomCode);
-      showToast(`?郊憭望?: ${error.code || error.message || "unknown"}`);
-    });
-
+  const persist = () => saveRoomPayload({ members: state.members, expenses: state.expenses, payments: state.payments }).catch((error) => {
+    console.error(error);
+    updateRoomStatus("同步失敗", error.code || state.roomCode);
+    showToast(`同步失敗: ${error.code || error.message || "unknown"}`);
+  });
   if (immediate) {
     persist();
     return;
   }
-
   state.saveTimer = window.setTimeout(persist, 350);
 }
 
 async function ensureFirebaseSession() {
-  if (!state.authReadyPromise) {
-    throw new Error("Firebase auth is not initialized");
-  }
+  if (!state.authReadyPromise) throw new Error("Firebase auth is not initialized");
   await state.authReadyPromise;
 }
 
@@ -873,118 +674,66 @@ function roomDocRef() {
 
 async function loadRoomRecord() {
   const snapshot = await getDoc(roomDocRef());
-  if (!snapshot.exists()) {
-    return { exists: false, payload: { ...EMPTY_ROOM_PAYLOAD } };
-  }
-
+  if (!snapshot.exists()) return { exists: false, payload: { ...EMPTY_ROOM_PAYLOAD } };
   const data = snapshot.data();
-  if (!data.payload || !data.iv) {
-    return { exists: true, payload: { ...EMPTY_ROOM_PAYLOAD } };
-  }
-
-  return {
-    exists: true,
-    payload: await decryptPayload({ payload: data.payload, iv: data.iv }),
-  };
+  if (!data.payload || !data.iv) return { exists: true, payload: { ...EMPTY_ROOM_PAYLOAD } };
+  return { exists: true, payload: await decryptPayload({ payload: data.payload, iv: data.iv }) };
 }
 
 async function saveRoomPayload(payload) {
   const encrypted = await encryptPayload(payload);
-  updateRoomStatus("?郊銝?, state.roomCode);
-  await setDoc(
-    roomDocRef(),
-    {
-      roomCode: state.roomCode,
-      payload: encrypted.payload,
-      iv: encrypted.iv,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  updateRoomStatus("同步中", state.roomCode);
+  await setDoc(roomDocRef(), { roomCode: state.roomCode, payload: encrypted.payload, iv: encrypted.iv, updatedAt: serverTimestamp() }, { merge: true });
   state.lastLoadedFingerprint = stableFingerprint(payload);
-  updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
+  updateRoomStatus("同步完成", state.roomCode);
 }
 
 async function ensureRoomMetadata() {
-  if (!ensureActiveRoom()) {
-    return;
-  }
-
-  await setDoc(
-    roomDocRef(),
-    {
-      roomCode: state.roomCode,
-      updatedAt: serverTimestamp(),
-    },
-    { merge: true }
-  );
+  if (!ensureActiveRoom()) return;
+  await setDoc(roomDocRef(), { roomCode: state.roomCode, updatedAt: serverTimestamp() }, { merge: true });
 }
-
 function startRoomSubscription() {
-  if (state.unsubscribeRoom) {
-    state.unsubscribeRoom();
-  }
-
-  state.unsubscribeRoom = onSnapshot(
-    roomDocRef(),
-    async (snapshot) => {
-      if (!snapshot.exists()) return;
-      const data = snapshot.data();
-      if (!data.payload || !data.iv) return;
-
-      try {
-        const payload = await decryptPayload({ payload: data.payload, iv: data.iv });
-        const fingerprint = stableFingerprint(payload);
-        if (fingerprint === state.lastLoadedFingerprint) return;
-        applyPayload(payload);
-        render();
-        updateRoomStatus("Firebase ?輸??郊銝?, state.roomCode);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    (error) => {
+  if (state.unsubscribeRoom) state.unsubscribeRoom();
+  state.unsubscribeRoom = onSnapshot(roomDocRef(), async (snapshot) => {
+    if (!snapshot.exists()) return;
+    const data = snapshot.data();
+    if (!data.payload || !data.iv) return;
+    try {
+      const payload = await decryptPayload({ payload: data.payload, iv: data.iv });
+      const fingerprint = stableFingerprint(payload);
+      if (fingerprint === state.lastLoadedFingerprint) return;
+      applyPayload(payload);
+      render();
+      updateRoomStatus("同步完成", state.roomCode);
+    } catch (error) {
       console.error(error);
-      updateRoomStatus("?郊憭望?", error.code || state.roomCode);
-      showToast(`?單??郊憭望?: ${error.code || error.message || "unknown"}`);
     }
-  );
+  }, (error) => {
+    console.error(error);
+    updateRoomStatus("同步失敗", error.code || state.roomCode);
+    showToast(`即時同步失敗: ${error.code || error.message || "unknown"}`);
+  });
 }
 
 function startRoomListSubscription() {
-  if (!state.db) {
-    return;
-  }
-  if (state.unsubscribeRoomList) {
-    state.unsubscribeRoomList();
-  }
-
+  if (!state.db) return;
+  if (state.unsubscribeRoomList) state.unsubscribeRoomList();
   const roomsQuery = query(collection(state.db, "rooms"), orderBy("updatedAt", "desc"));
-  state.unsubscribeRoomList = onSnapshot(
-    roomsQuery,
-    (snapshot) => {
-      state.rooms = snapshot.docs.map((roomDoc) => {
-        const data = roomDoc.data();
-        const savedCode = typeof data.roomCode === "string" ? data.roomCode.trim() : "";
-        const looksHashed = /^[a-f0-9]{64}$/i.test(savedCode || roomDoc.id);
-        const isCurrentRoom = roomDoc.id === state.roomId && state.roomCode;
-        const loginCode = savedCode || (isCurrentRoom ? state.roomCode : "");
-        const label = savedCode || (isCurrentRoom ? state.roomCode : looksHashed ? "???輸?" : roomDoc.id);
-
-        return {
-          id: roomDoc.id,
-          label,
-          loginCode,
-          updatedAtLabel: formatTimestamp(data.updatedAt),
-        };
-      });
-      renderRoomList();
-    },
-    (error) => {
-      console.error(error);
-      showToast(`?輸??”頛憭望?: ${error.code || error.message || "unknown"}`);
-    }
-  );
+  state.unsubscribeRoomList = onSnapshot(roomsQuery, (snapshot) => {
+    state.rooms = snapshot.docs.map((roomDoc) => {
+      const data = roomDoc.data();
+      const savedCode = typeof data.roomCode === "string" ? data.roomCode.trim() : "";
+      const looksHashed = /^[a-f0-9]{64}$/i.test(savedCode || roomDoc.id);
+      const isCurrentRoom = roomDoc.id === state.roomId && state.roomCode;
+      const loginCode = savedCode || (isCurrentRoom ? state.roomCode : "");
+      const label = savedCode || (isCurrentRoom ? state.roomCode : looksHashed ? "未命名房間" : roomDoc.id);
+      return { id: roomDoc.id, label, loginCode, updatedAtLabel: formatTimestamp(data.updatedAt) };
+    });
+    renderRoomList();
+  }, (error) => {
+    console.error(error);
+    showToast(`房間列表載入失敗: ${error.code || error.message || "unknown"}`);
+  });
 }
 
 function applyPayload(payload) {
@@ -1000,15 +749,13 @@ function applyPayload(payload) {
   state.payments = Array.isArray(payload.payments) ? payload.payments : [];
   state.lastLoadedFingerprint = stableFingerprint(payload);
 }
+
 async function encryptPayload(payload) {
   const key = await deriveCryptoKey();
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const plaintext = new TextEncoder().encode(JSON.stringify(payload));
   const cipherBuffer = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plaintext);
-  return {
-    iv: bufferToBase64(iv),
-    payload: bufferToBase64(new Uint8Array(cipherBuffer)),
-  };
+  return { iv: bufferToBase64(iv), payload: bufferToBase64(new Uint8Array(cipherBuffer)) };
 }
 
 async function decryptPayload(encrypted) {
@@ -1020,26 +767,8 @@ async function decryptPayload(encrypted) {
 }
 
 async function deriveCryptoKey() {
-  const material = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(state.roomSecret),
-    "PBKDF2",
-    false,
-    ["deriveKey"]
-  );
-
-  return crypto.subtle.deriveKey(
-    {
-      name: "PBKDF2",
-      salt: new TextEncoder().encode(`splitcash:${state.roomCode.toLowerCase()}`),
-      iterations: 120000,
-      hash: "SHA-256",
-    },
-    material,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt", "decrypt"]
-  );
+  const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(state.roomSecret), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: new TextEncoder().encode(`splitcash:${state.roomCode.toLowerCase()}`), iterations: 120000, hash: "SHA-256" }, material, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
 }
 
 function hasFirebaseConfig() {
@@ -1048,24 +777,18 @@ function hasFirebaseConfig() {
 
 async function sha256Hex(value) {
   const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
-  return Array.from(new Uint8Array(buffer))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
+  return Array.from(new Uint8Array(buffer)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function copyShareLink() {
   const roomCode = els.roomCodeInput.value.trim();
   if (!roomCode) {
-    showToast("隢?頛詨?輸?隞?Ⅳ");
+    showToast("請先輸入房間代碼");
     return;
   }
-
   const url = new URL(window.location.href);
   url.searchParams.set("room", roomCode);
-  navigator.clipboard
-    .writeText(url.toString())
-    .then(() => showToast("?澈???撌脰?鋆?))
-    .catch(() => showToast("?⊥?銴ˊ?澈???"));
+  navigator.clipboard.writeText(url.toString()).then(() => showToast("分享連結已複製")).catch(() => showToast("複製分享連結失敗"));
 }
 
 function updateRoomStatus(syncStatus, roomStatus) {
@@ -1077,93 +800,47 @@ function showToast(message) {
   els.toast.textContent = message;
   els.toast.classList.add("visible");
   window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => {
-    els.toast.classList.remove("visible");
-  }, 2400);
+  showToast.timer = window.setTimeout(() => els.toast.classList.remove("visible"), 2400);
 }
 
 function findMemberName(memberId) {
-  return state.members.find((member) => member.id === memberId)?.name || "撌脣?斗???;
+  return state.members.find((member) => member.id === memberId)?.name || "未知成員";
 }
 
-function createId() {
-  return crypto.randomUUID();
-}
-
-function toCents(amount) {
-  return Math.round(amount * 100);
-}
-
-function normalizeCents(value) {
-  return Math.round(value);
-}
-
+function createId() { return crypto.randomUUID(); }
+function toCents(amount) { return Math.round(amount * 100); }
+function normalizeCents(value) { return Math.round(value); }
 function formatCurrency(amountCents) {
-  return new Intl.NumberFormat("zh-TW", {
-    style: "currency",
-    currency: "TWD",
-    minimumFractionDigits: 2,
-  }).format(amountCents / 100);
+  return new Intl.NumberFormat("zh-TW", { style: "currency", currency: "TWD", minimumFractionDigits: 2 }).format(amountCents / 100);
 }
-
 function formatSignedCurrency(amountCents) {
   const absolute = formatCurrency(Math.abs(amountCents));
   if (amountCents > 0) return `+${absolute}`;
   if (amountCents < 0) return `-${absolute}`;
   return absolute;
 }
-
 function formatDate(value) {
-  return new Intl.DateTimeFormat("zh-TW", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+  return new Intl.DateTimeFormat("zh-TW", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
-
 function formatTimestamp(value) {
-  if (!value) {
-    return "撠?湔";
-  }
-  if (typeof value.toDate === "function") {
-    return formatDate(value.toDate());
-  }
+  if (!value) return "尚未同步";
+  if (typeof value.toDate === "function") return formatDate(value.toDate());
   return formatDate(value);
 }
-
 function stableFingerprint(payload) {
-  return JSON.stringify({
-    members: payload.members || [],
-    expenses: payload.expenses || [],
-    payments: payload.payments || [],
-  });
+  return JSON.stringify({ members: payload.members || [], expenses: payload.expenses || [], payments: payload.payments || [] });
 }
-
 function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+  return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 }
-
 function bufferToBase64(uint8Array) {
   let binary = "";
   for (const byte of uint8Array) binary += String.fromCharCode(byte);
   return btoa(binary);
 }
-
 function base64ToUint8Array(base64) {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
   return bytes;
 }
-
-
-
-
-
-
