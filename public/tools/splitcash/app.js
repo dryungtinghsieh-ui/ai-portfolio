@@ -50,6 +50,10 @@ const els = {
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
   roomListPanel: document.getElementById("room-list-panel"),
+  memberSection: document.getElementById("member-section"),
+  expenseSection: document.getElementById("expense-section"),
+  summarySection: document.getElementById("summary-section"),
+  historySection: document.getElementById("history-section"),
   memberForm: document.getElementById("member-form"),
   memberNameInput: document.getElementById("member-name-input"),
   memberList: document.getElementById("member-list"),
@@ -352,12 +356,34 @@ function computeSettlements(balanceRows) {
 }
 
 function render() {
+  updateAppVisibility();
   renderRoomList();
   renderMembers();
   renderParticipantOptions();
   renderPayerOptions();
   renderExpenses();
   renderSummary();
+}
+
+function updateAppVisibility() {
+  const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  const sections = [
+    els.memberSection,
+    els.expenseSection,
+    els.summarySection,
+    els.historySection,
+  ];
+
+  sections.forEach((section) => {
+    if (!section) {
+      return;
+    }
+    section.classList.toggle("is-hidden", !hasActiveRoom);
+  });
+
+  if (els.leaveRoomButton) {
+    els.leaveRoomButton.hidden = !hasActiveRoom;
+  }
 }
 
 function renderRoomList() {

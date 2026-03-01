@@ -133,6 +133,10 @@ h1 {
   background: linear-gradient(140deg, rgba(255, 248, 238, 0.94), rgba(240, 251, 248, 0.88));
 }
 
+.app-section.is-hidden {
+  display: none;
+}
+
 .panel-head {
   display: flex;
   justify-content: space-between;

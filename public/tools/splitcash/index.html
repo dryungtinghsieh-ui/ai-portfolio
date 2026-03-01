@@ -6,7 +6,7 @@
     <title>SplitCash</title>
     <meta
       name="description"
-      content="給朋友之間記帳用的小工具。資料先在瀏覽器端加密，再同步到 Firebase。"
+      content="給朋友之間記帳用的小工具。資料會先在瀏覽器端加密，再同步到 Firebase。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,9 +52,7 @@
               <button id="copy-share-link-button" class="ghost-button" type="button">複製分享連結</button>
             </div>
           </form>
-          <p class="hint">
-            不需要填自己的稱呼。可直接從下方房間列表選擇房間，再輸入密碼登入。
-          </p>
+          <p class="hint">首頁只顯示房間入口。進入房間後才會展開完整功能。</p>
 
           <div class="panel-head subhead">
             <h2>可用房間</h2>
@@ -62,7 +60,7 @@
           <div id="room-list-panel" class="room-list empty-state">房間列表載入中</div>
         </section>
 
-        <section class="panel">
+        <section id="member-section" class="panel app-section is-hidden">
           <div class="panel-head">
             <h2>成員</h2>
             <span id="member-count">0 人</span>
@@ -74,7 +72,7 @@
           <div id="member-list" class="chip-list empty-state">還沒有成員</div>
         </section>
 
-        <section class="panel wide-panel">
+        <section id="expense-section" class="panel wide-panel app-section is-hidden">
           <div class="panel-head">
             <h2>新增支出</h2>
             <span id="expense-count">0 筆</span>
@@ -115,7 +113,7 @@
           </form>
         </section>
 
-        <section class="panel">
+        <section id="summary-section" class="panel app-section is-hidden">
           <div class="panel-head">
             <h2>結算</h2>
             <span id="total-spent">$0.00</span>
@@ -128,7 +126,7 @@
           <div id="payment-history" class="payment-history empty-state">還沒有已結算紀錄</div>
         </section>
 
-        <section class="panel wide-panel">
+        <section id="history-section" class="panel wide-panel app-section is-hidden">
           <div class="panel-head">
             <h2>支出紀錄</h2>
             <div class="actions">
