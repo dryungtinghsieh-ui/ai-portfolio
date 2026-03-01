@@ -80,7 +80,7 @@ const tagVariants = {
 };
 
 const ctaBaseClass =
-  'rounded-xl px-8 py-3 font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)]';
+  'inline-flex items-center justify-center self-center rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)] sm:px-8 sm:py-3 sm:text-base md:self-auto';
 const ctaPrimaryClass =
   'bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-slate-50';
 const ctaSecondaryClass =
@@ -203,7 +203,7 @@ export default function Home() {
 
                 <motion.div
                   variants={itemVariants}
-                  className="mb-12 flex flex-col justify-center gap-4 sm:flex-row md:justify-start"
+                  className="mb-12 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 md:items-start md:justify-start"
                 >
                   <motion.a
                     href="/fun/microstrip"
