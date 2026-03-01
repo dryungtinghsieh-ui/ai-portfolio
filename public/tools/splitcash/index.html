@@ -57,7 +57,7 @@
             </div>
           </form>
           <p class="hint">
-            這一版不再使用本機房間儲存。請先在 `firebase-config.js` 填入 Firebase 設定，資料會先加密再同步。
+            進房前會先匿名登入 Firebase。房間內容在瀏覽器端先加密後才寫到 Firestore。
           </p>
         </section>
 
@@ -137,6 +137,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script src="./app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
