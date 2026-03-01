@@ -106,22 +106,41 @@ function initializeFirebase() {
   state.app = initializeApp(firebaseConfig);
   state.auth = getAuth(state.app);
   state.db = getFirestore(state.app);
+  updateRoomStatus("連接中", "Initializing Firebase...");
+  
+  let authUnsubscribe;
+  const timeoutId = window.setTimeout(() => {
+    if (authUnsubscribe) authUnsubscribe();
+    updateRoomStatus("連接失敗", "Firebase auth timeout");
+    showToast("Firebase 連接逾時，請檢查網路連接後重新整理頁面");
+  }, 15000);
+  
   state.authReadyPromise = new Promise((resolve, reject) => {
-    const timeoutId = window.setTimeout(() => reject(new Error("Firebase auth timeout")), 15000);
-    const unsubscribe = onAuthStateChanged(state.auth, (user) => {
-      if (!user) return;
-      window.clearTimeout(timeoutId);
-      unsubscribe();
-      updateRoomStatus("已匿名登入", "Firebase auth ready");
-      resolve(user);
-      startRoomListSubscription();
-    });
+    authUnsubscribe = onAuthStateChanged(
+      state.auth,
+      (user) => {
+        if (!user) return; // 等待 signInAnonymously 完成
+        window.clearTimeout(timeoutId);
+        updateRoomStatus("已匿名登入", "Firebase auth ready");
+        resolve(user);
+        startRoomListSubscription();
+      },
+      (error) => {
+        window.clearTimeout(timeoutId);
+        reject(error);
+      }
+    );
+  }).catch((error) => {
+    console.error("Firebase auth listener error:", error);
+    updateRoomStatus("連接失敗", error.code || error.message || "unknown");
+    showToast(`Firebase 連接失敗: ${error.message || error.code || "unknown"}`);
   });
 
   signInAnonymously(state.auth).catch((error) => {
-    console.error(error);
-    updateRoomStatus("Firebase 登入失敗", error.code || "Firebase auth error");
-    showToast(`Firebase 登入失敗: ${error.code || "unknown"}`);
+    window.clearTimeout(timeoutId);
+    console.error("Anonymous signin error:", error);
+    updateRoomStatus("連接失敗", error.code || "Firebase auth error");
+    showToast(`Firebase 匿名登入失敗: ${error.message || error.code || "unknown"}`);
   });
 }
 
