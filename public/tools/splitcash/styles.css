@@ -210,6 +210,10 @@ h1 {
   backdrop-filter: blur(18px);
 }
 
+.section-tabs[hidden] {
+  display: none !important;
+}
+
 .section-tab {
   min-height: 44px;
   padding: 10px 12px;
