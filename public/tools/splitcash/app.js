@@ -47,6 +47,10 @@ const els = {
   roomSecretInput: document.getElementById("room-secret-input"),
   copyShareLinkButton: document.getElementById("copy-share-link-button"),
   leaveRoomButton: document.getElementById("leave-room-button"),
+  roomEntrySection: document.getElementById("room-entry-section"),
+  roomDiscoverySection: document.getElementById("room-discovery-section"),
+  activeRoomSummary: document.getElementById("active-room-summary"),
+  activeRoomCode: document.getElementById("active-room-code"),
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
   appGrid: document.getElementById("app-grid"),
@@ -380,6 +384,22 @@ function updateAppVisibility() {
 
   if (els.leaveRoomButton) {
     els.leaveRoomButton.hidden = !hasActiveRoom;
+  }
+
+  if (els.roomEntrySection) {
+    els.roomEntrySection.hidden = hasActiveRoom;
+  }
+
+  if (els.roomDiscoverySection) {
+    els.roomDiscoverySection.hidden = hasActiveRoom;
+  }
+
+  if (els.activeRoomSummary) {
+    els.activeRoomSummary.hidden = !hasActiveRoom;
+  }
+
+  if (els.activeRoomCode) {
+    els.activeRoomCode.textContent = hasActiveRoom ? state.roomCode : "-";
   }
 
   if (els.appGrid) {

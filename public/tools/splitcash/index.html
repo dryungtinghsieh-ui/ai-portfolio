@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260301c" />
+    <link rel="stylesheet" href="./styles.css?v=20260301d" />
   </head>
   <body>
     <div class="page-shell">
@@ -38,26 +38,35 @@
             <h2>房間</h2>
             <button id="leave-room-button" class="ghost-button" type="button">離開房間</button>
           </div>
-          <form id="room-form" class="stack-form">
-            <label>
-              房間代碼
-              <input id="room-code-input" name="roomCode" type="text" placeholder="例如 tainan-trip" required />
-            </label>
-            <label>
-              房間密碼
-              <input id="room-secret-input" name="roomSecret" type="password" placeholder="至少 8 碼" required />
-            </label>
-            <div class="actions">
-              <button type="submit">進入房間</button>
-              <button id="copy-share-link-button" class="ghost-button" type="button">複製分享連結</button>
-            </div>
-          </form>
-          <p class="hint">首頁只顯示房間入口。進入房間後才會展開完整功能。</p>
-
-          <div class="panel-head subhead">
-            <h2>可用房間</h2>
+          <div id="active-room-summary" class="active-room-summary" hidden>
+            <span class="eyebrow">Current Room</span>
+            <strong id="active-room-code">-</strong>
+            <p class="hint">離開房間後才會重新顯示登入表單與可用房間列表。</p>
           </div>
-          <div id="room-list-panel" class="room-list empty-state">房間列表載入中</div>
+          <div id="room-entry-section">
+            <form id="room-form" class="stack-form">
+              <label>
+                房間代碼
+                <input id="room-code-input" name="roomCode" type="text" placeholder="例如 tainan-trip" required />
+              </label>
+              <label>
+                房間密碼
+                <input id="room-secret-input" name="roomSecret" type="password" placeholder="至少 8 碼" required />
+              </label>
+              <div class="actions">
+                <button type="submit">進入房間</button>
+                <button id="copy-share-link-button" class="ghost-button" type="button">複製分享連結</button>
+              </div>
+            </form>
+            <p class="hint">首頁只顯示房間入口。進入房間後才會展開完整功能。</p>
+          </div>
+
+          <div id="room-discovery-section">
+            <div class="panel-head subhead">
+              <h2>可用房間</h2>
+            </div>
+            <div id="room-list-panel" class="room-list empty-state">房間列表載入中</div>
+          </div>
         </section>
 
         <section id="member-section" class="panel app-section is-hidden">
@@ -138,6 +147,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260301c"></script>
+    <script type="module" src="./app.js?v=20260301d"></script>
   </body>
 </html>

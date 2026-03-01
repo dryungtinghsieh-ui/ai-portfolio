@@ -197,6 +197,32 @@ h1 {
   display: none;
 }
 
+.active-room-summary {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.active-room-summary .eyebrow {
+  margin: 0;
+}
+
+.active-room-summary strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.active-room-summary .hint {
+  margin: 0;
+}
+
 .panel-head {
   display: flex;
   justify-content: space-between;
@@ -534,6 +560,11 @@ button:hover,
   .hero {
     padding: 18px;
     border-radius: 22px;
+  }
+
+  .active-room-summary {
+    padding: 16px;
+    border-radius: 18px;
   }
 
   .inline-form,
