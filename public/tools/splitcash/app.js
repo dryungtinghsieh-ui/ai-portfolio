@@ -106,8 +106,8 @@ function initializeFirebase() {
 
   signInAnonymously(state.auth).catch((error) => {
     console.error(error);
-    updateRoomStatus("匿名登入失敗", "Firebase auth error");
-    showToast("Firebase 匿名登入失敗");
+    updateRoomStatus("匿名登入失敗", error.code || "Firebase auth error");
+    showToast(`Firebase 匿名登入失敗: ${error.code || "unknown"}`);
   });
 }
 
