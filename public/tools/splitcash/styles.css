@@ -197,6 +197,39 @@ h1 {
   display: none;
 }
 
+.section-tabs {
+  display: none;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 20px;
+  background: rgba(255, 251, 245, 0.78);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.section-tab {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.section-tab:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.section-tab.is-active {
+  border-color: rgba(15, 118, 110, 0.18);
+  background: linear-gradient(135deg, var(--accent) 0%, #155e75 100%);
+  color: #f7fffd;
+}
+
 .active-room-summary {
   display: grid;
   gap: 8px;
@@ -582,6 +615,17 @@ button:hover,
     grid-column: 1 / -1;
   }
 
+  .section-tabs {
+    display: grid;
+    position: sticky;
+    top: 12px;
+    z-index: 5;
+  }
+
+  .app-section.mobile-tab-hidden {
+    display: none;
+  }
+
   .app-grid.room-only .room-panel {
     grid-column: 1 / -1;
     width: 100%;
@@ -658,6 +702,10 @@ button:hover,
   .split-mode-toggle,
   .participant-option {
     grid-template-columns: 1fr;
+  }
+
+  .section-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   h1 {

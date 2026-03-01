@@ -18,6 +18,7 @@ const state = {
   roomCode: "",
   roomSecret: "",
   roomId: "",
+  activeSectionTab: "expense",
   rooms: [],
   members: [],
   expenses: [],
@@ -41,6 +42,7 @@ const els = {
   roomDiscoverySection: document.getElementById("room-discovery-section"),
   activeRoomSummary: document.getElementById("active-room-summary"),
   activeRoomCode: document.getElementById("active-room-code"),
+  sectionTabs: document.getElementById("section-tabs"),
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
   appGrid: document.getElementById("app-grid"),
@@ -83,6 +85,10 @@ function bindEvents() {
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
   els.expenseForm.addEventListener("change", handleExpenseFormChange);
+  if (els.sectionTabs) {
+    els.sectionTabs.addEventListener("click", handleSectionTabClick);
+  }
+  window.addEventListener("resize", syncResponsiveSections);
 }
 
 function hydrateRoomForm() {
@@ -361,6 +367,7 @@ function computeSettlements(balanceRows) {
 }
 function render() {
   updateAppVisibility();
+  syncResponsiveSections();
   renderRoomList();
   renderMembers();
   renderParticipantOptions();
@@ -379,7 +386,40 @@ function updateAppVisibility() {
   els.roomDiscoverySection.hidden = hasActiveRoom;
   els.activeRoomSummary.hidden = !hasActiveRoom;
   els.activeRoomCode.textContent = hasActiveRoom ? state.roomCode : "-";
+  if (els.sectionTabs) {
+    els.sectionTabs.hidden = !hasActiveRoom;
+  }
   els.appGrid.classList.toggle("room-only", !hasActiveRoom);
+}
+
+function handleSectionTabClick(event) {
+  const button = event.target.closest("[data-section-tab]");
+  if (!button) return;
+  state.activeSectionTab = button.dataset.sectionTab;
+  syncResponsiveSections();
+}
+
+function syncResponsiveSections() {
+  const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  const isMobile = window.matchMedia("(max-width: 960px)").matches;
+  const sections = {
+    member: els.memberSection,
+    expense: els.expenseSection,
+    summary: els.summarySection,
+    history: els.historySection,
+  };
+
+  Object.entries(sections).forEach(([key, section]) => {
+    if (!section) return;
+    const shouldHideForTab = hasActiveRoom && isMobile && key !== state.activeSectionTab;
+    section.classList.toggle("mobile-tab-hidden", shouldHideForTab);
+  });
+
+  if (!els.sectionTabs) return;
+  Array.from(els.sectionTabs.querySelectorAll("[data-section-tab]")).forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.sectionTab === state.activeSectionTab);
+    button.setAttribute("aria-pressed", button.dataset.sectionTab === state.activeSectionTab ? "true" : "false");
+  });
 }
 
 function renderRoomList() {
