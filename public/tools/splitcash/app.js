@@ -55,7 +55,6 @@ const els = {
   memberForm: document.getElementById("member-form"),
   memberNameInput: document.getElementById("member-name-input"),
   memberList: document.getElementById("member-list"),
-  memberSettlementList: document.getElementById("member-settlement-list"),
   memberCount: document.getElementById("member-count"),
   expenseForm: document.getElementById("expense-form"),
   expenseFormTitle: document.getElementById("expense-form-title"),
@@ -66,7 +65,6 @@ const els = {
   splitModeHint: document.getElementById("split-mode-hint"),
   expenseCount: document.getElementById("expense-count"),
   totalSpent: document.getElementById("total-spent"),
-  summaryCards: document.getElementById("summary-cards"),
   settlementList: document.getElementById("settlement-list"),
   paymentHistory: document.getElementById("payment-history"),
   expenseList: document.getElementById("expense-list"),
@@ -91,7 +89,6 @@ function bindEvents() {
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
   els.expenseForm.addEventListener("change", handleExpenseFormChange);
   els.expenseCancelButton.addEventListener("click", resetExpenseForm);
-  els.summaryCards.addEventListener("click", handleSummaryCardClick);
   if (els.sectionTabs) {
     els.sectionTabs.addEventListener("click", handleSectionTabClick);
   }
@@ -538,12 +535,6 @@ function handleSectionTabClick(event) {
   syncResponsiveSections();
 }
 
-function handleSummaryCardClick(event) {
-  const button = event.target.closest("[data-balance-detail]");
-  if (!button) return;
-  toggleBalanceDetail(button.dataset.balanceDetail);
-}
-
 function handleMemberListClick(event) {
   const detailButton = event.target.closest("[data-balance-detail]");
   if (detailButton) {
@@ -624,20 +615,16 @@ function renderMembers() {
   if (state.members.length === 0) {
     els.memberList.className = "chip-list empty-state";
     els.memberList.textContent = "還沒有成員";
-    renderSettlementList(els.memberSettlementList, []);
     return;
   }
   const balances = computeBalances();
   const balanceMap = new Map(balances.map((row) => [row.id, row]));
-  const settlements = computeSettlements(balances);
 
   els.memberList.className = "member-balance-list";
   els.memberList.innerHTML = state.members.map((member) => {
     const row = balanceMap.get(member.id) || { id: member.id, name: member.name, balanceCents: 0 };
     return getBalanceCardMarkup(row, { removable: true });
   }).join("");
-
-  renderSettlementList(els.memberSettlementList, settlements);
 }
 
 function renderParticipantOptions() {
@@ -714,18 +701,9 @@ function renderExpenses() {
 }
 
 function renderSummary() {
-  const balances = computeBalances();
-  const settlements = computeSettlements(balances);
+  const settlements = computeSettlements(computeBalances());
   const total = state.expenses.reduce((sum, expense) => sum + expense.amountCents, 0);
   els.totalSpent.textContent = formatCurrency(total);
-
-  if (balances.length === 0) {
-    els.summaryCards.className = "summary-cards empty-state";
-    els.summaryCards.textContent = "新增成員後會在這裡顯示每個人的淨額";
-  } else {
-    els.summaryCards.className = "summary-cards";
-    els.summaryCards.innerHTML = balances.map((row) => getBalanceCardMarkup(row)).join("");
-  }
 
   renderSettlementList(els.settlementList, settlements);
 
