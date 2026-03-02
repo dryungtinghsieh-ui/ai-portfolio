@@ -39,6 +39,7 @@ const els = {
   roomCodeInput: document.getElementById("room-code-input"),
   roomSecretInput: document.getElementById("room-secret-input"),
   leaveRoomButton: document.getElementById("leave-room-button"),
+  roomPanel: document.getElementById("room-panel"),
   roomEntrySection: document.getElementById("room-entry-section"),
   roomDiscoverySection: document.getElementById("room-discovery-section"),
   sectionTabs: document.getElementById("section-tabs"),
@@ -516,6 +517,9 @@ function updateAppVisibility() {
     if (section) section.classList.toggle("is-hidden", !hasActiveRoom);
   });
   els.leaveRoomButton.hidden = !hasActiveRoom;
+  if (els.roomPanel) {
+    els.roomPanel.hidden = hasActiveRoom;
+  }
   els.roomEntrySection.hidden = hasActiveRoom;
   els.roomDiscoverySection.hidden = hasActiveRoom;
   if (els.sectionTabs) {

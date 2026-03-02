@@ -92,6 +92,8 @@ h1 {
 }
 
 .hero-badge {
+  display: grid;
+  gap: 10px;
   min-width: 220px;
   padding: 18px 20px;
   border-radius: 22px;
@@ -108,6 +110,17 @@ h1 {
 
 .hero-badge strong {
   font-size: 1.12rem;
+}
+
+.hero-leave-button {
+  width: 100%;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f7f4ee;
+}
+
+.hero-leave-button:hover {
+  box-shadow: none;
 }
 
 .app-grid {

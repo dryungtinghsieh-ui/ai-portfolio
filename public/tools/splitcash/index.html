@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260301n" />
+    <link rel="stylesheet" href="./styles.css?v=20260301o" />
   </head>
   <body>
     <div class="page-shell">
@@ -30,14 +30,14 @@
         <div class="hero-badge">
           <span id="sync-status">等待連線</span>
           <strong id="room-status">Firebase room sync</strong>
+          <button id="leave-room-button" class="ghost-button hero-leave-button" type="button" hidden>離開房間</button>
         </div>
       </header>
 
       <main id="app-grid" class="app-grid room-only">
-        <section class="panel room-panel">
+        <section id="room-panel" class="panel room-panel">
           <div class="panel-head">
             <h2>房間</h2>
-            <button id="leave-room-button" class="ghost-button" type="button">離開房間</button>
           </div>
           <div id="room-entry-section">
             <form id="room-form" class="stack-form">
@@ -165,6 +165,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260301n"></script>
+    <script type="module" src="./app.js?v=20260301o"></script>
   </body>
 </html>
