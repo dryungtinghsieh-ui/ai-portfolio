@@ -19,6 +19,7 @@ const state = {
   roomSecret: "",
   roomId: "",
   activeSectionTab: "expense",
+  expandedBalanceMemberId: "",
   rooms: [],
   members: [],
   expenses: [],
@@ -83,6 +84,7 @@ function bindEvents() {
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
   els.expenseForm.addEventListener("change", handleExpenseFormChange);
+  els.summaryCards.addEventListener("click", handleSummaryCardClick);
   if (els.sectionTabs) {
     els.sectionTabs.addEventListener("click", handleSectionTabClick);
   }
@@ -364,6 +366,49 @@ function computeBalances() {
   return state.members.map((member) => ({ ...member, balanceCents: normalizeCents(balances.get(member.id) || 0) }));
 }
 
+function getBalanceBreakdown(memberId) {
+  const lines = [];
+
+  for (const expense of state.expenses) {
+    if (expense.payerId === memberId) {
+      lines.push({
+        key: `payer-${expense.id}`,
+        label: `代墊 ${expense.title}`,
+        amountCents: expense.amountCents,
+      });
+    }
+
+    for (const share of getExpenseShares(expense)) {
+      if (share.memberId !== memberId) continue;
+      lines.push({
+        key: `share-${expense.id}-${memberId}`,
+        label: `分攤 ${expense.title}`,
+        amountCents: -share.amountCents,
+      });
+    }
+  }
+
+  for (const payment of state.payments) {
+    if (payment.fromId === memberId) {
+      lines.push({
+        key: `payment-out-${payment.id}`,
+        label: `已支付給 ${findMemberName(payment.toId)}`,
+        amountCents: payment.amountCents,
+      });
+    }
+
+    if (payment.toId === memberId) {
+      lines.push({
+        key: `payment-in-${payment.id}`,
+        label: `已收到 ${findMemberName(payment.fromId)}`,
+        amountCents: -payment.amountCents,
+      });
+    }
+  }
+
+  return lines;
+}
+
 function computeSettlements(balanceRows) {
   const creditors = balanceRows.filter((row) => row.balanceCents > 0).map((row) => ({ id: row.id, name: row.name, amountCents: row.balanceCents })).sort((a, b) => b.amountCents - a.amountCents);
   const debtors = balanceRows.filter((row) => row.balanceCents < 0).map((row) => ({ id: row.id, name: row.name, amountCents: Math.abs(row.balanceCents) })).sort((a, b) => b.amountCents - a.amountCents);
@@ -414,6 +459,15 @@ function handleSectionTabClick(event) {
   if (!button) return;
   state.activeSectionTab = button.dataset.sectionTab;
   syncResponsiveSections();
+}
+
+function handleSummaryCardClick(event) {
+  const button = event.target.closest("[data-balance-detail]");
+  if (!button) return;
+
+  state.expandedBalanceMemberId =
+    state.expandedBalanceMemberId === button.dataset.balanceDetail ? "" : button.dataset.balanceDetail;
+  renderSummary();
 }
 
 function syncResponsiveSections() {
@@ -572,7 +626,42 @@ function renderSummary() {
     els.summaryCards.innerHTML = balances.map((row) => {
       const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
       const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
-      return `<article class="summary-card"><strong>${escapeHtml(row.name)}</strong><div>${label}</div><div class="${className}">${formatSignedCurrency(row.balanceCents)}</div></article>`;
+      const details = getBalanceBreakdown(row.id);
+      const isExpanded = state.expandedBalanceMemberId === row.id;
+      const detailMarkup = isExpanded
+        ? `
+          <div class="summary-detail">
+            ${details.length > 0
+              ? details
+                  .map(
+                    (item) => `
+                      <div class="summary-detail-row">
+                        <span>${escapeHtml(item.label)}</span>
+                        <strong class="${item.amountCents >= 0 ? "positive" : "negative"}">${formatSignedCurrency(item.amountCents)}</strong>
+                      </div>
+                    `
+                  )
+                  .join("")
+              : '<div class="summary-detail-empty">目前沒有明細</div>'}
+            <div class="summary-detail-total">
+              <span>合計</span>
+              <strong class="${className}">${formatSignedCurrency(row.balanceCents)}</strong>
+            </div>
+          </div>
+        `
+        : "";
+
+      return `
+        <article class="summary-card">
+          <strong>${escapeHtml(row.name)}</strong>
+          <div>${label}</div>
+          <div class="${className}">${formatSignedCurrency(row.balanceCents)}</div>
+          <button type="button" class="summary-detail-toggle" data-balance-detail="${row.id}">
+            ${isExpanded ? "收起說明" : "怎麼算"}
+          </button>
+          ${detailMarkup}
+        </article>
+      `;
     }).join("");
   }
 

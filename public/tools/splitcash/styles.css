@@ -537,6 +537,52 @@ button:hover,
   font-size: 1.02rem;
 }
 
+.summary-detail-toggle {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(27, 39, 36, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+.summary-detail-toggle:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.summary-detail {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.summary-detail-row,
+.summary-detail-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.summary-detail-row strong,
+.summary-detail-total strong {
+  margin: 0;
+  text-align: right;
+}
+
+.summary-detail-total {
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+
+.summary-detail-empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .summary-card .positive {
   color: var(--accent);
 }
