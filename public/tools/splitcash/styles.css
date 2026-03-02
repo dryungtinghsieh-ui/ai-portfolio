@@ -630,6 +630,18 @@ button:hover,
   margin-top: 14px;
 }
 
+.expense-item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.expense-edit-button {
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--ink) !important;
+  border: 1px solid rgba(27, 39, 36, 0.12) !important;
+}
+
 .empty-state {
   padding: 18px;
   border: 1px dashed rgba(27, 39, 36, 0.18);
@@ -752,6 +764,16 @@ button:hover,
   .split-mode-toggle,
   .participant-option {
     grid-template-columns: 1fr;
+  }
+
+  .expense-item-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .expense-item-actions button {
+    width: 100%;
   }
 
   .section-tabs {

@@ -20,6 +20,7 @@ const state = {
   roomId: "",
   activeSectionTab: "expense",
   expandedBalanceMemberId: "",
+  editingExpenseId: "",
   rooms: [],
   members: [],
   expenses: [],
@@ -56,6 +57,9 @@ const els = {
   memberList: document.getElementById("member-list"),
   memberCount: document.getElementById("member-count"),
   expenseForm: document.getElementById("expense-form"),
+  expenseFormTitle: document.getElementById("expense-form-title"),
+  expenseSubmitButton: document.getElementById("expense-submit-button"),
+  expenseCancelButton: document.getElementById("expense-cancel-button"),
   expensePayerSelect: document.getElementById("expense-payer-select"),
   participantOptions: document.getElementById("participant-options"),
   splitModeHint: document.getElementById("split-mode-hint"),
@@ -84,6 +88,7 @@ function bindEvents() {
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
   els.expenseForm.addEventListener("change", handleExpenseFormChange);
+  els.expenseCancelButton.addEventListener("click", resetExpenseForm);
   els.summaryCards.addEventListener("click", handleSummaryCardClick);
   if (els.sectionTabs) {
     els.sectionTabs.addEventListener("click", handleSectionTabClick);
@@ -235,8 +240,8 @@ function handleExpenseSubmit(event) {
   const customShares = splitMode === "custom" ? getCustomShareAllocations(amountCents) : null;
   if (splitMode === "custom" && !customShares) return;
 
-  state.expenses.unshift({
-    id: createId(),
+  const expenseRecord = {
+    id: state.editingExpenseId || createId(),
     title,
     amountCents,
     payerId,
@@ -245,9 +250,21 @@ function handleExpenseSubmit(event) {
     customShares,
     note,
     createdAt: new Date().toISOString(),
-  });
+  };
 
-  els.expenseForm.reset();
+  if (state.editingExpenseId) {
+    const original = state.expenses.find((expense) => expense.id === state.editingExpenseId);
+    if (original?.createdAt) {
+      expenseRecord.createdAt = original.createdAt;
+    }
+    state.expenses = state.expenses.map((expense) =>
+      expense.id === state.editingExpenseId ? expenseRecord : expense
+    );
+  } else {
+    state.expenses.unshift(expenseRecord);
+  }
+
+  resetExpenseForm();
   render();
   queueSave();
 }
@@ -279,8 +296,60 @@ function removeMember(memberId) {
 
 function removeExpense(expenseId) {
   state.expenses = state.expenses.filter((expense) => expense.id !== expenseId);
+  if (state.editingExpenseId === expenseId) {
+    resetExpenseForm();
+  }
   render();
   queueSave();
+}
+
+function startEditingExpense(expenseId) {
+  const expense = state.expenses.find((item) => item.id === expenseId);
+  if (!expense) return;
+
+  state.editingExpenseId = expenseId;
+  updateExpenseFormModeUI();
+
+  els.expenseForm.querySelector('[name="title"]').value = expense.title;
+  els.expenseForm.querySelector('[name="amount"]').value = (expense.amountCents / 100).toFixed(2);
+  els.expensePayerSelect.value = expense.payerId;
+  els.expenseForm.querySelector('[name="note"]').value = expense.note || "";
+
+  const splitModeInput = els.expenseForm.querySelector(`input[name="splitMode"][value="${expense.splitMode || "equal"}"]`);
+  if (splitModeInput) {
+    splitModeInput.checked = true;
+  }
+
+  const selectedParticipantIds = new Set(expense.participantIds || []);
+  const customShareMap = new Map(
+    (expense.customShares || []).map((share) => [share.memberId, (share.amountCents / 100).toFixed(2)])
+  );
+
+  Array.from(els.participantOptions.querySelectorAll('input[type="checkbox"]')).forEach((checkbox) => {
+    checkbox.checked = selectedParticipantIds.has(checkbox.value);
+    const shareInput = els.participantOptions.querySelector(`[data-share-input="${checkbox.value}"]`);
+    if (shareInput instanceof HTMLInputElement) {
+      shareInput.value = customShareMap.get(checkbox.value) || "";
+    }
+  });
+
+  syncSplitModeUI();
+  els.expenseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function resetExpenseForm() {
+  state.editingExpenseId = "";
+  els.expenseForm.reset();
+  updateExpenseFormModeUI();
+  renderPayerOptions();
+  renderParticipantOptions();
+}
+
+function updateExpenseFormModeUI() {
+  const isEditing = Boolean(state.editingExpenseId);
+  els.expenseFormTitle.textContent = isEditing ? "編輯支出" : "新增支出";
+  els.expenseSubmitButton.textContent = isEditing ? "儲存修改" : "新增支出";
+  els.expenseCancelButton.hidden = !isEditing;
 }
 
 function recordSettlement(fromId, toId, amountCents) {
@@ -430,6 +499,7 @@ function computeSettlements(balanceRows) {
 function render() {
   updateAppVisibility();
   syncResponsiveSections();
+  updateExpenseFormModeUI();
   renderRoomList();
   renderMembers();
   renderParticipantOptions();
@@ -601,12 +671,18 @@ function renderExpenses() {
         </div>
         <footer>
           <small>${formatDate(expense.createdAt)}</small>
-          <button type="button" data-remove-expense="${expense.id}">刪除</button>
+          <div class="expense-item-actions">
+            <button type="button" class="ghost-button expense-edit-button" data-edit-expense="${expense.id}">編輯</button>
+            <button type="button" data-remove-expense="${expense.id}">刪除</button>
+          </div>
         </footer>
       </article>
     `;
   }).join("");
 
+  Array.from(els.expenseList.querySelectorAll("[data-edit-expense]")).forEach((button) => {
+    button.addEventListener("click", () => startEditingExpense(button.dataset.editExpense));
+  });
   Array.from(els.expenseList.querySelectorAll("[data-remove-expense]")).forEach((button) => {
     button.addEventListener("click", () => removeExpense(button.dataset.removeExpense));
   });
