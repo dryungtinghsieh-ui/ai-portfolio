@@ -155,8 +155,8 @@ async function handleRoomSubmit(event) {
     showToast("請輸入房間代碼與密碼");
     return;
   }
-  if (roomSecret.length < 8) {
-    showToast("房間密碼至少需要 8 碼");
+  if (!/^\d{4}$/.test(roomSecret)) {
+    showToast("房間 PIN 需要 4 碼數字");
     return;
   }
 

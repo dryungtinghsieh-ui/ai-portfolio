@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260301h" />
+    <link rel="stylesheet" href="./styles.css?v=20260301i" />
   </head>
   <body>
     <div class="page-shell">
@@ -52,7 +52,7 @@
               </label>
               <label>
                 房間密碼
-                <input id="room-secret-input" name="roomSecret" type="password" placeholder="至少 8 碼" required />
+                <input id="room-secret-input" name="roomSecret" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="4 碼 PIN" required />
               </label>
               <div class="actions">
                 <button type="submit">進入房間</button>
@@ -168,6 +168,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260301h"></script>
+    <script type="module" src="./app.js?v=20260301i"></script>
   </body>
 </html>
