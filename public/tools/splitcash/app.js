@@ -36,7 +36,6 @@ const els = {
   roomForm: document.getElementById("room-form"),
   roomCodeInput: document.getElementById("room-code-input"),
   roomSecretInput: document.getElementById("room-secret-input"),
-  copyShareLinkButton: document.getElementById("copy-share-link-button"),
   leaveRoomButton: document.getElementById("leave-room-button"),
   roomEntrySection: document.getElementById("room-entry-section"),
   roomDiscoverySection: document.getElementById("room-discovery-section"),
@@ -80,7 +79,6 @@ function init() {
 
 function bindEvents() {
   els.roomForm.addEventListener("submit", handleRoomSubmit);
-  els.copyShareLinkButton.addEventListener("click", copyShareLink);
   els.leaveRoomButton.addEventListener("click", leaveRoom);
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
@@ -837,17 +835,6 @@ function hasFirebaseConfig() {
 async function sha256Hex(value) {
   const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(buffer)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-function copyShareLink() {
-  const roomCode = els.roomCodeInput.value.trim();
-  if (!roomCode) {
-    showToast("請先輸入房間代碼");
-    return;
-  }
-  const url = new URL(window.location.href);
-  url.searchParams.set("room", roomCode);
-  navigator.clipboard.writeText(url.toString()).then(() => showToast("分享連結已複製")).catch(() => showToast("複製分享連結失敗"));
 }
 
 function updateRoomStatus(syncStatus, roomStatus) {
