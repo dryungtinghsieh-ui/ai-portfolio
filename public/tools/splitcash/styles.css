@@ -425,6 +425,12 @@ button:hover,
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
+.member-balance-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
 .member-chip,
 .participant-option,
 .summary-card,
@@ -529,6 +535,30 @@ button:hover,
 
 .summary-card {
   padding: 16px;
+}
+
+.member-balance-card {
+  display: grid;
+  gap: 8px;
+}
+
+.member-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.member-remove-button {
+  padding: 8px 12px;
+  background: rgba(180, 35, 24, 0.1);
+  color: var(--danger);
+  box-shadow: none;
+}
+
+.member-balance-label {
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
 .summary-card strong {

@@ -55,6 +55,7 @@ const els = {
   memberForm: document.getElementById("member-form"),
   memberNameInput: document.getElementById("member-name-input"),
   memberList: document.getElementById("member-list"),
+  memberSettlementList: document.getElementById("member-settlement-list"),
   memberCount: document.getElementById("member-count"),
   expenseForm: document.getElementById("expense-form"),
   expenseFormTitle: document.getElementById("expense-form-title"),
@@ -86,6 +87,7 @@ function bindEvents() {
   els.roomForm.addEventListener("submit", handleRoomSubmit);
   els.leaveRoomButton.addEventListener("click", leaveRoom);
   els.memberForm.addEventListener("submit", handleMemberSubmit);
+  els.memberList.addEventListener("click", handleMemberListClick);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
   els.expenseForm.addEventListener("change", handleExpenseFormChange);
   els.expenseCancelButton.addEventListener("click", resetExpenseForm);
@@ -539,9 +541,25 @@ function handleSectionTabClick(event) {
 function handleSummaryCardClick(event) {
   const button = event.target.closest("[data-balance-detail]");
   if (!button) return;
+  toggleBalanceDetail(button.dataset.balanceDetail);
+}
 
-  state.expandedBalanceMemberId =
-    state.expandedBalanceMemberId === button.dataset.balanceDetail ? "" : button.dataset.balanceDetail;
+function handleMemberListClick(event) {
+  const detailButton = event.target.closest("[data-balance-detail]");
+  if (detailButton) {
+    toggleBalanceDetail(detailButton.dataset.balanceDetail);
+    return;
+  }
+
+  const removeButton = event.target.closest("[data-remove-member]");
+  if (removeButton) {
+    removeMember(removeButton.dataset.removeMember);
+  }
+}
+
+function toggleBalanceDetail(memberId) {
+  state.expandedBalanceMemberId = state.expandedBalanceMemberId === memberId ? "" : memberId;
+  renderMembers();
   renderSummary();
 }
 
@@ -606,18 +624,20 @@ function renderMembers() {
   if (state.members.length === 0) {
     els.memberList.className = "chip-list empty-state";
     els.memberList.textContent = "還沒有成員";
+    renderSettlementList(els.memberSettlementList, []);
     return;
   }
-  els.memberList.className = "chip-list";
-  els.memberList.innerHTML = state.members.map((member) => `
-    <article class="member-chip">
-      <strong>${escapeHtml(member.name)}</strong>
-      <button type="button" data-remove-member="${member.id}">刪除</button>
-    </article>
-  `).join("");
-  Array.from(els.memberList.querySelectorAll("[data-remove-member]")).forEach((button) => {
-    button.addEventListener("click", () => removeMember(button.dataset.removeMember));
-  });
+  const balances = computeBalances();
+  const balanceMap = new Map(balances.map((row) => [row.id, row]));
+  const settlements = computeSettlements(balances);
+
+  els.memberList.className = "member-balance-list";
+  els.memberList.innerHTML = state.members.map((member) => {
+    const row = balanceMap.get(member.id) || { id: member.id, name: member.name, balanceCents: 0 };
+    return getBalanceCardMarkup(row, { removable: true });
+  }).join("");
+
+  renderSettlementList(els.memberSettlementList, settlements);
 }
 
 function renderParticipantOptions() {
@@ -704,71 +724,87 @@ function renderSummary() {
     els.summaryCards.textContent = "新增成員後會在這裡顯示每個人的淨額";
   } else {
     els.summaryCards.className = "summary-cards";
-    els.summaryCards.innerHTML = balances.map((row) => {
-      const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
-      const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
-      const details = getBalanceBreakdown(row.id);
-      const isExpanded = state.expandedBalanceMemberId === row.id;
-      const detailMarkup = isExpanded
-        ? `
-          <div class="summary-detail">
-            ${details.length > 0
-              ? details
-                  .map(
-                    (item) => `
-                      <div class="summary-detail-row">
-                        <span>${escapeHtml(item.label)}</span>
-                        <strong class="${item.amountCents >= 0 ? "positive" : "negative"}">${formatSignedCurrency(item.amountCents)}</strong>
-                      </div>
-                    `
-                  )
-                  .join("")
-              : '<div class="summary-detail-empty">目前沒有明細</div>'}
-            <div class="summary-detail-total">
-              <span>合計</span>
-              <strong class="${className}">${formatSignedCurrency(row.balanceCents)}</strong>
-            </div>
-          </div>
-        `
-        : "";
-
-      return `
-        <article class="summary-card">
-          <strong>${escapeHtml(row.name)}</strong>
-          <div>${label}</div>
-          <div class="${className}">${formatSignedCurrency(row.balanceCents)}</div>
-          <button type="button" class="summary-detail-toggle" data-balance-detail="${row.id}">
-            ${isExpanded ? "收起說明" : "怎麼算"}
-          </button>
-          ${detailMarkup}
-        </article>
-      `;
-    }).join("");
+    els.summaryCards.innerHTML = balances.map((row) => getBalanceCardMarkup(row)).join("");
   }
 
-  if (settlements.length === 0) {
-    els.settlementList.className = "settlement-list empty-state";
-    els.settlementList.textContent = "目前沒有待結算款項";
-  } else {
-    els.settlementList.className = "settlement-list";
-    els.settlementList.innerHTML = settlements.map((item) => `
-      <article class="settlement-item">
-        <div class="settlement-row">
-          <div><strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong><div>${formatCurrency(item.amountCents)}</div></div>
-          <button type="button" class="settlement-action" data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}">記錄已結算</button>
-        </div>
-      </article>
-    `).join("");
-    Array.from(els.settlementList.querySelectorAll("[data-record-settlement]")).forEach((button) => {
-      button.addEventListener("click", () => {
-        const [fromId, toId, amountCents] = button.dataset.recordSettlement.split("|");
-        recordSettlement(fromId, toId, Number(amountCents));
-      });
-    });
-  }
+  renderSettlementList(els.settlementList, settlements);
 
   renderPaymentHistory();
 }
+
+function getBalanceCardMarkup(row, options = {}) {
+  const className = row.balanceCents > 0 ? "positive" : row.balanceCents < 0 ? "negative" : "";
+  const label = row.balanceCents > 0 ? "應收" : row.balanceCents < 0 ? "應付" : "已平衡";
+  const details = getBalanceBreakdown(row.id);
+  const isExpanded = state.expandedBalanceMemberId === row.id;
+  const removeButton = options.removable
+    ? `<button type="button" class="member-remove-button" data-remove-member="${row.id}">刪除</button>`
+    : "";
+  const detailMarkup = isExpanded
+    ? `
+      <div class="summary-detail">
+        ${details.length > 0
+          ? details
+              .map(
+                (item) => `
+                  <div class="summary-detail-row">
+                    <span>${escapeHtml(item.label)}</span>
+                    <strong class="${item.amountCents >= 0 ? "positive" : "negative"}">${formatSignedCurrency(item.amountCents)}</strong>
+                  </div>
+                `
+              )
+              .join("")
+          : '<div class="summary-detail-empty">目前沒有明細</div>'}
+        <div class="summary-detail-total">
+          <span>合計</span>
+          <strong class="${className}">${formatSignedCurrency(row.balanceCents)}</strong>
+        </div>
+      </div>
+    `
+    : "";
+
+  return `
+    <article class="summary-card member-balance-card">
+      <div class="member-card-head">
+        <strong>${escapeHtml(row.name)}</strong>
+        ${removeButton}
+      </div>
+      <div class="member-balance-label">${label}</div>
+      <div class="${className}">${formatSignedCurrency(row.balanceCents)}</div>
+      <button type="button" class="summary-detail-toggle" data-balance-detail="${row.id}">
+        ${isExpanded ? "收起說明" : "怎麼算"}
+      </button>
+      ${detailMarkup}
+    </article>
+  `;
+}
+
+function renderSettlementList(container, settlements) {
+  if (!container) return;
+  if (settlements.length === 0) {
+    container.className = "settlement-list empty-state";
+    container.textContent = "目前沒有待結算款項";
+    return;
+  }
+
+  container.className = "settlement-list";
+  container.innerHTML = settlements.map((item) => `
+    <article class="settlement-item">
+      <div class="settlement-row">
+        <div><strong>${escapeHtml(item.from)} -> ${escapeHtml(item.to)}</strong><div>${formatCurrency(item.amountCents)}</div></div>
+        <button type="button" class="settlement-action" data-record-settlement="${item.fromId}|${item.toId}|${item.amountCents}">記錄已結算</button>
+      </div>
+    </article>
+  `).join("");
+
+  Array.from(container.querySelectorAll("[data-record-settlement]")).forEach((button) => {
+    button.addEventListener("click", () => {
+      const [fromId, toId, amountCents] = button.dataset.recordSettlement.split("|");
+      recordSettlement(fromId, toId, Number(amountCents));
+    });
+  });
+}
+
 function renderPaymentHistory() {
   if (state.payments.length === 0) {
     els.paymentHistory.className = "payment-history empty-state";
