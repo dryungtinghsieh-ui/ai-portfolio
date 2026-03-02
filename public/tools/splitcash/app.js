@@ -308,7 +308,9 @@ function startEditingExpense(expenseId) {
   if (!expense) return;
 
   state.editingExpenseId = expenseId;
+  state.activeSectionTab = "expense";
   updateExpenseFormModeUI();
+  syncResponsiveSections();
 
   els.expenseForm.querySelector('[name="title"]').value = expense.title;
   els.expenseForm.querySelector('[name="amount"]').value = (expense.amountCents / 100).toFixed(2);
@@ -334,7 +336,10 @@ function startEditingExpense(expenseId) {
   });
 
   syncSplitModeUI();
-  els.expenseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  requestAnimationFrame(() => {
+    els.expenseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    els.expenseForm.querySelector('[name="title"]').focus();
+  });
 }
 
 function resetExpenseForm() {
