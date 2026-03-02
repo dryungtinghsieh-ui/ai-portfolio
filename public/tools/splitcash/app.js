@@ -41,8 +41,6 @@ const els = {
   leaveRoomButton: document.getElementById("leave-room-button"),
   roomEntrySection: document.getElementById("room-entry-section"),
   roomDiscoverySection: document.getElementById("room-discovery-section"),
-  activeRoomSummary: document.getElementById("active-room-summary"),
-  activeRoomCode: document.getElementById("active-room-code"),
   sectionTabs: document.getElementById("section-tabs"),
   roomStatus: document.getElementById("room-status"),
   syncStatus: document.getElementById("sync-status"),
@@ -520,8 +518,6 @@ function updateAppVisibility() {
   els.leaveRoomButton.hidden = !hasActiveRoom;
   els.roomEntrySection.hidden = hasActiveRoom;
   els.roomDiscoverySection.hidden = hasActiveRoom;
-  els.activeRoomSummary.hidden = !hasActiveRoom;
-  els.activeRoomCode.textContent = hasActiveRoom ? state.roomCode : "-";
   if (els.sectionTabs) {
     els.sectionTabs.hidden = !hasActiveRoom;
   }
