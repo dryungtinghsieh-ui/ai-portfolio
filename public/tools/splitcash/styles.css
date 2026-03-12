@@ -100,6 +100,10 @@ h1 {
   flex-wrap: wrap;
 }
 
+.room-status-display[hidden] {
+  display: none !important;
+}
+
 .room-status-text {
   margin: 0;
   color: var(--muted);

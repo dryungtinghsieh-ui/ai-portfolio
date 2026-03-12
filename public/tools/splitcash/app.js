@@ -519,13 +519,14 @@ function render() {
 
 function updateAppVisibility() {
   const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  const showCompactRoomStatus = hasActiveRoom && window.matchMedia("(max-width: 640px)").matches;
   document.body.classList.toggle("has-active-room", hasActiveRoom);
   [els.memberSection, els.expenseSection, els.summarySection, els.historySection].forEach((section) => {
     if (section) section.classList.toggle("is-hidden", !hasActiveRoom);
   });
   els.leaveRoomButton.hidden = !hasActiveRoom;
   if (els.roomStatusDisplay) {
-    els.roomStatusDisplay.hidden = !hasActiveRoom;
+    els.roomStatusDisplay.hidden = !showCompactRoomStatus;
   }
   if (els.roomPanel) {
     els.roomPanel.hidden = hasActiveRoom;
