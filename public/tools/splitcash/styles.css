@@ -126,7 +126,7 @@ h1 {
 }
 
 .hero-badge {
-  display: grid;
+  display: none;
   gap: 10px;
   min-width: 220px;
   padding: 18px 20px;
