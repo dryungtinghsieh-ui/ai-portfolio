@@ -183,7 +183,7 @@ h1 {
 }
 
 .has-active-room .hero-badge {
-  display: none;
+  display: grid;
 }
 
 .has-active-room .hero > div:first-child {

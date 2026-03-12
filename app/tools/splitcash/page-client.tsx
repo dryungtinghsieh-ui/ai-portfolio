@@ -20,15 +20,15 @@ export function SplitCashPageClient({ room }: SplitCashPageClientProps) {
     : '/tools/splitcash/index.html';
 
   return (
-    <main className="min-h-screen bg-[#161d1b] text-stone-100">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6">
-        <div className="overflow-hidden">
+    <main className="min-h-[100dvh] bg-[#161d1b] text-stone-100">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-0 py-0 sm:px-6 sm:py-4">
+        <div className="overflow-hidden sm:rounded-[28px]">
           <iframe
             title="SplitCash"
             src={iframeSrc}
             loading="eager"
             allowFullScreen
-            className="h-[92vh] w-full border-0"
+            className="h-[100dvh] w-full border-0 sm:h-[92vh]"
           />
         </div>
       </div>
