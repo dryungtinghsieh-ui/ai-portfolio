@@ -9,11 +9,16 @@
   --accent: #0f766e;
   --danger: #b42318;
   --shadow: 0 24px 70px rgba(35, 51, 46, 0.12);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
   font-family: "Manrope", sans-serif;
 }
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -202,6 +207,7 @@ h1 {
   border-radius: 26px;
   background: var(--panel);
   box-shadow: var(--shadow);
+  scroll-margin-top: 88px;
 }
 
 .wide-panel {
@@ -790,10 +796,20 @@ button:hover,
   .section-tabs {
     display: grid;
     position: sticky;
-    top: 8px;
-    z-index: 5;
+    top: calc(var(--safe-top) + 8px);
+    z-index: 20;
     gap: 6px;
     padding: 6px;
+    border-color: rgba(255, 255, 255, 0.68);
+    background: rgba(255, 251, 245, 0.9);
+  }
+
+  .room-status-text strong,
+  .expense-item strong span,
+  .settlement-item strong,
+  .member-balance-card .positive,
+  .member-balance-card .negative {
+    overflow-wrap: anywhere;
   }
 
   .panel-head {
@@ -830,7 +846,7 @@ button:hover,
 @media (max-width: 640px) {
   .page-shell {
     width: min(100% - 16px, 1180px);
-    padding: 10px 0 40px;
+    padding: calc(var(--safe-top) + 10px) 0 calc(var(--safe-bottom) + 40px);
   }
 
   .app-grid {
@@ -891,6 +907,10 @@ button:hover,
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    padding: 10px 12px;
+    border: 1px solid rgba(15, 118, 110, 0.12);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.72);
   }
 
   .has-active-room .room-status-text {
@@ -914,6 +934,9 @@ button:hover,
   .inline-form,
   .actions,
   .room-item,
+  .member-card-head,
+  .summary-detail-row,
+  .summary-detail-total,
   .expense-item footer,
   .settlement-row {
     flex-direction: column;
@@ -971,9 +994,17 @@ button:hover,
     width: 100%;
   }
 
+  .member-remove-button,
+  .summary-detail-toggle,
+  .settlement-action,
+  .expense-item footer button {
+    width: 100%;
+  }
+
   .panel-head {
     margin-bottom: 10px;
     gap: 8px;
+    align-items: flex-start;
   }
 
   .panel-head h2 {
@@ -988,7 +1019,8 @@ button:hover,
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 4px;
     padding: 4px;
-    top: 6px;
+    top: calc(var(--safe-top) + 6px);
+    border-radius: 18px;
   }
 
   .section-tab {
@@ -1040,6 +1072,40 @@ button:hover,
     line-height: 1.5;
   }
 
+  .member-balance-list,
+  .summary-cards,
+  .room-list,
+  .chip-list,
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .member-chip,
+  .summary-card,
+  .settlement-item,
+  .expense-item,
+  .room-item,
+  .participant-option {
+    border-radius: 16px;
+  }
+
+  .expense-item,
+  .settlement-item,
+  .summary-card {
+    padding: 14px;
+  }
+
+  .expense-meta {
+    display: grid;
+    gap: 6px;
+  }
+
+  .expense-item small,
+  .expense-meta,
+  .room-meta {
+    line-height: 1.5;
+  }
+
   .room-status-text {
     font-size: 0.88rem;
     margin: 0;
@@ -1047,5 +1113,14 @@ button:hover,
 
   .room-status-display {
     margin: 8px 0 0;
+  }
+
+  .toast {
+    left: 12px;
+    right: 12px;
+    bottom: calc(var(--safe-bottom) + 12px);
+    max-width: none;
+    padding: 12px 14px;
+    border-radius: 14px;
   }
 }

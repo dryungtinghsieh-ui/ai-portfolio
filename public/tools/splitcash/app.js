@@ -341,7 +341,7 @@ function startEditingExpense(expenseId) {
 
   syncSplitModeUI();
   requestAnimationFrame(() => {
-    els.expenseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollSectionIntoView(els.expenseSection);
     els.expenseForm.querySelector('[name="title"]').focus();
   });
 }
@@ -544,6 +544,7 @@ function handleSectionTabClick(event) {
   if (!button) return;
   state.activeSectionTab = button.dataset.sectionTab;
   syncResponsiveSections();
+  focusActiveSectionOnMobile();
 }
 
 function handleMemberListClick(event) {
@@ -586,6 +587,27 @@ function syncResponsiveSections() {
     button.classList.toggle("is-active", button.dataset.sectionTab === state.activeSectionTab);
     button.setAttribute("aria-pressed", button.dataset.sectionTab === state.activeSectionTab ? "true" : "false");
   });
+}
+
+function focusActiveSectionOnMobile() {
+  if (!window.matchMedia("(max-width: 960px)").matches) return;
+  const sectionMap = {
+    member: els.memberSection,
+    expense: els.expenseSection,
+    summary: els.summarySection,
+    history: els.historySection,
+  };
+  const activeSection = sectionMap[state.activeSectionTab];
+  if (!activeSection) return;
+  requestAnimationFrame(() => scrollSectionIntoView(activeSection));
+}
+
+function scrollSectionIntoView(section) {
+  if (!section) return;
+  const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+  const tabsHeight = els.sectionTabs && !els.sectionTabs.hidden ? els.sectionTabs.getBoundingClientRect().height : 0;
+  const offset = tabsHeight + 24;
+  window.scrollTo({ top: Math.max(0, sectionTop - offset), behavior: "smooth" });
 }
 
 function renderRoomList() {
