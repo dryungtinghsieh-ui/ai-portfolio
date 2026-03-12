@@ -16,6 +16,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -86,6 +92,26 @@ h1 {
   color: var(--muted);
 }
 
+.room-status-display {
+  margin: 14px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.room-status-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.room-status-text strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .hero-badge,
 .panel {
   backdrop-filter: blur(18px);
@@ -121,6 +147,26 @@ h1 {
 
 .hero-leave-button:hover {
   box-shadow: none;
+}
+
+.has-active-room .eyebrow {
+  display: none;
+}
+
+.has-active-room .hero-copy {
+  display: none;
+}
+
+.has-active-room .room-status-display {
+  display: flex;
+}
+
+.has-active-room .hero-badge {
+  display: none;
+}
+
+.has-active-room .hero > div:first-child {
+  flex: 1;
 }
 
 .app-grid {
@@ -372,6 +418,7 @@ select {
   background: rgba(255, 255, 255, 0.8);
   color: var(--ink);
   font: inherit;
+  font-size: 16px;
 }
 
 input:focus,
@@ -714,6 +761,10 @@ button:hover,
 }
 
 @media (max-width: 960px) {
+  .app-grid {
+    gap: 12px;
+  }
+
   .hero,
   .panel,
   .wide-panel {
@@ -723,8 +774,23 @@ button:hover,
   .section-tabs {
     display: grid;
     position: sticky;
-    top: 12px;
+    top: 8px;
     z-index: 5;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .panel-head {
+    margin-bottom: 12px;
+  }
+
+  .panel-head h2,
+  h2 {
+    font-size: 1rem;
+  }
+
+  .panel-head span {
+    font-size: 0.85rem;
   }
 
   .app-section.mobile-tab-hidden {
@@ -747,53 +813,65 @@ button:hover,
 
 @media (max-width: 640px) {
   .page-shell {
-    width: min(100% - 20px, 1180px);
-    padding-top: 18px;
+    width: min(100% - 16px, 1180px);
+    padding: 10px 0 40px;
+  }
+
+  .app-grid {
+    gap: 10px;
   }
 
   .panel,
   .hero {
-    padding: 18px;
-    border-radius: 22px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    margin-bottom: 0;
+  }
+
+  .hero {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-copy {
+    margin: 6px 0 0;
+    line-height: 1.5;
+    font-size: 0.93rem;
   }
 
   .active-room-summary {
-    padding: 16px;
-    border-radius: 18px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    gap: 6px;
+    margin-bottom: 4px;
   }
 
   .has-active-room .hero {
     display: block;
-    padding: 12px;
-    border-radius: 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    margin-bottom: 2px;
   }
 
-  .has-active-room .hero > :first-child {
+  .has-active-room .hero > div:first-child {
+    width: 100%;
+  }
+
+  .has-active-room .eyebrow {
     display: none;
   }
 
+  .has-active-room .hero-copy {
+    display: none;
+  }
+
+  .has-active-room .room-status-display {
+    margin: 8px 0 0;
+    display: flex !important;
+  }
+
   .has-active-room .hero-badge {
-    min-width: 0;
-    width: 100%;
-    padding: 14px;
-    gap: 8px;
-    border-radius: 18px;
-  }
-
-  .has-active-room .hero-badge span {
-    margin: 0;
-    font-size: 0.78rem;
-  }
-
-  .has-active-room .hero-badge strong {
-    font-size: 1.25rem;
-    line-height: 1.15;
-    word-break: break-word;
-    overflow-wrap: anywhere;
-  }
-
-  .has-active-room .hero-leave-button {
-    width: 100%;
+    display: none;
   }
 
   .inline-form,
@@ -803,18 +881,20 @@ button:hover,
   .settlement-row {
     flex-direction: column;
     align-items: stretch;
+    gap: 6px;
   }
 
   button,
   .ghost-button,
   .upload-button {
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    border-radius: 20px;
+    padding: 9px 12px;
+    font-size: 0.88rem;
+    border-radius: 18px;
+    min-height: 44px;
   }
 
   .actions {
-    gap: 8px;
+    gap: 6px;
   }
 
   .app-grid.room-only .actions button,
@@ -822,8 +902,8 @@ button:hover,
   .actions button,
   .actions .ghost-button {
     flex: 0 0 auto;
-    min-height: 52px;
-    padding: 10px 14px;
+    min-height: 44px;
+    padding: 9px 12px;
     width: 100%;
   }
 
@@ -831,7 +911,7 @@ button:hover,
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
-    gap: 8px;
+    gap: 6px;
   }
 
   .room-item-actions button {
@@ -847,17 +927,88 @@ button:hover,
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
+    gap: 6px;
   }
 
   .expense-item-actions button {
     width: 100%;
   }
 
+  .panel-head {
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  .panel-head h2 {
+    font-size: 0.95rem;
+  }
+
+  .panel-head span {
+    font-size: 0.8rem;
+  }
+
   .section-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    top: 6px;
+  }
+
+  .section-tab {
+    padding: 8px 10px;
+    min-height: 40px;
+    font-size: 0.8rem;
   }
 
   h1 {
-    font-size: 2.7rem;
+    font-size: 2.4rem;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    margin: 0 0 4px;
+  }
+
+  .stack-form,
+  .expense-form {
+    gap: 10px;
+  }
+
+  input,
+  select {
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+
+  label {
+    gap: 6px;
+    font-size: 0.85rem;
+  }
+
+  fieldset {
+    padding: 10px;
+    border-radius: 14px;
+    margin: 0;
+  }
+
+  legend {
+    padding: 0 6px;
+    font-size: 0.8rem;
+  }
+
+  .hint {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .room-status-text {
+    font-size: 0.88rem;
+    margin: 0;
+  }
+
+  .room-status-display {
+    margin: 8px 0 0;
   }
 }

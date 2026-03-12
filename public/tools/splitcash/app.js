@@ -44,6 +44,8 @@ const els = {
   roomDiscoverySection: document.getElementById("room-discovery-section"),
   sectionTabs: document.getElementById("section-tabs"),
   roomStatus: document.getElementById("room-status"),
+  roomStatusDisplay: document.getElementById("room-status-display"),
+  roomStatusName: document.getElementById("room-status-name"),
   syncStatus: document.getElementById("sync-status"),
   appGrid: document.getElementById("app-grid"),
   roomListPanel: document.getElementById("room-list-panel"),
@@ -518,6 +520,9 @@ function updateAppVisibility() {
     if (section) section.classList.toggle("is-hidden", !hasActiveRoom);
   });
   els.leaveRoomButton.hidden = !hasActiveRoom;
+  if (els.roomStatusDisplay) {
+    els.roomStatusDisplay.hidden = !hasActiveRoom;
+  }
   if (els.roomPanel) {
     els.roomPanel.hidden = hasActiveRoom;
   }
@@ -1025,6 +1030,12 @@ async function sha256Hex(value) {
 function updateRoomStatus(syncStatus, roomStatus) {
   els.syncStatus.textContent = syncStatus;
   els.roomStatus.textContent = roomStatus;
+  
+  // Update room status display if in active room
+  const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  if (hasActiveRoom && els.roomStatusName) {
+    els.roomStatusName.textContent = roomStatus;
+  }
 }
 
 function showToast(message) {

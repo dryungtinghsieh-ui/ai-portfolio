@@ -25,7 +25,6 @@ export function SplitCashPageClient({ room }: SplitCashPageClientProps) {
         <div className="flex items-center justify-between gap-3">
           <div>
             <h1 className="text-lg font-semibold">SplitCash</h1>
-            <p className="text-sm text-stone-300">Private shared expense tool</p>
           </div>
         </div>
         <div className="overflow-hidden rounded-xl border border-white/10 bg-black/20 shadow-2xl">
