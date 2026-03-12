@@ -112,6 +112,14 @@ h1 {
   font-weight: 700;
 }
 
+.leave-room-compact {
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  border-radius: 16px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .hero-badge,
 .panel {
   backdrop-filter: blur(18px);
@@ -150,6 +158,10 @@ h1 {
 }
 
 .has-active-room .eyebrow {
+  display: none;
+}
+
+.has-active-room h1 {
   display: none;
 }
 
@@ -861,6 +873,10 @@ button:hover,
     display: none;
   }
 
+  .has-active-room h1 {
+    display: none;
+  }
+
   .has-active-room .hero-copy {
     display: none;
   }
@@ -868,6 +884,23 @@ button:hover,
   .has-active-room .room-status-display {
     margin: 8px 0 0;
     display: flex !important;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .has-active-room .room-status-text {
+    font-size: 0.85rem;
+    margin: 0;
+    flex: 1;
+  }
+
+  .has-active-room .leave-room-compact {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-height: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .has-active-room .hero-badge {

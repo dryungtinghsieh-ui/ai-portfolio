@@ -39,6 +39,7 @@ const els = {
   roomCodeInput: document.getElementById("room-code-input"),
   roomSecretInput: document.getElementById("room-secret-input"),
   leaveRoomButton: document.getElementById("leave-room-button"),
+  leaveRoomButtonCompact: document.getElementById("leave-room-button-compact"),
   roomPanel: document.getElementById("room-panel"),
   roomEntrySection: document.getElementById("room-entry-section"),
   roomDiscoverySection: document.getElementById("room-discovery-section"),
@@ -85,6 +86,9 @@ function init() {
 function bindEvents() {
   els.roomForm.addEventListener("submit", handleRoomSubmit);
   els.leaveRoomButton.addEventListener("click", leaveRoom);
+  if (els.leaveRoomButtonCompact) {
+    els.leaveRoomButtonCompact.addEventListener("click", leaveRoom);
+  }
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.memberList.addEventListener("click", handleMemberListClick);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
