@@ -190,6 +190,21 @@ h1 {
   flex: 1;
 }
 
+@media (min-width: 641px) {
+  .has-active-room .hero {
+    justify-content: flex-end;
+    align-items: stretch;
+  }
+
+  .has-active-room .hero > div:first-child {
+    display: none;
+  }
+
+  .has-active-room .hero-badge {
+    width: min(100%, 320px);
+  }
+}
+
 .app-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
