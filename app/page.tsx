@@ -193,8 +193,14 @@ export default function Home() {
                 >
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
-                    focused on AI-assisted S-parameter prediction, TDR interpretation, and hybrid
-                    neural-network systems.
+                    with <span className="text-cyan-300">4+ years of Signal Integrity expertise</span> and{' '}
+                    <span className="text-cyan-300">7+ years of AI experience</span>. Proficient in AI & LLM
+                    technologies including Skills, MCP, and RAG for real-world applications.
+                  </p>
+                  <p className="mt-3 text-xs leading-relaxed text-gray-300 sm:text-sm">
+                    <span className="text-blue-300">Software:</span> HFSS, CAD tools, Python, C, Java
+                    <br />
+                    <span className="text-blue-300">Hardware:</span> VNA, Oscilloscopes, Lab Instrumentation
                   </p>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
                     4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
