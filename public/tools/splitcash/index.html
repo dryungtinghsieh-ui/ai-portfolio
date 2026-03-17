@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>SplitCash</title>
     <meta
       name="description"
@@ -14,7 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260302a" />
+    <link rel="stylesheet" href="./styles.css?v=20260312b" />
   </head>
   <body>
     <div class="page-shell">
@@ -26,6 +26,10 @@
             給私下分帳用的小工具。每個房間都用密碼保護，資料會透過 Firebase 即時同步，適合旅遊、
             聚餐、室友和小型團隊記帳。
           </p>
+          <div id="room-status-display" class="room-status-display" hidden>
+            <p class="room-status-text"><span id="room-status-label">同步完成</span>：<strong id="room-status-name">--</strong></p>
+            <button id="leave-room-button-compact" class="ghost-button leave-room-compact" type="button">離開</button>
+          </div>
         </div>
         <div class="hero-badge">
           <span id="sync-status">等待連線</span>
@@ -165,6 +169,6 @@
     <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="./firebase-config.js"></script>
-    <script type="module" src="./app.js?v=20260302a"></script>
+    <script type="module" src="./app.js?v=20260312b"></script>
   </body>
 </html>

@@ -39,11 +39,14 @@ const els = {
   roomCodeInput: document.getElementById("room-code-input"),
   roomSecretInput: document.getElementById("room-secret-input"),
   leaveRoomButton: document.getElementById("leave-room-button"),
+  leaveRoomButtonCompact: document.getElementById("leave-room-button-compact"),
   roomPanel: document.getElementById("room-panel"),
   roomEntrySection: document.getElementById("room-entry-section"),
   roomDiscoverySection: document.getElementById("room-discovery-section"),
   sectionTabs: document.getElementById("section-tabs"),
   roomStatus: document.getElementById("room-status"),
+  roomStatusDisplay: document.getElementById("room-status-display"),
+  roomStatusName: document.getElementById("room-status-name"),
   syncStatus: document.getElementById("sync-status"),
   appGrid: document.getElementById("app-grid"),
   roomListPanel: document.getElementById("room-list-panel"),
@@ -83,6 +86,9 @@ function init() {
 function bindEvents() {
   els.roomForm.addEventListener("submit", handleRoomSubmit);
   els.leaveRoomButton.addEventListener("click", leaveRoom);
+  if (els.leaveRoomButtonCompact) {
+    els.leaveRoomButtonCompact.addEventListener("click", leaveRoom);
+  }
   els.memberForm.addEventListener("submit", handleMemberSubmit);
   els.memberList.addEventListener("click", handleMemberListClick);
   els.expenseForm.addEventListener("submit", handleExpenseSubmit);
@@ -335,7 +341,7 @@ function startEditingExpense(expenseId) {
 
   syncSplitModeUI();
   requestAnimationFrame(() => {
-    els.expenseSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollSectionIntoView(els.expenseSection);
     els.expenseForm.querySelector('[name="title"]').focus();
   });
 }
@@ -513,11 +519,15 @@ function render() {
 
 function updateAppVisibility() {
   const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  const showCompactRoomStatus = hasActiveRoom && window.matchMedia("(max-width: 640px)").matches;
   document.body.classList.toggle("has-active-room", hasActiveRoom);
   [els.memberSection, els.expenseSection, els.summarySection, els.historySection].forEach((section) => {
     if (section) section.classList.toggle("is-hidden", !hasActiveRoom);
   });
   els.leaveRoomButton.hidden = !hasActiveRoom;
+  if (els.roomStatusDisplay) {
+    els.roomStatusDisplay.hidden = !showCompactRoomStatus;
+  }
   if (els.roomPanel) {
     els.roomPanel.hidden = hasActiveRoom;
   }
@@ -534,6 +544,7 @@ function handleSectionTabClick(event) {
   if (!button) return;
   state.activeSectionTab = button.dataset.sectionTab;
   syncResponsiveSections();
+  focusActiveSectionOnMobile();
 }
 
 function handleMemberListClick(event) {
@@ -576,6 +587,27 @@ function syncResponsiveSections() {
     button.classList.toggle("is-active", button.dataset.sectionTab === state.activeSectionTab);
     button.setAttribute("aria-pressed", button.dataset.sectionTab === state.activeSectionTab ? "true" : "false");
   });
+}
+
+function focusActiveSectionOnMobile() {
+  if (!window.matchMedia("(max-width: 960px)").matches) return;
+  const sectionMap = {
+    member: els.memberSection,
+    expense: els.expenseSection,
+    summary: els.summarySection,
+    history: els.historySection,
+  };
+  const activeSection = sectionMap[state.activeSectionTab];
+  if (!activeSection) return;
+  requestAnimationFrame(() => scrollSectionIntoView(activeSection));
+}
+
+function scrollSectionIntoView(section) {
+  if (!section) return;
+  const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+  const tabsHeight = els.sectionTabs && !els.sectionTabs.hidden ? els.sectionTabs.getBoundingClientRect().height : 0;
+  const offset = tabsHeight + 24;
+  window.scrollTo({ top: Math.max(0, sectionTop - offset), behavior: "smooth" });
 }
 
 function renderRoomList() {
@@ -1025,6 +1057,12 @@ async function sha256Hex(value) {
 function updateRoomStatus(syncStatus, roomStatus) {
   els.syncStatus.textContent = syncStatus;
   els.roomStatus.textContent = roomStatus;
+  
+  // Update room status display if in active room
+  const hasActiveRoom = Boolean(state.roomCode && state.roomSecret && state.roomId);
+  if (hasActiveRoom && els.roomStatusName) {
+    els.roomStatusName.textContent = roomStatus;
+  }
 }
 
 function showToast(message) {
