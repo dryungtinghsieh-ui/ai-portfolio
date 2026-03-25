@@ -1,31 +1,25 @@
 # AI Portfolio
 
-A personal research and engineering portfolio for **Dr. Yung-Ting Hsieh**, built with Next.js App Router.
+Personal website and research portfolio for **Dr. Yung-Ting Hsieh**.
 
-## Overview
+This repository is for maintaining my own site, not an open-source starter template.
 
-This repo combines two parts in one site:
+## Site Scope
 
-- Portfolio pages for profile, research highlights, and publication details
-- Interactive mini-tools (for example `Microstrip`) served from static HTML/JS apps under `public/`
-
-## Key Features
-
-- Animated landing page with technical focus areas and contact links
-- Research index and dynamic project detail pages (`/research/[id]`)
-- Citation display with fallback data from local source files
-- Google Scholar citation sync via API route and scheduled updater script
-- Embedded tool include `Microstrip` (interactive fun project)
+- Personal profile and technical positioning
+- Research project showcase and detail pages
+- Publication/citation presentation
+- Interactive `Microstrip` demo page
 
 ## Route Map
 
-- `/` Home page
-- `/research` Research project list
-- `/research/[id]` Project detail page
-- `/fun/microstrip` Microstrip wrapper page (iframe)
+- `/` Landing page
+- `/research` Research list
+- `/research/[id]` Research detail
+- `/fun/microstrip` Interactive demo
 - `/api/scholar-citations` Citation fetch endpoint
 
-## Tech Stack
+## Stack
 
 - Next.js 16
 - React 19
@@ -33,7 +27,7 @@ This repo combines two parts in one site:
 - Tailwind CSS 4
 - Framer Motion
 
-## Project Structure
+## Structure
 
 ```text
 app/
@@ -50,49 +44,17 @@ scripts/
   update-scholar-citations.mjs
 ```
 
-## Getting Started
+## Citation Sync Notes
 
-### 1) Install dependencies
+1. Baseline citation data is stored in `lib/research-data.ts`.
+2. `GET /api/scholar-citations` fetches total citations from Google Scholar at runtime.
+3. If fetch/parsing fails, UI falls back to local data.
+4. `scripts/update-scholar-citations.mjs` is used for scheduled/local refresh.
 
-Preferred (repo already includes `pnpm-lock.yaml`):
+## Maintenance Commands
 
-```bash
-pnpm install
-```
-
-Alternative:
-
-```bash
-npm install
-```
-
-### 2) Run development server
-
-```bash
-pnpm dev
-```
-
-Open `http://localhost:3000`.
-
-## Scripts
-
-- `pnpm dev` Start development server
-- `pnpm build` Build for production
-- `pnpm start` Start production server
-- `pnpm lint` Run ESLint
-- `pnpm update:citations` Fetch latest citation counts and update `lib/research-data.ts`
-
-## Citation Data Flow
-
-1. The UI reads baseline publication citation values from `lib/research-data.ts`.
-2. `GET /api/scholar-citations` tries to fetch total citations from Google Scholar.
-3. If runtime fetch fails, the UI keeps local fallback values.
-4. Scheduled updates can refresh local citation values through `scripts/update-scholar-citations.mjs` and the GitHub Action workflow.
-
-## Notes for Maintainers
-
-- No automated test framework is currently configured in this repo.
-
-## Deployment
-
-Deploy as a standard Next.js app (Vercel recommended).
+- `pnpm dev`
+- `pnpm build`
+- `pnpm start`
+- `pnpm lint`
+- `pnpm update:citations`
