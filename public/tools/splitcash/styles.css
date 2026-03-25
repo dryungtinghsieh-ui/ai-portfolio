@@ -192,8 +192,17 @@ h1 {
 
 @media (min-width: 641px) {
   .has-active-room .hero {
+    margin-left: auto;
+    margin-bottom: 14px;
+    width: fit-content;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
     justify-content: flex-end;
-    align-items: stretch;
+    align-items: center;
+    backdrop-filter: none;
   }
 
   .has-active-room .hero > div:first-child {
@@ -201,7 +210,33 @@ h1 {
   }
 
   .has-active-room .hero-badge {
-    width: min(100%, 320px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    width: auto;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(14, 36, 33, 0.9);
+  }
+
+  .has-active-room .hero-badge span {
+    margin: 0;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .has-active-room .hero-badge strong {
+    font-size: 1rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .has-active-room .hero-leave-button {
+    width: auto;
+    margin-left: 2px;
+    padding: 7px 12px;
+    font-size: 0.82rem;
   }
 }
 
