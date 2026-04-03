@@ -95,14 +95,14 @@ const timelineEntries = [
   {
     period: '2019-2026',
     title: 'Rutgers University CPS Lab',
-    subtitle: 'Ph.D. in Electrical and Computer Engineering',
+    subtitle: 'Ph.D. in Electrical and Computer Engineering / Graduate Research Assistant',
     detail:
-      'Graduate Research Assistant role focused on signal processing, communications, low-power ML, and hardware-aware AI systems throughout the Ph.D. journey.',
+      'Built the core 7+ years of AI/ML experience through applied research in signal processing, communications, low-power ML, and hardware-aware AI systems.',
   },
   {
     period: '2019-2026',
     title: 'Rutgers University',
-    subtitle: 'Teaching Assistant',
+    subtitle: 'Teaching and Graduate Assistant',
     detail:
       'Supported faculty projects, labs, and technical instruction while translating complex engineering concepts into practical teaching and research support.',
   },
@@ -160,9 +160,6 @@ function CareerTimeline({
                   </p>
                   <p className={`mt-1 text-sm font-semibold ${isActive ? 'text-cyan-200' : ''}`}>
                     {entry.title}
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-gray-500">
-                    {entry.subtitle}
                   </p>
                 </button>
               );
