@@ -81,7 +81,7 @@ const timelineEntries = [
   {
     period: '2025-Present',
     title: 'TE Connectivity',
-    subtitle: 'Sr. Signal Integrity Engineer',
+    subtitle: 'Sr. R&D Product/Development Engineer',
     detail:
       'Leading advanced SI development for high-speed interconnect products, spanning simulation, measurement correlation, design review, and product execution.',
   },
