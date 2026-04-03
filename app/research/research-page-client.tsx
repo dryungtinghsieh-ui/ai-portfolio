@@ -166,7 +166,7 @@ export function ResearchPageClient() {
               variants={itemVariants}
               className="mx-auto mb-2 max-w-3xl text-lg text-gray-300 sm:text-xl"
             >
-              Pioneering work in AI-assisted signal integrity, hybrid neural networks, and
+              Pioneering work in AI-assisted signal integrity, spiking neural networks, and
               neuromorphic computing.
             </motion.p>
 

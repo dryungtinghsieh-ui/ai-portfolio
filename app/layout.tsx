@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     template: '%s | Dr. Yung-Ting Hsieh',
   },
   description:
-    'AI-Assisted Signal Integrity Engineer and researcher focused on hybrid neural networks, S-parameter prediction, and engineering AI workflows.',
+    'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
   openGraph: {
     title: 'Dr. Yung-Ting Hsieh | AI Research Portfolio',
     description:
-      'AI-Assisted Signal Integrity Engineer and researcher focused on hybrid neural networks, S-parameter prediction, and engineering AI workflows.',
+      'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
     type: 'website',
     url: '/',
   },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Dr. Yung-Ting Hsieh | AI Research Portfolio',
     description:
-      'AI-Assisted Signal Integrity Engineer and researcher focused on hybrid neural networks, S-parameter prediction, and engineering AI workflows.',
+      'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
   },
 };
 

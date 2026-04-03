@@ -13,7 +13,6 @@ const expertiseTags = [
   'CAD Design',
   'MEMS Simulation',
   // AI & ML
-  'Hybrid Neural Networks',
   'Spiking Neural Networks',
   'LLM for Engineering',
   'RAG for Technical Knowledge',
@@ -104,6 +103,25 @@ const ctaTertiaryClass =
 const ctaQuaternaryClass =
   'bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-slate-100';
 
+const softwareStack = [
+  'HFSS',
+  'CAD Tools',
+  'Python',
+  'C',
+  'Java',
+  'Linux/EDA',
+  'CUDA',
+  'Ollama',
+  'LMStudio',
+];
+
+const hardwareStack = [
+  'VNA',
+  'Oscilloscopes',
+  'Lab Instrumentation',
+  'NVIDIA GPU (GB/RTX Series)',
+];
+
 export default function Home() {
   const [hoveredTag, setHoveredTag] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
@@ -185,10 +203,10 @@ export default function Home() {
 
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
-                    Signal Integrity Engineer with Strong AI Expertise
+                    Signal Integrity Engineer
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
-                    Physics-Based SI Design × Hybrid Neural Networks × LLM-Enhanced R&D
+                    Physics-Based SI × AI-Enhanced R&D
                   </p>
                 </motion.div>
 
@@ -196,9 +214,8 @@ export default function Home() {
                   variants={itemVariants}
                   className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
                 >
-                  Signal Integrity engineer with rigorous physics fundamentals and advanced AI/ML capabilities.
-                  I design high-speed interconnects powered by hybrid neural networks and leverage LLMs as research copilots
-                  for accelerated iteration, design verification, and technical problem-solving.
+                  I build high-speed interconnect solutions by combining SI fundamentals, neural modeling, and
+                  LLM-assisted engineering workflows.
                 </motion.p>
 
                 <motion.div
@@ -208,13 +225,36 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
                     with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in hybrid neural networks, circuit modeling, and LLM-enhanced engineering workflows for solving complex high-speed design challenges.
+                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in spiking neural networks, circuit modeling, and LLM-enhanced engineering workflows for solving complex high-speed design challenges.
                   </p>
-                  <p className="mt-3 text-xs leading-relaxed text-gray-300 sm:text-sm">
-                    <span className="text-blue-300">Software:</span> HFSS, CAD tools, Python, C, Java, Linux/EDA, CUDA, Ollama, LMStudio
-                    <br />
-                    <span className="text-blue-300">Hardware:</span> VNA, Oscilloscopes, Lab Instrumentation, Nvidia GPU (GB/RTX series)
-                  </p>
+                  <div className="mt-4 grid gap-4 text-xs sm:grid-cols-2 sm:text-sm">
+                    <div className="rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
+                      <p className="mb-2 text-blue-300">Software</p>
+                      <div className="flex flex-wrap gap-2">
+                        {softwareStack.map((tool) => (
+                          <span
+                            key={tool}
+                            className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[11px] text-gray-200 sm:text-xs"
+                          >
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-cyan-500/20 bg-slate-900/40 p-3">
+                      <p className="mb-2 text-cyan-300">Hardware</p>
+                      <div className="flex flex-wrap gap-2">
+                        {hardwareStack.map((tool) => (
+                          <span
+                            key={tool}
+                            className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] text-gray-200 sm:text-xs"
+                          >
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
                     4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
                   </p>
@@ -356,7 +396,7 @@ export default function Home() {
               Let&apos;s Collaborate on <span className="text-blue-400">Advanced SI & AI Engineering</span>
             </h3>
             <p className="mx-auto mb-8 max-w-2xl text-gray-400">
-              Looking to solve high-speed design challenges with physics-based SI engineering, hybrid neural networks,
+              Looking to solve high-speed design challenges with physics-based SI engineering, neuromorphic AI,
               and AI-accelerated R&D workflows? Let's talk.
             </p>
             <motion.a
