@@ -243,7 +243,7 @@ function EducationJourney() {
               <div className="absolute left-[calc(50%+28px)] top-9 hidden h-px w-[calc(100%-56px)] bg-gradient-to-r from-blue-500/40 to-cyan-400/30 sm:block" />
             )}
             <div className="flex h-full flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-4 py-5 text-center">
-              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-slate-950/80 p-2">
+              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-white p-2">
                 <Image
                   src={entry.logo}
                   alt={entry.school}
@@ -349,9 +349,6 @@ export default function Home() {
                     reduceMotion={reduceMotion}
                   />
                 </motion.div>
-                <motion.div variants={itemVariants} className="mb-8 md:hidden">
-                  <EducationJourney />
-                </motion.div>
 
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
@@ -360,6 +357,10 @@ export default function Home() {
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
                     Physics-Based SI × AI-Enhanced R&D
                   </p>
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="mb-12">
+                  <EducationJourney />
                 </motion.div>
 
                 <motion.div
@@ -489,9 +490,6 @@ export default function Home() {
                     onSelect={setActiveTimelineEntry}
                     reduceMotion={reduceMotion}
                   />
-                </div>
-                <div className="mt-6 w-full max-w-[500px]">
-                  <EducationJourney />
                 </div>
               </motion.div>
             </div>
