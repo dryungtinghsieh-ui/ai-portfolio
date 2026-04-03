@@ -2,37 +2,6 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { useState } from 'react';
-
-const expertiseTags = [
-  // Signal Integrity Core
-  'Signal Integrity',
-  'TDR',
-  'S-Parameters',
-  'HFSS',
-  'CAD Design',
-  'MEMS Simulation',
-  // AI & ML
-  'Spiking Neural Networks',
-  'LLM for Engineering',
-  'RAG for Technical Knowledge',
-  'AI Agents',
-  'Edge AI',
-  'Analog AI',
-  'TensorFlow',
-  'PyTorch',
-  // Software & Tools
-  'Python',
-  'C',
-  'Java',
-  'Linux/EDA',
-  'CUDA',
-  'Ollama',
-  'LMStudio',
-  // Model Context Protocol
-  'Model Context Protocol',
-  'AI Copilot Workflows',
-];
 
 const socials = [
   {
@@ -75,22 +44,6 @@ const itemVariants = {
   },
 };
 
-const tagVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: (index: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delay: index * 0.04,
-      duration: 0.4,
-    },
-  }),
-  hover: {
-    scale: 1.05,
-    boxShadow: '0 0 20px rgba(59, 130, 246, 0.45)',
-    transition: { duration: 0.2 },
-  },
-};
 
 const ctaBaseClass =
   'inline-flex items-center justify-center self-center rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)] sm:px-8 sm:py-3 sm:text-base md:self-auto';
@@ -109,7 +62,8 @@ const softwareStack = [
   'Python',
   'C',
   'Java',
-  'Linux/EDA',
+  'Linux',
+  'EDA',
   'CUDA',
   'Ollama',
   'LMStudio',
@@ -123,7 +77,6 @@ const hardwareStack = [
 ];
 
 export default function Home() {
-  const [hoveredTag, setHoveredTag] = useState<number | null>(null);
   const reduceMotion = useReducedMotion();
 
   return (
@@ -341,47 +294,6 @@ export default function Home() {
               </motion.div>
             </div>
           </motion.div>
-        </section>
-
-        <section className="bg-gradient-to-b from-black via-slate-900/30 to-black px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            <motion.h2
-              initial={reduceMotion ? false : { opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              className="mb-12 text-center text-3xl font-bold sm:text-4xl"
-            >
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                Technical Expertise
-              </span>
-            </motion.h2>
-
-            <motion.div
-              className="flex flex-wrap justify-center gap-3"
-              variants={containerVariants}
-              initial={reduceMotion ? false : 'hidden'}
-              whileInView="visible"
-              viewport={{ once: true, margin: '-100px' }}
-            >
-              {expertiseTags.map((tag, index) => (
-                <motion.div
-                  key={tag}
-                  custom={index}
-                  variants={tagVariants}
-                  whileHover={reduceMotion ? undefined : 'hover'}
-                  onHoverStart={() => setHoveredTag(index)}
-                  onHoverEnd={() => setHoveredTag(null)}
-                  className={`cursor-pointer rounded-full border px-4 py-2 transition-all duration-200 ${
-                    hoveredTag === index
-                      ? 'border-blue-400 bg-blue-600/40 text-blue-200'
-                      : 'border-blue-500/30 bg-slate-900/40 text-gray-300'
-                  }`}
-                >
-                  {tag}
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
         </section>
 
         <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
