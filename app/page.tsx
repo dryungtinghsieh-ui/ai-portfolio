@@ -178,7 +178,7 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
                     with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in spiking neural networks, circuit modeling, and LLM-enhanced engineering workflows for solving complex high-speed design challenges.
+                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in circuit modeling, RAG systems, and Skills/MCP-driven engineering workflows for solving complex high-speed design challenges.
                   </p>
                   <div className="mt-4 grid gap-4 text-xs sm:grid-cols-2 sm:text-sm">
                     <div className="rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
@@ -209,7 +209,8 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
-                    4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
+                    Using AI to predict advanced SI parameters: 4000x faster iterations, ~4% prediction
+                    error, and ~$12.5M estimated savings.
                   </p>
                 </motion.div>
 
