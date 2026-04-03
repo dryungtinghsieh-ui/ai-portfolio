@@ -430,6 +430,31 @@ export default function Home() {
           </motion.div>
         </section>
 
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+
+        <section className="px-4 py-16 text-center sm:px-6 lg:px-8">
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h3 className="mb-6 text-2xl font-bold sm:text-3xl">
+              Let&apos;s Collaborate on <span className="text-blue-400">Advanced SI & AI Engineering</span>
+            </h3>
+            <p className="mx-auto mb-8 max-w-2xl text-gray-400">
+              Looking to solve high-speed design challenges with physics-based SI engineering, neuromorphic AI,
+              and AI-accelerated R&D workflows? Let's talk.
+            </p>
+            <motion.a
+              href="mailto:dr.yungting.hsieh@gmail.com"
+              whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              className="inline-block rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 px-8 py-3 font-semibold text-black transition-all hover:shadow-lg"
+            >
+              Get In Touch
+            </motion.a>
+          </motion.div>
+        </section>
       </div>
     </main>
   );
