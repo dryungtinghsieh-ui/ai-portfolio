@@ -83,14 +83,14 @@ const timelineEntries = [
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
     detail:
-      'Leading advanced SI development for high-speed interconnect products, spanning simulation, measurement correlation, design review, and product execution.',
+      'Lead high-speed interconnect development through SI simulation, measurement correlation, and product-facing design execution.',
   },
   {
     period: '2022',
     title: 'TE Connectivity',
     subtitle: 'Signal Integrity Electrical Engineering Intern',
     detail:
-      'Developed AI-based S-parameter prediction workflows and contributed to the TE AI Cup award-winning approach for faster SI design iteration.',
+      'Built early AI-assisted SI modeling workflows that later supported award-winning parameter prediction and faster design iteration.',
   },
   {
     period: '2019-2026',
@@ -286,8 +286,8 @@ export default function Home() {
                   variants={itemVariants}
                   className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
                 >
-                  I build high-speed interconnect solutions by combining SI fundamentals, neural modeling, and
-                  LLM-assisted engineering workflows.
+                  I combine physics-based SI engineering, AI modeling, and practical R&D workflows for
+                  high-speed interconnect development.
                 </motion.p>
 
                 <motion.div
@@ -297,7 +297,7 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Sr. Signal Integrity Engineer at TE Connectivity</span>{' '}
                     with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in circuit modeling, RAG systems, and Skills/MCP-driven engineering workflows for solving complex high-speed design challenges.
+                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Focused on circuit modeling, engineering AI workflows, and system-level problem solving.
                   </p>
                   <div className="mt-4 grid gap-4 text-xs sm:grid-cols-2 sm:text-sm">
                     <div className="rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
