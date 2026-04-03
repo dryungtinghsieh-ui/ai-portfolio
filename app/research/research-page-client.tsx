@@ -201,7 +201,7 @@ export function ResearchPageClient() {
           </motion.div>
         </section>
 
-        <section className="bg-gradient-to-b from-transparent via-slate-900/30 to-black px-4 py-16 sm:px-6 lg:px-8">
+        <section className="bg-gradient-to-b from-transparent via-slate-900/30 to-black px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <motion.div
               className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4"
@@ -212,10 +212,7 @@ export function ResearchPageClient() {
             >
               {[
                 { label: 'Research Projects', value: researchProjects.length },
-                {
-                  label: 'Publications',
-                  value: researchProjects.reduce((acc, p) => acc + (p.publications?.length || 0), 0),
-                },
+                { label: 'Publications', value: 12 },
                 { label: 'Patents Filed', value: 2 },
                 { label: 'Citations', value: citationState.totalCitations.toLocaleString() },
               ].map((stat) => (
@@ -231,7 +228,7 @@ export function ResearchPageClient() {
                 </motion.div>
               ))}
             </motion.div>
-            <p className="mt-6 text-center text-xs text-gray-500">
+            <p className="mt-4 text-center text-xs text-gray-500">
               Citation source: {citationState.source === 'local-fallback'
                 ? 'local project data'
                 : citationState.source === 'scholarly-cache'
