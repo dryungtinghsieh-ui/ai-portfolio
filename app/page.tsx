@@ -97,14 +97,7 @@ const timelineEntries = [
     title: 'Rutgers University',
     subtitle: 'Ph.D. in Electrical and Computer Engineering',
     detail:
-      'Graduate Research Assistant role focused on signal processing, communications, low-power ML, and hardware-aware AI systems throughout the Ph.D. journey.',
-  },
-  {
-    period: '2019-2026',
-    title: 'Rutgers University',
-    subtitle: 'Teaching Assistant',
-    detail:
-      'Supported faculty projects, labs, and technical instruction while translating complex engineering concepts into practical teaching and research support.',
+      'Served as Graduate Research Assistant and Teaching Assistant, focusing on signal processing, communications, low-power ML, and technical instruction throughout the Ph.D. journey.',
   },
   {
     period: '2017-2018',
