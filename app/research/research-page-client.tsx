@@ -378,7 +378,9 @@ export function ResearchPageClient() {
                 ? 'local project data'
                 : citationState.source === 'scholarly-live'
                   ? 'scholarly (live)'
-                  : 'Google Scholar (live)'}.
+                  : citationState.source === 'scholarly-cache'
+                    ? 'scholarly cache'
+                    : 'Google Scholar (live)'}.
               {' '}Last checked: {lastCheckedLabel}
               {citationFetchFailed ? ' (live fetch failed, fallback applied)' : ''}
             </p>

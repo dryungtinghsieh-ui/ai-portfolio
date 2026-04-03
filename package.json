@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "update:citations": "node scripts/update-scholar-citations.mjs"
+    "update:citations": "node scripts/update-scholar-citations.mjs",
+    "update:scholarly-cache": "node scripts/update-scholarly-cache.mjs"
   },
   "dependencies": {
     "firebase": "^12.10.0",
