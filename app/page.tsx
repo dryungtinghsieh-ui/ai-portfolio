@@ -374,7 +374,7 @@ export default function Home() {
                     </div>
                   </div>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
-                    Using AI to predict advanced SI parameters: 4000x faster iterations, ~4% prediction
+                    Developing AI for advanced SI parameter prediction: 4000x faster iterations, ~4% prediction
                     error, and ~$12.5M estimated savings.
                   </p>
                 </motion.div>
