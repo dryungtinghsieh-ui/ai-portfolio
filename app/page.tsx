@@ -156,7 +156,7 @@ export default function Home() {
 
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
-                    Signal Integrity Engineer
+                    Sr. Signal Integrity Engineer
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
                     Physics-Based SI × AI-Enhanced R&D
