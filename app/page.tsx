@@ -77,48 +77,34 @@ const hardwareStack = [
   'NVIDIA GPU (GB/RTX Series)',
 ];
 
-const flagshipProjectPoints = [
-  'Input: S-parameters, TDR-informed features, and product geometry signals',
-  'Engine: AI-assisted SI parameter prediction with physics-aware feature design',
-  'Output: Faster impedance, loss, and channel-quality evaluation for design screening',
-  'Impact: 4000x faster iteration, ~4% error, and ~$12.5M estimated capex savings',
-];
-
-const flagshipProjectPoints = [
-  'Input: S-parameters, TDR-informed features, and product geometry signals',
-  'Engine: AI-assisted SI parameter prediction with physics-aware feature design',
-  'Output: Faster impedance, loss, and channel-quality evaluation for design screening',
-  'Impact: 4000x faster iteration, ~4% error, and ~$12.5M estimated capex savings',
-];
-
 const timelineEntries = [
   {
     period: '2025-Present',
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
     detail:
-      'Lead advanced SI development for high-speed interconnect products, driving simulation, measurement correlation, and design decisions toward product execution.',
+      'Leading advanced SI development for high-speed interconnect products, spanning simulation, measurement correlation, design review, and product execution.',
   },
   {
     period: '2022',
     title: 'TE Connectivity',
     subtitle: 'Signal Integrity Electrical Engineering Intern',
     detail:
-      'Developed AI-based S-parameter prediction workflows and helped deliver the TE AI Cup Best AI Innovation Award solution for faster SI iteration.',
+      'Developed AI-based S-parameter prediction workflows and contributed to the TE AI Cup award-winning approach for faster SI design iteration.',
   },
   {
     period: '2019-2026',
     title: 'Rutgers University',
     subtitle: 'Ph.D. in Electrical and Computer Engineering',
     detail:
-      'Built the research foundation behind later industry work through graduate research and teaching in signal processing, communications, low-power ML, and hardware-aware AI.',
+      'Served as Graduate Research Assistant and Teaching Assistant, focusing on signal processing, communications, low-power ML, and technical instruction throughout the Ph.D. journey.',
   },
   {
     period: '2017-2018',
     title: 'PAL Acoustics Technology',
     subtitle: 'R&D Engineer',
     detail:
-      'Supported customer-facing test programs for Dell, HP, Amazon, and Microsoft, and redesigned procedures that cut setup time by 15% and improved profit margin.',
+      'Worked with enterprise customers including Dell, HP, Amazon, and Microsoft, and improved test procedures to reduce setup time and increase profit margin.',
   },
 ];
 
@@ -292,7 +278,7 @@ export default function Home() {
                     Sr. Signal Integrity Engineer
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
-                    AI-Driven Signal Integrity Systems for High-Speed Interconnects
+                    Physics-Based SI × AI-Enhanced R&D
                   </p>
                 </motion.div>
 
@@ -300,39 +286,9 @@ export default function Home() {
                   variants={itemVariants}
                   className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
                 >
-                  I design AI-driven signal integrity systems that cut simulation time by 4000x and
-                  accelerate high-speed interconnect development from weeks to hours.
+                  I build high-speed interconnect solutions by combining SI fundamentals, neural modeling, and
+                  LLM-assisted engineering workflows.
                 </motion.p>
-
-                <motion.div
-                  variants={itemVariants}
-                  className="mb-8 rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 via-slate-900/80 to-slate-950/90 p-6 backdrop-blur-sm sm:p-7"
-                >
-                  <div className="flex flex-col gap-5">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-cyan-200">
-                        Signature Project
-                      </span>
-                      <span className="text-sm font-medium text-blue-200">
-                        AI-Assisted SI Parameter Prediction System
-                      </span>
-                    </div>
-                    <p className="max-w-3xl text-sm leading-relaxed text-gray-300 sm:text-base">
-                      A production-minded modeling workflow for predicting advanced SI behavior before
-                      expensive sweep cycles, enabling faster engineering decisions with measurable business impact.
-                    </p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {flagshipProjectPoints.map((point) => (
-                        <div
-                          key={point}
-                          className="rounded-xl border border-blue-500/20 bg-slate-900/60 p-4 text-sm text-gray-200"
-                        >
-                          {point}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
 
                 <motion.div
                   variants={itemVariants}
@@ -341,7 +297,7 @@ export default function Home() {
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Sr. Signal Integrity Engineer at TE Connectivity</span>{' '}
                     with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. I build AI-assisted SI workflows that connect modeling, measurement, and engineering decision-making for complex high-speed design challenges.
+                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in circuit modeling, RAG systems, and Skills/MCP-driven engineering workflows for solving complex high-speed design challenges.
                   </p>
                   <div className="mt-4 grid gap-4 text-xs sm:grid-cols-2 sm:text-sm">
                     <div className="rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
