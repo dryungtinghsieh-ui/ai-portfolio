@@ -79,9 +79,13 @@ const hardwareStack = [
 
 const timelineEntries = [
   {
-    period: '2022-Present',
+    period: '2022, 2025-Present',
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
+    phases: [
+      { label: 'Intern', period: '2022' },
+      { label: 'Full-time', period: '2025-Present' },
+    ],
     detail:
       'Progressed from Signal Integrity intern to senior engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
   },
@@ -89,6 +93,7 @@ const timelineEntries = [
     period: '2019-2026',
     title: 'Rutgers University',
     subtitle: 'Ph.D. in Electrical and Computer Engineering',
+    phases: [],
     detail:
       'Served as Graduate Research Assistant and Teaching Assistant, focusing on signal processing, communications, low-power ML, and technical instruction throughout the Ph.D. journey.',
   },
@@ -96,8 +101,32 @@ const timelineEntries = [
     period: '2017-2018',
     title: 'PAL Acoustics Technology',
     subtitle: 'R&D Engineer',
+    phases: [],
     detail:
       'Worked with enterprise customers including Dell, HP, Amazon, and Microsoft, and improved test procedures to reduce setup time and increase profit margin.',
+  },
+];
+
+const educationJourney = [
+  {
+    stage: 'HS',
+    school: 'Tainan First Senior High School',
+    logo: '/Schools/TNFSH_emblem.svg',
+  },
+  {
+    stage: 'BS',
+    school: 'National Chung Hsing University',
+    logo: '/Schools/National_Chung_Hsing_University_logo.svg',
+  },
+  {
+    stage: 'MS',
+    school: 'National Chiao Tung University',
+    logo: '/Schools/NCTU_emblem.svg',
+  },
+  {
+    stage: 'Ph.D.',
+    school: 'Rutgers University',
+    logo: '/Schools/Rutgers.png',
   },
 ];
 
@@ -149,6 +178,18 @@ function CareerTimeline({
                   <p className="mt-1 text-xs leading-relaxed text-gray-500">
                     {entry.subtitle}
                   </p>
+                  {entry.phases.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {entry.phases.map((phase) => (
+                        <span
+                          key={`${entry.title}-${phase.label}-${phase.period}`}
+                          className="rounded-full border border-blue-500/20 bg-slate-900/80 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-gray-400"
+                        >
+                          {phase.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </button>
               );
             })}
@@ -170,10 +211,54 @@ function CareerTimeline({
           <p className="mt-2 text-sm font-medium text-blue-300">
             {timelineEntries[activeIndex].subtitle}
           </p>
+          {timelineEntries[activeIndex].phases.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {timelineEntries[activeIndex].phases.map((phase) => (
+                <span
+                  key={`${timelineEntries[activeIndex].title}-${phase.label}-${phase.period}`}
+                  className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200"
+                >
+                  {phase.label}: {phase.period}
+                </span>
+              ))}
+            </div>
+          )}
           <p className="mt-4 text-sm leading-relaxed text-gray-300">
             {timelineEntries[activeIndex].detail}
           </p>
         </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function EducationJourney() {
+  return (
+    <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
+      <p className="mb-5 text-xs uppercase tracking-[0.24em] text-blue-300">Education</p>
+      <div className="grid gap-4 sm:grid-cols-4">
+        {educationJourney.map((entry, index) => (
+          <div key={entry.stage} className="relative">
+            {index < educationJourney.length - 1 && (
+              <div className="absolute left-[calc(50%+28px)] top-9 hidden h-px w-[calc(100%-56px)] bg-gradient-to-r from-blue-500/40 to-cyan-400/30 sm:block" />
+            )}
+            <div className="flex h-full flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-4 py-5 text-center">
+              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-slate-950/80 p-2">
+                <Image
+                  src={entry.logo}
+                  alt={entry.school}
+                  width={52}
+                  height={52}
+                  className="max-h-12 w-auto object-contain"
+                />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                {entry.stage}
+              </p>
+              <p className="mt-2 text-sm leading-snug text-gray-300">{entry.school}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -264,6 +349,9 @@ export default function Home() {
                     reduceMotion={reduceMotion}
                   />
                 </motion.div>
+                <motion.div variants={itemVariants} className="mb-8 md:hidden">
+                  <EducationJourney />
+                </motion.div>
 
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
@@ -273,14 +361,6 @@ export default function Home() {
                     Physics-Based SI × AI-Enhanced R&D
                   </p>
                 </motion.div>
-
-                <motion.p
-                  variants={itemVariants}
-                  className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
-                >
-                  I combine physics-based SI engineering, AI modeling, and practical R&D workflows for
-                  high-speed interconnect development.
-                </motion.p>
 
                 <motion.div
                   variants={itemVariants}
@@ -409,6 +489,9 @@ export default function Home() {
                     onSelect={setActiveTimelineEntry}
                     reduceMotion={reduceMotion}
                   />
+                </div>
+                <div className="mt-6 w-full max-w-[500px]">
+                  <EducationJourney />
                 </div>
               </motion.div>
             </div>
