@@ -131,6 +131,9 @@ function CareerTimeline({
           <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Timeline</p>
           <h3 className="mt-2 text-xl font-semibold text-white">Experience Timeline</h3>
         </div>
+        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300">
+          4+ years SI | 7+ years AI/ML
+        </span>
       </div>
       <div className="grid gap-4 lg:grid-cols-[170px_1fr]">
         <div className="relative pl-4">
