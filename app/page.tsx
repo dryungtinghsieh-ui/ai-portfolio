@@ -5,9 +5,14 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 const expertiseTags = [
+  // Signal Integrity Core
   'Signal Integrity',
   'TDR',
   'S-Parameters',
+  'HFSS',
+  'CAD Design',
+  'MEMS Simulation',
+  // AI & ML
   'Hybrid Neural Networks',
   'Spiking Neural Networks',
   'LLM for Engineering',
@@ -15,10 +20,19 @@ const expertiseTags = [
   'AI Agents',
   'Edge AI',
   'Analog AI',
-  'Machine Learning',
   'TensorFlow',
   'PyTorch',
-  'MEMS Simulation',
+  // Software & Tools
+  'Python',
+  'C',
+  'Java',
+  'Linux/EDA',
+  'CUDA',
+  'Ollama',
+  'LMStudio',
+  // Model Context Protocol
+  'Model Context Protocol',
+  'AI Copilot Workflows',
 ];
 
 const socials = [
@@ -171,10 +185,10 @@ export default function Home() {
 
                 <motion.div variants={itemVariants} className="mb-8">
                   <h2 className="mb-2 text-xl font-semibold text-blue-300 sm:text-2xl">
-                    AI-Assisted Signal Integrity Engineer
+                    Signal Integrity Engineer with Strong AI Expertise
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
-                    Analog-Digital Hybrid Neural Networks + LLM-Enhanced R&D
+                    Physics-Based SI Design × Hybrid Neural Networks × LLM-Enhanced R&D
                   </p>
                 </motion.div>
 
@@ -182,9 +196,9 @@ export default function Home() {
                   variants={itemVariants}
                   className="mb-12 text-lg leading-relaxed text-gray-300 sm:text-xl"
                 >
-                  I build engineering AI that starts with physics, learns from data, and uses
-                  LLMs as a fast research copilot for debugging, design reviews, and technical
-                  decision-making.
+                  Signal Integrity engineer with rigorous physics fundamentals and advanced AI/ML capabilities.
+                  I design high-speed interconnects powered by hybrid neural networks and leverage LLMs as research copilots
+                  for accelerated iteration, design verification, and technical problem-solving.
                 </motion.p>
 
                 <motion.div
@@ -193,14 +207,13 @@ export default function Home() {
                 >
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
                     <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
-                    with <span className="text-cyan-300">4+ years of Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI experience</span>. Proficient in AI & LLM
-                    technologies including Skills, MCP, and RAG for real-world applications.
+                    with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
+                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in hybrid neural networks, circuit modeling, and LLM-enhanced engineering workflows for solving complex high-speed design challenges.
                   </p>
                   <p className="mt-3 text-xs leading-relaxed text-gray-300 sm:text-sm">
-                    <span className="text-blue-300">Software:</span> HFSS, CAD tools, Python, C, Java
+                    <span className="text-blue-300">Software:</span> HFSS, CAD tools, Python, C, Java, Linux/EDA, CUDA, Ollama, LMStudio
                     <br />
-                    <span className="text-blue-300">Hardware:</span> VNA, Oscilloscopes, Lab Instrumentation
+                    <span className="text-blue-300">Hardware:</span> VNA, Oscilloscopes, Lab Instrumentation, Nvidia GPU (GB/RTX series)
                   </p>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
                     4000x faster iterations, ~4% prediction error, and ~$12.5M estimated savings.
@@ -340,11 +353,11 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <h3 className="mb-6 text-2xl font-bold sm:text-3xl">
-              Let&apos;s Collaborate on <span className="text-blue-400">Next-Gen AI Solutions</span>
+              Let&apos;s Collaborate on <span className="text-blue-400">Advanced SI & AI Engineering</span>
             </h3>
             <p className="mx-auto mb-8 max-w-2xl text-gray-400">
-              Interested in signal integrity, hybrid neural networks, or practical LLM copilots for
-              engineering teams?
+              Looking to solve high-speed design challenges with physics-based SI engineering, hybrid neural networks,
+              and AI-accelerated R&D workflows? Let's talk.
             </p>
             <motion.a
               href="mailto:dr.yungting.hsieh@gmail.com"
