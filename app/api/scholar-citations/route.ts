@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { researchProjects } from '@/lib/research-data';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import path from 'node:path';
 
 export const revalidate = 43200;
 
 const SCHOLAR_USER_ID = 'TSoiF94AAAAJ';
+const execFileAsync = promisify(execFile);
 const PROFILE_URLS = [
   `https://scholar.google.com/citations?user=${SCHOLAR_USER_ID}&hl=en`,
   `https://scholar.google.com.tw/citations?user=${SCHOLAR_USER_ID}&hl=en`,
@@ -65,6 +69,73 @@ function getLocalFallback() {
   return { totalCitations, citationsByScholarId };
 }
 
+function normalizeCitationPayload(payload: unknown): {
+  totalCitations: number;
+  citationsByScholarId: Record<string, number>;
+} | null {
+  if (!payload || typeof payload !== 'object') {
+    return null;
+  }
+
+  const candidate = payload as {
+    totalCitations?: unknown;
+    citationsByScholarId?: unknown;
+  };
+
+  if (
+    typeof candidate.totalCitations !== 'number' ||
+    !Number.isFinite(candidate.totalCitations) ||
+    typeof candidate.citationsByScholarId !== 'object' ||
+    candidate.citationsByScholarId === null
+  ) {
+    return null;
+  }
+
+  const citationsByScholarId: Record<string, number> = {};
+  for (const [key, value] of Object.entries(candidate.citationsByScholarId)) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      citationsByScholarId[key] = value;
+    }
+  }
+
+  return {
+    totalCitations: candidate.totalCitations,
+    citationsByScholarId,
+  };
+}
+
+async function fetchByScholarly(): Promise<{
+  totalCitations: number;
+  citationsByScholarId: Record<string, number>;
+}> {
+  const pythonCommands = process.env.SCHOLARLY_PYTHON_PATH
+    ? [process.env.SCHOLARLY_PYTHON_PATH]
+    : ['python3', 'python'];
+  const scriptPath = path.join(process.cwd(), 'scripts', 'fetch-scholarly-citations.py');
+  let lastError: unknown;
+
+  for (const pythonCommand of pythonCommands) {
+    try {
+      const { stdout } = await execFileAsync(pythonCommand, [scriptPath, SCHOLAR_USER_ID], {
+        cwd: process.cwd(),
+        timeout: 15000,
+        maxBuffer: 1024 * 1024,
+      });
+
+      const parsed = normalizeCitationPayload(JSON.parse(stdout));
+      if (!parsed) {
+        throw new Error('Invalid scholarly citation payload');
+      }
+
+      return parsed;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw lastError ?? new Error('Unable to run scholarly fetch');
+}
+
 async function fetchTextWithTimeout(url: string, timeoutMs = 12000): Promise<string> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -103,6 +174,25 @@ async function fetchFromAny(urls: string[]): Promise<string> {
 
 export async function GET() {
   const localFallback = getLocalFallback();
+
+  try {
+    const scholarlyData = await fetchByScholarly();
+    return NextResponse.json(
+      {
+        totalCitations: scholarlyData.totalCitations,
+        citationsByScholarId: scholarlyData.citationsByScholarId,
+        source: 'scholarly-live',
+        fetchedAt: new Date().toISOString(),
+      },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=43200, stale-while-revalidate=86400',
+        },
+      }
+    );
+  } catch {
+    // Fall back to direct HTML parsing when scholarly is unavailable.
+  }
 
   try {
     const [profileHtml, worksHtml] = await Promise.all([

@@ -374,7 +374,11 @@ export function ResearchPageClient() {
               ))}
             </motion.div>
             <p className="mt-6 text-center text-xs text-gray-500">
-              Citation source: {citationState.source === 'google-scholar-live' ? 'Google Scholar (live)' : 'local project data'}.
+              Citation source: {citationState.source === 'local-fallback'
+                ? 'local project data'
+                : citationState.source === 'scholarly-live'
+                  ? 'scholarly (live)'
+                  : 'Google Scholar (live)'}.
               {' '}Last checked: {lastCheckedLabel}
               {citationFetchFailed ? ' (live fetch failed, fallback applied)' : ''}
             </p>
