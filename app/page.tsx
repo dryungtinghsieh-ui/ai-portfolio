@@ -79,39 +79,32 @@ const hardwareStack = [
 
 const timelineEntries = [
   {
-    period: '2025-Present',
+    period: 'Present',
     title: 'TE Connectivity',
-    subtitle: 'Sr. R&D Product/Development Engineer',
+    subtitle: 'Sr. Signal Integrity Engineer',
     detail:
-      'Leading advanced SI development for high-speed interconnect products, spanning simulation, measurement correlation, design review, and product execution.',
+      'Driving high-speed interconnect development through SI simulation, correlation, and AI-assisted design workflows aligned with product execution.',
   },
   {
-    period: '2022',
-    title: 'TE Connectivity',
-    subtitle: 'Signal Integrity Electrical Engineering Intern',
+    period: 'Recent Impact',
+    title: 'AI for SI Engineering',
+    subtitle: 'Modeling, automation, and faster iteration',
     detail:
-      'Developed AI-based S-parameter prediction workflows and contributed to the TE AI Cup award-winning approach for faster SI design iteration.',
+      'Applied machine learning to advanced SI parameter prediction, enabling faster engineering loops, better design screening, and measurable business value.',
   },
   {
-    period: '2019-2026',
-    title: 'Rutgers University CPS Lab',
-    subtitle: 'Ph.D. Researcher / Graduate Research Assistant',
+    period: 'Cross-Functional',
+    title: 'R&D to Product Workflow',
+    subtitle: 'Simulation, validation, and collaboration',
     detail:
-      'Built the core 7+ years of AI/ML experience through applied research in signal processing, communications, low-power ML, and hardware-aware AI systems.',
+      'Bridging modeling, lab measurement, and technical communication across research, hardware, and product teams.',
   },
   {
-    period: '2019-2026',
-    title: 'Rutgers University',
-    subtitle: 'Teaching and Graduate Assistant',
+    period: 'Foundation',
+    title: 'Physics + AI + Systems',
+    subtitle: 'Engineering depth for complex problems',
     detail:
-      'Supported faculty projects, labs, and technical instruction while translating complex engineering concepts into practical teaching and research support.',
-  },
-  {
-    period: '2017-2018',
-    title: 'PAL Acoustics Technology',
-    subtitle: 'Research and Development Engineer',
-    detail:
-      'Worked with enterprise customers including Dell, HP, Amazon, and Microsoft, and improved test procedures to reduce setup time and increase profit margin.',
+      'Built a multidisciplinary foundation across physics-based analysis, signal processing, and AI methods for demanding engineering environments.',
   },
 ];
 
@@ -129,10 +122,10 @@ function CareerTimeline({
       <div className="mb-5 flex items-center justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Timeline</p>
-          <h3 className="mt-2 text-xl font-semibold text-white">Experience Timeline</h3>
+          <h3 className="mt-2 text-xl font-semibold text-white">Career Snapshot</h3>
         </div>
         <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300">
-          4+ years SI | 7+ years AI/ML
+          Interactive
         </span>
       </div>
       <div className="grid gap-4 lg:grid-cols-[170px_1fr]">
