@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const socials = [
   {
@@ -76,8 +77,119 @@ const hardwareStack = [
   'NVIDIA GPU (GB/RTX Series)',
 ];
 
+const timelineEntries = [
+  {
+    period: 'Present',
+    title: 'TE Connectivity',
+    subtitle: 'Sr. Signal Integrity Engineer',
+    detail:
+      'Leading high-speed interconnect modeling and AI-assisted engineering workflows for advanced SI design.',
+  },
+  {
+    period: '2022-2023',
+    title: 'TE AI Cup x Rutgers',
+    subtitle: 'Best AI Innovation Prize',
+    detail:
+      'Built AI models for Channel Operating Margin prediction, enabling much faster SI iteration and production-scale impact.',
+  },
+  {
+    period: 'Ph.D. Journey',
+    title: 'Rutgers University',
+    subtitle: 'ECE Researcher',
+    detail:
+      'Focused on underwater acoustics, analog/neuromorphic ML systems, and applied AI for sensing and communications.',
+  },
+  {
+    period: 'Earlier Training',
+    title: 'Taiwan',
+    subtitle: 'Physics -> Engineering Acoustics',
+    detail:
+      'Built a cross-disciplinary foundation spanning physics, acoustics, devices, and experimental engineering.',
+  },
+];
+
+function CareerTimeline({
+  activeIndex,
+  onSelect,
+  reduceMotion,
+}: {
+  activeIndex: number;
+  onSelect: (index: number) => void;
+  reduceMotion: boolean | null;
+}) {
+  return (
+    <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Timeline</p>
+          <h3 className="mt-2 text-xl font-semibold text-white">Career Snapshot</h3>
+        </div>
+        <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300">
+          Interactive
+        </span>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-[170px_1fr]">
+        <div className="relative pl-4">
+          <div className="absolute bottom-0 left-[7px] top-0 w-px bg-gradient-to-b from-blue-500/40 via-cyan-400/30 to-transparent" />
+          <div className="space-y-3">
+            {timelineEntries.map((entry, index) => {
+              const isActive = activeIndex === index;
+              return (
+                <button
+                  key={entry.title}
+                  type="button"
+                  onClick={() => onSelect(index)}
+                  onMouseEnter={() => onSelect(index)}
+                  className={`relative w-full text-left transition-colors ${
+                    isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'
+                  }`}
+                >
+                  <span
+                    className={`absolute -left-[13px] top-1.5 h-3 w-3 rounded-full border ${
+                      isActive
+                        ? 'border-cyan-300 bg-cyan-300 shadow-[0_0_14px_rgba(34,211,238,0.65)]'
+                        : 'border-blue-500/40 bg-slate-950'
+                    }`}
+                  />
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-blue-300/80">
+                    {entry.period}
+                  </p>
+                  <p className={`mt-1 text-sm font-semibold ${isActive ? 'text-cyan-200' : ''}`}>
+                    {entry.title}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <motion.div
+          key={timelineEntries[activeIndex].title}
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="rounded-xl border border-blue-500/20 bg-slate-900/60 p-5"
+        >
+          <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">
+            {timelineEntries[activeIndex].period}
+          </p>
+          <h4 className="mt-2 text-2xl font-bold text-white">
+            {timelineEntries[activeIndex].title}
+          </h4>
+          <p className="mt-2 text-sm font-medium text-blue-300">
+            {timelineEntries[activeIndex].subtitle}
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-gray-300">
+            {timelineEntries[activeIndex].detail}
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const reduceMotion = useReducedMotion();
+  const [activeTimelineEntry, setActiveTimelineEntry] = useState(0);
 
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white">
@@ -152,6 +264,13 @@ export default function Home() {
                       />
                     </div>
                   </div>
+                </motion.div>
+                <motion.div variants={itemVariants} className="mb-8 md:hidden">
+                  <CareerTimeline
+                    activeIndex={activeTimelineEntry}
+                    onSelect={setActiveTimelineEntry}
+                    reduceMotion={reduceMotion}
+                  />
                 </motion.div>
 
                 <motion.div variants={itemVariants} className="mb-8">
@@ -271,8 +390,8 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              <motion.div variants={itemVariants} className="hidden justify-center md:flex">
-                <div className="relative h-[700px] w-[500px] max-w-[480px]">
+              <motion.div variants={itemVariants} className="hidden md:flex md:flex-col md:items-center md:justify-start">
+                <div className="relative -mt-10 h-[640px] w-[500px] max-w-[480px]">
                   {!reduceMotion && (
                     <motion.div
                       className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 blur-2xl"
@@ -291,6 +410,13 @@ export default function Home() {
                       style={{ objectPosition: '65% center' }}
                     />
                   </div>
+                </div>
+                <div className="mt-6 w-full max-w-[500px]">
+                  <CareerTimeline
+                    activeIndex={activeTimelineEntry}
+                    onSelect={setActiveTimelineEntry}
+                    reduceMotion={reduceMotion}
+                  />
                 </div>
               </motion.div>
             </div>
