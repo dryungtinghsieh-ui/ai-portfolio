@@ -122,7 +122,6 @@ function CareerTimeline({
       <div className="mb-5 flex items-center justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Timeline</p>
-          <h3 className="mt-2 text-xl font-semibold text-white">Experience Timeline</h3>
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-[170px_1fr]">
