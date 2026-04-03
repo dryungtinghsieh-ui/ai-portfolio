@@ -62,7 +62,7 @@ export function ResearchPageClient() {
     fetchedAt: null,
     source: null,
   });
-  const [citationFetchFailed, setCitationFetchFailed] = useState(false);
+  const [usingFallbackData, setUsingFallbackData] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -89,11 +89,11 @@ export function ResearchPageClient() {
           source: typeof data.source === 'string' ? data.source : null,
         });
         if (data.source === 'local-fallback') {
-          setCitationFetchFailed(true);
+          setUsingFallbackData(true);
         }
       } catch {
         if (isMounted) {
-          setCitationFetchFailed(true);
+          setUsingFallbackData(true);
         }
       }
     };
@@ -376,13 +376,11 @@ export function ResearchPageClient() {
             <p className="mt-6 text-center text-xs text-gray-500">
               Citation source: {citationState.source === 'local-fallback'
                 ? 'local project data'
-                : citationState.source === 'scholarly-live'
-                  ? 'scholarly (live)'
-                  : citationState.source === 'scholarly-cache'
-                    ? 'scholarly cache'
-                    : 'Google Scholar (live)'}.
+                : citationState.source === 'scholarly-cache'
+                  ? 'scholarly cache'
+                  : 'scholarly cache'}.
               {' '}Last checked: {lastCheckedLabel}
-              {citationFetchFailed ? ' (live fetch failed, fallback applied)' : ''}
+              {usingFallbackData ? ' (cache unavailable, fallback applied)' : ''}
             </p>
           </div>
         </section>

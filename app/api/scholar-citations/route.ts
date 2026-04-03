@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import { researchProjects } from '@/lib/research-data';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 
 export const revalidate = 43200;
 
-const SCHOLAR_USER_ID = 'TSoiF94AAAAJ';
-const execFileAsync = promisify(execFile);
 const CACHE_FILE_PATH = path.join(process.cwd(), 'data', 'scholar-stats.json');
 
 function getLocalFallback() {
@@ -87,41 +83,6 @@ async function readCachedScholarlyData(): Promise<{
   return parsed;
 }
 
-async function fetchByScholarly(): Promise<{
-  totalCitations: number;
-  citationsByScholarId: Record<string, number>;
-  fetchedAt?: string;
-  hindex?: number;
-  i10index?: number;
-}> {
-  const pythonCommands = process.env.SCHOLARLY_PYTHON_PATH
-    ? [process.env.SCHOLARLY_PYTHON_PATH]
-    : ['python3', 'python'];
-  const scriptPath = path.join(process.cwd(), 'scripts', 'fetch-scholarly-citations.py');
-  let lastError: unknown;
-
-  for (const pythonCommand of pythonCommands) {
-    try {
-      const { stdout } = await execFileAsync(pythonCommand, [scriptPath, SCHOLAR_USER_ID], {
-        cwd: process.cwd(),
-        timeout: 15000,
-        maxBuffer: 1024 * 1024,
-      });
-
-      const parsed = normalizeCitationPayload(JSON.parse(stdout));
-      if (!parsed) {
-        throw new Error('Invalid scholarly citation payload');
-      }
-
-      return parsed;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError ?? new Error('Unable to run scholarly fetch');
-}
-
 export async function GET() {
   const localFallback = getLocalFallback();
 
@@ -135,28 +96,6 @@ export async function GET() {
         i10index: cachedData.i10index ?? null,
         source: 'scholarly-cache',
         fetchedAt: cachedData.fetchedAt ?? new Date().toISOString(),
-      },
-      {
-        headers: {
-          'Cache-Control': 's-maxage=43200, stale-while-revalidate=86400',
-        },
-      }
-    );
-  } catch {
-    // Fall through to live scholarly fetch if cache is unavailable.
-  }
-
-  try {
-    const scholarlyData = await fetchByScholarly();
-
-    return NextResponse.json(
-      {
-        totalCitations: scholarlyData.totalCitations,
-        citationsByScholarId: scholarlyData.citationsByScholarId,
-        hindex: scholarlyData.hindex ?? null,
-        i10index: scholarlyData.i10index ?? null,
-        source: 'scholarly-live',
-        fetchedAt: scholarlyData.fetchedAt ?? new Date().toISOString(),
       },
       {
         headers: {

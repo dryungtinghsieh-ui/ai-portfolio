@@ -247,7 +247,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               >
                 <h2 className="mb-6 text-xl font-bold text-blue-300 sm:text-2xl">Publications</h2>
                 <p className="mb-4 text-xs text-gray-500">
-                  Citation data {citationSyncFailed ? 'using fallback values' : 'synced from Google Scholar'}
+                  Citation data {citationSyncFailed ? 'using fallback values' : 'synced from scholarly cache'}
                   {citationsLastChecked
                     ? `, last checked ${new Date(citationsLastChecked).toLocaleString()}`
                     : ''}
