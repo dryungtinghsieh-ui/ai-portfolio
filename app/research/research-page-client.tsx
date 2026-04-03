@@ -385,28 +385,6 @@ export function ResearchPageClient() {
           </div>
         </section>
 
-        <section className="px-4 py-16 text-center sm:px-6 lg:px-8">
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="mb-6 text-2xl font-bold sm:text-3xl">Interested in Collaboration?</h3>
-            <p className="mx-auto mb-8 max-w-2xl text-gray-400">
-              Let&apos;s discuss research opportunities, technical partnerships, or AI-driven
-              solutions for engineering challenges.
-            </p>
-            <motion.a
-              href="mailto:dr.yungting.hsieh@gmail.com"
-              whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-              className="inline-block rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 px-8 py-3 font-semibold text-black transition-all hover:shadow-lg"
-            >
-              Get In Touch
-            </motion.a>
-          </motion.div>
-        </section>
       </div>
     </main>
   );
