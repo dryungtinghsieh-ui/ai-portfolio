@@ -201,6 +201,48 @@ export function ResearchPageClient() {
           </motion.div>
         </section>
 
+        <section className="bg-gradient-to-b from-transparent via-slate-900/30 to-black px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <motion.div
+              className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4"
+              variants={containerVariants}
+              initial={reduceMotion ? false : 'hidden'}
+              whileInView="visible"
+              viewport={{ once: true, margin: '-100px' }}
+            >
+              {[
+                { label: 'Research Projects', value: researchProjects.length },
+                {
+                  label: 'Publications',
+                  value: researchProjects.reduce((acc, p) => acc + (p.publications?.length || 0), 0),
+                },
+                { label: 'Patents Filed', value: 2 },
+                { label: 'Citations', value: citationState.totalCitations.toLocaleString() },
+              ].map((stat) => (
+                <motion.div
+                  key={stat.label}
+                  variants={itemVariants}
+                  className="rounded-lg border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 p-4 text-center"
+                >
+                  <p className="mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+                    {stat.value}
+                  </p>
+                  <p className="text-sm text-gray-400 sm:text-base">{stat.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+            <p className="mt-6 text-center text-xs text-gray-500">
+              Citation source: {citationState.source === 'local-fallback'
+                ? 'local project data'
+                : citationState.source === 'scholarly-cache'
+                  ? 'scholarly cache'
+                  : 'scholarly cache'}.
+              {' '}Last checked: {lastCheckedLabel}
+              {usingFallbackData ? ' (cache unavailable, fallback applied)' : ''}
+            </p>
+          </div>
+        </section>
+
         <section className="px-4 py-12 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             <motion.div
@@ -340,48 +382,6 @@ export function ResearchPageClient() {
                 </motion.div>
               ))}
             </motion.div>
-          </div>
-        </section>
-
-        <section className="bg-gradient-to-b from-transparent via-slate-900/30 to-black px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            <motion.div
-              className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4"
-              variants={containerVariants}
-              initial={reduceMotion ? false : 'hidden'}
-              whileInView="visible"
-              viewport={{ once: true, margin: '-100px' }}
-            >
-              {[
-                { label: 'Research Projects', value: researchProjects.length },
-                {
-                  label: 'Publications',
-                  value: researchProjects.reduce((acc, p) => acc + (p.publications?.length || 0), 0),
-                },
-                { label: 'Patents Filed', value: 2 },
-                { label: 'Citations', value: citationState.totalCitations.toLocaleString() },
-              ].map((stat) => (
-                <motion.div
-                  key={stat.label}
-                  variants={itemVariants}
-                  className="rounded-lg border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 p-4 text-center"
-                >
-                  <p className="mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-gray-400 sm:text-base">{stat.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-            <p className="mt-6 text-center text-xs text-gray-500">
-              Citation source: {citationState.source === 'local-fallback'
-                ? 'local project data'
-                : citationState.source === 'scholarly-cache'
-                  ? 'scholarly cache'
-                  : 'scholarly cache'}.
-              {' '}Last checked: {lastCheckedLabel}
-              {usingFallbackData ? ' (cache unavailable, fallback applied)' : ''}
-            </p>
           </div>
         </section>
 
