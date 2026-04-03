@@ -82,10 +82,7 @@ const timelineEntries = [
     period: '2022, 2025-Present',
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
-    phases: [
-      { label: 'Intern', period: '2022' },
-      { label: 'Full-time', period: '2025-Present' },
-    ],
+    phases: [],
     detail:
       'Progressed from Signal Integrity intern to senior engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
   },
@@ -110,7 +107,7 @@ const timelineEntries = [
 const educationJourney = [
   {
     stage: 'HS',
-    school: 'Tainan First Senior High School',
+    school: 'National Tainan First Senior High School',
     logo: '/Schools/TNFSH_emblem.svg',
   },
   {
@@ -126,7 +123,7 @@ const educationJourney = [
   {
     stage: 'Ph.D.',
     school: 'Rutgers University',
-    logo: '/Schools/Rutgers.png',
+    logo: '/Schools/Rutgers_Scarlet_Knights_logo.svg.png',
   },
 ];
 
@@ -178,18 +175,6 @@ function CareerTimeline({
                   <p className="mt-1 text-xs leading-relaxed text-gray-500">
                     {entry.subtitle}
                   </p>
-                  {entry.phases.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {entry.phases.map((phase) => (
-                        <span
-                          key={`${entry.title}-${phase.label}-${phase.period}`}
-                          className="rounded-full border border-blue-500/20 bg-slate-900/80 px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-gray-400"
-                        >
-                          {phase.label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </button>
               );
             })}
@@ -211,18 +196,6 @@ function CareerTimeline({
           <p className="mt-2 text-sm font-medium text-blue-300">
             {timelineEntries[activeIndex].subtitle}
           </p>
-          {timelineEntries[activeIndex].phases.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {timelineEntries[activeIndex].phases.map((phase) => (
-                <span
-                  key={`${timelineEntries[activeIndex].title}-${phase.label}-${phase.period}`}
-                  className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200"
-                >
-                  {phase.label}: {phase.period}
-                </span>
-              ))}
-            </div>
-          )}
           <p className="mt-4 text-sm leading-relaxed text-gray-300">
             {timelineEntries[activeIndex].detail}
           </p>
