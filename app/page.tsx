@@ -79,18 +79,11 @@ const hardwareStack = [
 
 const timelineEntries = [
   {
-    period: '2025-Present',
+    period: '2022-Present',
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
     detail:
-      'Lead high-speed interconnect development through SI simulation, measurement correlation, and product-facing design execution.',
-  },
-  {
-    period: '2022',
-    title: 'TE Connectivity',
-    subtitle: 'Signal Integrity Electrical Engineering Intern',
-    detail:
-      'Built early AI-assisted SI modeling workflows that later supported award-winning parameter prediction and faster design iteration.',
+      'Progressed from Signal Integrity intern to senior engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
   },
   {
     period: '2019-2026',
