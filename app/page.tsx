@@ -94,7 +94,7 @@ const timelineEntries = [
   },
   {
     period: '2019-2026',
-    title: 'Rutgers University',
+    title: 'Rutgers University CPS Lab',
     subtitle: 'Ph.D. in Electrical and Computer Engineering',
     detail:
       'Graduate Research Assistant role focused on signal processing, communications, low-power ML, and hardware-aware AI systems throughout the Ph.D. journey.',
@@ -109,7 +109,7 @@ const timelineEntries = [
   {
     period: '2017-2018',
     title: 'PAL Acoustics Technology',
-    subtitle: 'R&D Engineer',
+    subtitle: 'Research and Development Engineer',
     detail:
       'Worked with enterprise customers including Dell, HP, Amazon, and Microsoft, and improved test procedures to reduce setup time and increase profit margin.',
   },
