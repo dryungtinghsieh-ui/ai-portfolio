@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import { ResearchProject, researchProjects } from '@/lib/research-data';
 
 interface ProjectDetailClientProps {
@@ -23,6 +24,58 @@ const itemVariants = {
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const reduceMotion = useReducedMotion();
+  const fallbackCitationsByScholarId = useMemo(() => {
+    const citationsByScholarId: Record<string, number> = {};
+    for (const publication of project.publications ?? []) {
+      if (publication.scholarId) {
+        citationsByScholarId[publication.scholarId] = publication.citations ?? 0;
+      }
+    }
+    return citationsByScholarId;
+  }, [project.publications]);
+
+  const [citationsByScholarId, setCitationsByScholarId] = useState<Record<string, number>>(
+    fallbackCitationsByScholarId
+  );
+  const [citationsLastChecked, setCitationsLastChecked] = useState<string | null>(null);
+  const [citationSyncFailed, setCitationSyncFailed] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCitations = async () => {
+      try {
+        const response = await fetch('/api/scholar-citations', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Citation API request failed');
+        }
+
+        const data = await response.json();
+        if (!isMounted) {
+          return;
+        }
+
+        if (data.citationsByScholarId && typeof data.citationsByScholarId === 'object') {
+          setCitationsByScholarId(data.citationsByScholarId);
+        }
+        if (typeof data.fetchedAt === 'string') {
+          setCitationsLastChecked(data.fetchedAt);
+        }
+        if (data.source === 'local-fallback') {
+          setCitationSyncFailed(true);
+        }
+      } catch {
+        if (isMounted) {
+          setCitationSyncFailed(true);
+        }
+      }
+    };
+
+    fetchCitations();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white">
@@ -193,6 +246,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 className="mb-12"
               >
                 <h2 className="mb-6 text-xl font-bold text-blue-300 sm:text-2xl">Publications</h2>
+                <p className="mb-4 text-xs text-gray-500">
+                  Citation data {citationSyncFailed ? 'using fallback values' : 'synced from Google Scholar'}
+                  {citationsLastChecked
+                    ? `, last checked ${new Date(citationsLastChecked).toLocaleString()}`
+                    : ''}
+                  .
+                </p>
                 <div className="space-y-4">
                   {project.publications.map((pub, index) => (
                     <motion.div
@@ -207,9 +267,12 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                         <p>{pub.publication}</p>
                         <div className="mt-2 flex items-center gap-4 sm:mt-0">
                           <p className="font-semibold text-cyan-400">{pub.year}</p>
-                          {pub.citations ? (
-                            <p className="font-semibold text-blue-300">Cited by {pub.citations}</p>
-                          ) : null}
+                          <p className="font-semibold text-blue-300">
+                            Cited by{' '}
+                            {pub.scholarId && typeof citationsByScholarId[pub.scholarId] === 'number'
+                              ? citationsByScholarId[pub.scholarId]
+                              : pub.citations ?? 0}
+                          </p>
                         </div>
                       </div>
                       {pub.url && (

@@ -31,25 +31,34 @@ const itemVariants = {
 
 type CitationState = {
   totalCitations: number;
+  citationsByScholarId: Record<string, number>;
   fetchedAt: string | null;
   source: string | null;
 };
 
 export function ResearchPageClient() {
   const reduceMotion = useReducedMotion();
-  const fallbackCitations = useMemo(
-    () =>
-      researchProjects.reduce(
-        (acc, project) =>
-          acc +
-          (project.publications?.reduce((pubAcc, pub) => pubAcc + (pub.citations || 0), 0) || 0),
-        0
-      ),
-    []
-  );
+  const fallbackCitationState = useMemo(() => {
+    const citationsByScholarId: Record<string, number> = {};
+    const totalCitations = researchProjects.reduce(
+      (acc, project) =>
+        acc +
+        (project.publications?.reduce((pubAcc, pub) => {
+          const citations = pub.citations || 0;
+          if (pub.scholarId) {
+            citationsByScholarId[pub.scholarId] = citations;
+          }
+          return pubAcc + citations;
+        }, 0) || 0),
+      0
+    );
+
+    return { totalCitations, citationsByScholarId };
+  }, []);
 
   const [citationState, setCitationState] = useState<CitationState>({
-    totalCitations: fallbackCitations,
+    totalCitations: fallbackCitationState.totalCitations,
+    citationsByScholarId: fallbackCitationState.citationsByScholarId,
     fetchedAt: null,
     source: null,
   });
@@ -72,9 +81,16 @@ export function ResearchPageClient() {
 
         setCitationState({
           totalCitations: data.totalCitations,
+          citationsByScholarId:
+            data.citationsByScholarId && typeof data.citationsByScholarId === 'object'
+              ? data.citationsByScholarId
+              : fallbackCitationState.citationsByScholarId,
           fetchedAt: typeof data.fetchedAt === 'string' ? data.fetchedAt : null,
           source: typeof data.source === 'string' ? data.source : null,
         });
+        if (data.source === 'local-fallback') {
+          setCitationFetchFailed(true);
+        }
       } catch {
         if (isMounted) {
           setCitationFetchFailed(true);
@@ -86,11 +102,17 @@ export function ResearchPageClient() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [fallbackCitationState.citationsByScholarId]);
 
   const lastCheckedLabel = citationState.fetchedAt
     ? new Date(citationState.fetchedAt).toLocaleString()
     : 'Using local fallback values';
+  const getPublicationCitations = (scholarId?: string, fallbackCitations?: number) => {
+    if (scholarId && typeof citationState.citationsByScholarId[scholarId] === 'number') {
+      return citationState.citationsByScholarId[scholarId];
+    }
+    return fallbackCitations;
+  };
 
   return (
     <main className="min-h-screen w-full overflow-hidden bg-black text-white">
@@ -262,6 +284,10 @@ export function ResearchPageClient() {
                                 <span className="mr-2 text-blue-400">&bull;</span>
                                 <span>
                                   {pub.title} ({pub.year})
+                                  {typeof getPublicationCitations(pub.scholarId, pub.citations) ===
+                                  'number'
+                                    ? ` - Cited by ${getPublicationCitations(pub.scholarId, pub.citations)}`
+                                    : ''}
                                 </span>
                               </li>
                             ))}
@@ -348,7 +374,7 @@ export function ResearchPageClient() {
               ))}
             </motion.div>
             <p className="mt-6 text-center text-xs text-gray-500">
-              Citation source: {citationState.source ? 'Google Scholar' : 'local project data'}.
+              Citation source: {citationState.source === 'google-scholar-live' ? 'Google Scholar (live)' : 'local project data'}.
               {' '}Last checked: {lastCheckedLabel}
               {citationFetchFailed ? ' (live fetch failed, fallback applied)' : ''}
             </p>
