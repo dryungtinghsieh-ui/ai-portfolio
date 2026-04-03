@@ -95,7 +95,7 @@ const timelineEntries = [
   {
     period: '2019-2026',
     title: 'Rutgers University CPS Lab',
-    subtitle: 'Ph.D. Researcher / Graduate Research Assistant',
+    subtitle: 'Ph.D. in Electrical and Computer Engineering / Graduate Research Assistant',
     detail:
       'Built the core 7+ years of AI/ML experience through applied research in signal processing, communications, low-power ML, and hardware-aware AI systems.',
   },
