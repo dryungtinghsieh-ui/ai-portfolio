@@ -83,28 +83,28 @@ const timelineEntries = [
     title: 'TE Connectivity',
     subtitle: 'Sr. Signal Integrity Engineer',
     detail:
-      'Driving high-speed interconnect development through SI simulation, correlation, and AI-assisted design workflows aligned with product execution.',
+      'Leading high-speed interconnect modeling and AI-assisted engineering workflows for advanced SI design.',
   },
   {
-    period: 'Recent Impact',
-    title: 'AI for SI Engineering',
-    subtitle: 'Modeling, automation, and faster iteration',
+    period: '2022-2023',
+    title: 'TE AI Cup x Rutgers',
+    subtitle: 'Best AI Innovation Prize',
     detail:
-      'Applied machine learning to advanced SI parameter prediction, enabling faster engineering loops, better design screening, and measurable business value.',
+      'Built AI models for Channel Operating Margin prediction, enabling much faster SI iteration and production-scale impact.',
   },
   {
-    period: 'Cross-Functional',
-    title: 'R&D to Product Workflow',
-    subtitle: 'Simulation, validation, and collaboration',
+    period: 'Ph.D. Journey',
+    title: 'Rutgers University',
+    subtitle: 'ECE Researcher',
     detail:
-      'Bridging modeling, lab measurement, and technical communication across research, hardware, and product teams.',
+      'Focused on underwater acoustics, analog/neuromorphic ML systems, and applied AI for sensing and communications.',
   },
   {
-    period: 'Foundation',
-    title: 'Physics + AI + Systems',
-    subtitle: 'Engineering depth for complex problems',
+    period: 'Earlier Training',
+    title: 'Taiwan',
+    subtitle: 'Physics -> Engineering Acoustics',
     detail:
-      'Built a multidisciplinary foundation across physics-based analysis, signal processing, and AI methods for demanding engineering environments.',
+      'Built a cross-disciplinary foundation spanning physics, acoustics, devices, and experimental engineering.',
   },
 ];
 
