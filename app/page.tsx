@@ -176,7 +176,7 @@ export default function Home() {
                   className="mb-12 rounded-xl border border-blue-500/20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 p-6 backdrop-blur-sm sm:p-8"
                 >
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
-                    <span className="font-semibold text-cyan-300">Senior R&D Engineer at TE Connectivity</span>{' '}
+                    <span className="font-semibold text-cyan-300">Sr. Signal Integrity Engineer at TE Connectivity</span>{' '}
                     with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
                     <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Specialized in circuit modeling, RAG systems, and Skills/MCP-driven engineering workflows for solving complex high-speed design challenges.
                   </p>
