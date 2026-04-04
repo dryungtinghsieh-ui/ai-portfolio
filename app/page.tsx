@@ -127,7 +127,7 @@ const educationJourney = [
     stage: 'Ph.D.',
     school: 'Rutgers University',
     logo: '/Schools/Rutgers_Scarlet_Knights_logo.svg.png',
-    ranking: 'Top 50 U.S.',
+    ranking: 'Top 40 U.S.',
   },
 ];
 
