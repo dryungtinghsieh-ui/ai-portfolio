@@ -109,21 +109,25 @@ const educationJourney = [
     stage: 'HS',
     school: 'Tainan First Senior High School',
     logo: '/Schools/TNFSH_emblem.svg',
+    ranking: 'Top 3% Selective',
   },
   {
     stage: 'BS',
     school: 'National Chung Hsing University',
     logo: '/Schools/National_Chung_Hsing_University_logo.svg',
+    ranking: 'Top 6 Taiwan',
   },
   {
     stage: 'MS',
     school: 'National Chiao Tung University',
     logo: '/Schools/NCTU_emblem.svg',
+    ranking: 'Top 3 Taiwan',
   },
   {
     stage: 'Ph.D.',
     school: 'Rutgers University',
     logo: '/Schools/Rutgers_Scarlet_Knights_logo.svg.png',
+    ranking: 'Top 50 U.S.',
   },
 ];
 
@@ -229,6 +233,9 @@ function EducationJourney() {
                 {entry.stage}
               </p>
               <p className="mt-2 text-sm leading-snug text-gray-300">{entry.school}</p>
+              <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-blue-300/80">
+                {entry.ranking}
+              </p>
             </div>
           </div>
         ))}
