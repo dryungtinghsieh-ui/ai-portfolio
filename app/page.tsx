@@ -84,7 +84,7 @@ const timelineEntries = [
     subtitle: 'Sr. R&D Product/Development Engineer',
     phases: [],
     detail:
-      'Progressed from Signal Integrity intern to senior engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
+      'Started as a Signal Integrity Electrical Engineering Intern in 2022 and returned as a full-time Sr. R&D Product/Development Engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
   },
   {
     period: '2019-2026',
@@ -107,7 +107,7 @@ const timelineEntries = [
 const educationJourney = [
   {
     stage: 'HS',
-    school: 'National Tainan First Senior High School',
+    school: 'Tainan First Senior High School',
     logo: '/Schools/TNFSH_emblem.svg',
   },
   {
