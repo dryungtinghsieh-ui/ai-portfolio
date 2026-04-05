@@ -210,10 +210,36 @@ function CareerTimeline({
 }
 
 function EducationJourney() {
+  const mobileEducationJourney = [...educationJourney].reverse();
+
   return (
     <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
       <p className="mb-5 text-xs uppercase tracking-[0.24em] text-blue-300">Education</p>
-      <div className="flex flex-col gap-4 sm:grid sm:grid-cols-4">
+      <div className="flex flex-col gap-4 sm:hidden">
+        {mobileEducationJourney.map((entry) => (
+          <div key={`mobile-${entry.stage}`} className="relative">
+            <div className="flex h-full flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-4 py-5 text-center">
+              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-white p-2">
+                <Image
+                  src={entry.logo}
+                  alt={entry.school}
+                  width={52}
+                  height={52}
+                  className="max-h-12 w-auto object-contain"
+                />
+              </div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                {entry.stage}
+              </p>
+              <p className="mt-2 text-sm leading-snug text-gray-300">{entry.school}</p>
+              <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-blue-300/80">
+                {entry.ranking}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="hidden gap-4 sm:grid sm:grid-cols-4">
         {educationJourney.map((entry, index) => (
           <div key={entry.stage} className="relative">
             {index < educationJourney.length - 1 && (
