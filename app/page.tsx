@@ -213,7 +213,7 @@ function EducationJourney() {
   return (
     <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
       <p className="mb-5 text-xs uppercase tracking-[0.24em] text-blue-300">Education</p>
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="flex flex-col gap-4 sm:grid sm:grid-cols-4">
         {educationJourney.map((entry, index) => (
           <div key={entry.stage} className="relative">
             {index < educationJourney.length - 1 && (
