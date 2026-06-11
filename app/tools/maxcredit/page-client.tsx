@@ -1,6 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { getAuth, onAuthStateChanged, signInAnonymously, type User } from 'firebase/auth';
+import { doc, getFirestore, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore';
+
+import { app } from '@/lib/firebase';
 
 type CardKey = 'csr' | 'amex-gold';
 type Cadence = 'monthly' | 'semiannual' | 'annual';
@@ -20,6 +24,8 @@ type CreditItem = {
 };
 
 const storageKey = 'maxcredit.dashboard.v1';
+const syncKeyStorageKey = 'maxcredit.syncKey.v1';
+const firestoreCollection = 'maxcreditDashboards';
 
 const cardLabels: Record<CardKey | 'all', string> = {
   all: 'All Cards',
@@ -173,37 +179,207 @@ function getCadenceLabel(cadence: Cadence) {
   return 'Annual';
 }
 
-export function MaxCreditPageClient() {
-  const [credits, setCredits] = useState<CreditItem[]>(() => {
-    if (typeof window === 'undefined') {
-      return defaultCredits;
+function normalizeCredits(candidate: unknown) {
+  if (!Array.isArray(candidate)) {
+    return defaultCredits;
+  }
+
+  const validItems = candidate.filter((item): item is CreditItem => {
+    if (!item || typeof item !== 'object') {
+      return false;
     }
 
-    const saved = window.localStorage.getItem(storageKey);
-    if (!saved) {
-      return defaultCredits;
-    }
-
-    try {
-      const parsed = JSON.parse(saved) as CreditItem[];
-      return Array.isArray(parsed) ? parsed : defaultCredits;
-    } catch {
-      return defaultCredits;
-    }
+    const credit = item as Partial<CreditItem>;
+    return (
+      typeof credit.id === 'string' &&
+      (credit.card === 'csr' || credit.card === 'amex-gold') &&
+      typeof credit.issuer === 'string' &&
+      typeof credit.cardName === 'string' &&
+      typeof credit.creditName === 'string' &&
+      typeof credit.allowance === 'number' &&
+      typeof credit.used === 'number' &&
+      (credit.cadence === 'monthly' ||
+        credit.cadence === 'semiannual' ||
+        credit.cadence === 'annual') &&
+      typeof credit.resetLabel === 'string' &&
+      typeof credit.note === 'string'
+    );
   });
+
+  if (validItems.length === 0) {
+    return defaultCredits;
+  }
+
+  const savedIds = new Set(validItems.map((item) => item.id));
+  const missingDefaults = defaultCredits.filter((item) => !savedIds.has(item.id));
+  return [...validItems, ...missingDefaults];
+}
+
+function getInitialCredits() {
+  if (typeof window === 'undefined') {
+    return defaultCredits;
+  }
+
+  const saved = window.localStorage.getItem(storageKey);
+  if (!saved) {
+    return defaultCredits;
+  }
+
+  try {
+    return normalizeCredits(JSON.parse(saved));
+  } catch {
+    return defaultCredits;
+  }
+}
+
+function getInitialSyncKey() {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return window.localStorage.getItem(syncKeyStorageKey) ?? '';
+}
+
+function normalizeSyncKey(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64);
+}
+
+export function MaxCreditPageClient() {
+  const [credits, setCredits] = useState<CreditItem[]>(getInitialCredits);
   const [activeCard, setActiveCard] = useState<CardKey | 'all'>('all');
+  const [syncKeyInput, setSyncKeyInput] = useState(getInitialSyncKey);
+  const [syncKey, setSyncKey] = useState(() => normalizeSyncKey(getInitialSyncKey()));
+  const [syncStatus, setSyncStatus] = useState(() =>
+    normalizeSyncKey(getInitialSyncKey()) ? 'Connecting...' : 'Local only'
+  );
+  const [user, setUser] = useState<User | null>(null);
   const [newItem, setNewItem] = useState({
     card: 'csr' as CardKey,
     creditName: '',
     allowance: '10',
     cadence: 'monthly' as Cadence,
   });
+  const applyingRemoteRef = useRef(false);
+  const remoteReadyRef = useRef(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const latestCreditsRef = useRef(credits);
 
   useEffect(() => {
+    const auth = getAuth(app);
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (nextUser) => {
+        setUser(nextUser);
+      },
+      (error) => {
+        console.error(error);
+        setSyncStatus('Firebase auth failed');
+      }
+    );
+
+    signInAnonymously(auth).catch((error) => {
+      console.error(error);
+      setSyncStatus('Firebase sign-in failed');
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    latestCreditsRef.current = credits;
     if (typeof window !== 'undefined') {
       window.localStorage.setItem(storageKey, JSON.stringify(credits));
     }
   }, [credits]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(syncKeyStorageKey, syncKeyInput);
+    }
+  }, [syncKeyInput]);
+
+  useEffect(() => {
+    if (!syncKey || !user) {
+      remoteReadyRef.current = false;
+      return;
+    }
+
+    const db = getFirestore(app);
+    const dashboardRef = doc(db, firestoreCollection, syncKey);
+
+    const unsubscribe = onSnapshot(
+      dashboardRef,
+      (snapshot) => {
+        if (!snapshot.exists()) {
+          setDoc(dashboardRef, {
+            credits: latestCreditsRef.current,
+            ownerUid: user.uid,
+            updatedAt: serverTimestamp(),
+          }).catch((error) => {
+            console.error(error);
+            setSyncStatus('Sync failed');
+          });
+          return;
+        }
+
+        const data = snapshot.data();
+        applyingRemoteRef.current = true;
+        setCredits(normalizeCredits(data.credits));
+        remoteReadyRef.current = true;
+        setSyncStatus('Synced');
+        window.setTimeout(() => {
+          applyingRemoteRef.current = false;
+        }, 0);
+      },
+      (error) => {
+        console.error(error);
+        remoteReadyRef.current = false;
+        setSyncStatus('Sync failed');
+      }
+    );
+
+    return () => {
+      unsubscribe();
+      remoteReadyRef.current = false;
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, [syncKey, user]);
+
+  useEffect(() => {
+    if (!syncKey || !user || !remoteReadyRef.current || applyingRemoteRef.current) {
+      return;
+    }
+
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+    }
+
+    saveTimerRef.current = setTimeout(() => {
+      const db = getFirestore(app);
+      setSyncStatus('Saving...');
+      setDoc(
+        doc(db, firestoreCollection, syncKey),
+        {
+          credits,
+          ownerUid: user.uid,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      )
+        .then(() => setSyncStatus('Synced'))
+        .catch((error) => {
+          console.error(error);
+          setSyncStatus('Sync failed');
+        });
+    }, 450);
+  }, [credits, syncKey, user]);
 
   const visibleCredits = useMemo(
     () => credits.filter((item) => activeCard === 'all' || item.card === activeCard),
@@ -286,6 +462,14 @@ export function MaxCreditPageClient() {
     setCredits((current) => current.filter((item) => item.id !== id));
   };
 
+  const connectSyncKey = () => {
+    const normalized = normalizeSyncKey(syncKeyInput);
+    setSyncKeyInput(normalized);
+    setSyncKey(normalized);
+    remoteReadyRef.current = false;
+    setSyncStatus(normalized ? 'Connecting...' : 'Local only');
+  };
+
   return (
     <main className="min-h-[100dvh] bg-[#111111] text-zinc-100">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
@@ -299,24 +483,55 @@ export function MaxCreditPageClient() {
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-300 sm:text-base">
               Track premium card credits before they expire. Amounts are editable because issuers
-              can change benefit terms, and your data stays in this browser.
+              can change benefit terms. Add a Sync Key to keep the same dashboard on every device.
             </p>
           </div>
-          <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-1 text-sm">
-            {(['all', 'csr', 'amex-gold'] as const).map((card) => (
-              <button
-                key={card}
-                type="button"
-                onClick={() => setActiveCard(card)}
-                className={`min-h-10 px-3 font-medium transition ${
-                  activeCard === card
-                    ? 'rounded-md bg-white text-zinc-950'
-                    : 'text-zinc-300 hover:text-white'
-                }`}
-              >
-                {cardLabels[card]}
-              </button>
-            ))}
+          <div className="grid gap-3">
+            <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-1 text-sm">
+              {(['all', 'csr', 'amex-gold'] as const).map((card) => (
+                <button
+                  key={card}
+                  type="button"
+                  onClick={() => setActiveCard(card)}
+                  className={`min-h-10 px-3 font-medium transition ${
+                    activeCard === card
+                      ? 'rounded-md bg-white text-zinc-950'
+                      : 'text-zinc-300 hover:text-white'
+                  }`}
+                >
+                  {cardLabels[card]}
+                </button>
+              ))}
+            </div>
+            <div className="rounded-lg border border-white/10 bg-[#181818] p-3">
+              <p className="mb-2 text-xs uppercase tracking-[0.18em] text-zinc-500">
+                Firebase sync
+              </p>
+              <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+                <input
+                  value={syncKeyInput}
+                  onChange={(event) => setSyncKeyInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      connectSyncKey();
+                    }
+                  }}
+                  placeholder="Sync key, e.g. yungting-wallet"
+                  className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-amber-200/60"
+                />
+                <button
+                  type="button"
+                  onClick={connectSyncKey}
+                  className="min-h-10 rounded-md bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-amber-100"
+                >
+                  Sync
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-zinc-500">
+                Status: {syncStatus}
+                {syncKey ? ` / ${syncKey}` : ''}
+              </p>
+            </div>
           </div>
         </header>
 
@@ -552,7 +767,10 @@ export function MaxCreditPageClient() {
         </section>
 
         <footer className="flex flex-col gap-3 border-t border-white/10 py-5 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>Saved locally in this browser. Verify final benefit terms in Chase and Amex portals.</p>
+          <p>
+            Saved locally and synced through Firebase when a Sync Key is connected. Verify final
+            benefit terms in Chase and Amex portals.
+          </p>
           <button
             type="button"
             onClick={resetDefaults}
