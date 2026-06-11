@@ -25,6 +25,7 @@ type CreditItem = {
 
 const storageKey = 'maxcredit.dashboard.v1';
 const syncKeyStorageKey = 'maxcredit.syncKey.v1';
+const monthStorageKey = 'maxcredit.month.v1';
 const firestoreCollection = 'rooms';
 const firestoreDocPrefix = 'maxcredit-';
 
@@ -216,12 +217,58 @@ function normalizeCredits(candidate: unknown) {
   return [...validItems, ...missingDefaults];
 }
 
-function getInitialCredits() {
+function getCurrentMonthKey() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function shiftMonth(monthKey: string, offset: number) {
+  const [yearText, monthText] = monthKey.split('-');
+  const date = new Date(Number(yearText), Number(monthText) - 1 + offset, 1);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function formatMonthLabel(monthKey: string) {
+  const [yearText, monthText] = monthKey.split('-');
+  const date = new Date(Number(yearText), Number(monthText) - 1, 1);
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+  }).format(date);
+}
+
+function getMonthOptions(selectedMonth: string) {
+  const currentMonth = getCurrentMonthKey();
+  const monthKeys = new Set<string>();
+
+  for (let offset = -12; offset <= 12; offset += 1) {
+    monthKeys.add(shiftMonth(currentMonth, offset));
+  }
+  monthKeys.add(selectedMonth);
+
+  return [...monthKeys].sort().reverse();
+}
+
+function getInitialSelectedMonth() {
+  if (typeof window === 'undefined') {
+    return getCurrentMonthKey();
+  }
+
+  return window.localStorage.getItem(monthStorageKey) ?? getCurrentMonthKey();
+}
+
+function getMonthCreditsStorageKey(monthKey: string) {
+  return `${storageKey}.${monthKey}`;
+}
+
+function getInitialCredits(monthKey = getInitialSelectedMonth()) {
   if (typeof window === 'undefined') {
     return defaultCredits;
   }
 
-  const saved = window.localStorage.getItem(storageKey);
+  const saved =
+    window.localStorage.getItem(getMonthCreditsStorageKey(monthKey)) ??
+    window.localStorage.getItem(storageKey);
   if (!saved) {
     return defaultCredits;
   }
@@ -272,7 +319,9 @@ function getFirebaseErrorMessage(error: unknown, fallback: string) {
 }
 
 export function MaxCreditPageClient() {
-  const [credits, setCredits] = useState<CreditItem[]>(getInitialCredits);
+  const [selectedMonth, setSelectedMonth] = useState(getInitialSelectedMonth);
+  const monthOptions = useMemo(() => getMonthOptions(selectedMonth), [selectedMonth]);
+  const [credits, setCredits] = useState<CreditItem[]>(() => getInitialCredits(selectedMonth));
   const [activeCard, setActiveCard] = useState<CardKey | 'all'>('all');
   const [syncKeyInput, setSyncKeyInput] = useState(getInitialSyncKey);
   const [syncKey, setSyncKey] = useState(() => normalizeSyncKey(getInitialSyncKey()));
@@ -319,9 +368,15 @@ export function MaxCreditPageClient() {
   useEffect(() => {
     latestCreditsRef.current = credits;
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem(storageKey, JSON.stringify(credits));
+      window.localStorage.setItem(getMonthCreditsStorageKey(selectedMonth), JSON.stringify(credits));
     }
-  }, [credits]);
+  }, [credits, selectedMonth]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(monthStorageKey, selectedMonth);
+    }
+  }, [selectedMonth]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -354,7 +409,9 @@ export function MaxCreditPageClient() {
           setDoc(dashboardRef, {
             tool: 'maxcredit',
             syncKey,
-            credits: latestCreditsRef.current,
+            months: {
+              [selectedMonth]: latestCreditsRef.current,
+            },
             ownerUid: user.uid,
             updatedAt: serverTimestamp(),
           })
@@ -370,8 +427,38 @@ export function MaxCreditPageClient() {
         }
 
         const data = snapshot.data();
+        const monthCredits =
+          data.months &&
+          typeof data.months === 'object' &&
+          !Array.isArray(data.months) &&
+          selectedMonth in data.months
+            ? (data.months as Record<string, unknown>)[selectedMonth]
+            : data.credits;
+
+        if (!monthCredits) {
+          setDoc(
+            dashboardRef,
+            {
+              tool: 'maxcredit',
+              syncKey,
+              months: {
+                [selectedMonth]: latestCreditsRef.current,
+              },
+              ownerUid: user.uid,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true }
+          ).catch((error) => {
+            console.error(error);
+            setSyncStatus(`Sync failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
+          });
+          remoteReadyRef.current = true;
+          setSyncStatus('Synced');
+          return;
+        }
+
         applyingRemoteRef.current = true;
-        setCredits(normalizeCredits(data.credits));
+        setCredits(normalizeCredits(monthCredits));
         remoteReadyRef.current = true;
         setSyncStatus('Synced');
         window.setTimeout(() => {
@@ -395,7 +482,7 @@ export function MaxCreditPageClient() {
         clearTimeout(saveTimerRef.current);
       }
     };
-  }, [syncKey, user]);
+  }, [selectedMonth, syncKey, user]);
 
   useEffect(() => {
     if (!syncKey || !user || !remoteReadyRef.current || applyingRemoteRef.current) {
@@ -414,7 +501,9 @@ export function MaxCreditPageClient() {
         {
           tool: 'maxcredit',
           syncKey,
-          credits,
+          months: {
+            [selectedMonth]: credits,
+          },
           ownerUid: user.uid,
           updatedAt: serverTimestamp(),
         },
@@ -426,7 +515,7 @@ export function MaxCreditPageClient() {
           setSyncStatus(`Sync failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
         });
     }, 450);
-  }, [credits, syncKey, user]);
+  }, [credits, selectedMonth, syncKey, user]);
 
   const visibleCredits = useMemo(
     () => credits.filter((item) => activeCard === 'all' || item.card === activeCard),
@@ -517,6 +606,19 @@ export function MaxCreditPageClient() {
     setSyncStatus(normalized ? (user ? 'Connecting...' : 'Signing in...') : 'Local only');
   };
 
+  const changeSelectedMonth = (monthKey: string) => {
+    const nextCredits = getInitialCredits(monthKey);
+    applyingRemoteRef.current = true;
+    remoteReadyRef.current = false;
+    latestCreditsRef.current = nextCredits;
+    setSelectedMonth(monthKey);
+    setCredits(nextCredits);
+    setSyncStatus(syncKey ? 'Connecting...' : 'Local only');
+    window.setTimeout(() => {
+      applyingRemoteRef.current = false;
+    }, 0);
+  };
+
   return (
     <main className="min-h-[100dvh] bg-[#dfe6f3] p-3 text-[#111739] sm:p-6">
       <div className="mx-auto grid min-h-[calc(100dvh-24px)] w-full max-w-7xl overflow-hidden rounded-2xl bg-[#fbfcff] shadow-[0_24px_80px_rgba(30,45,84,0.14)] lg:grid-cols-[180px_1fr]">
@@ -567,11 +669,22 @@ export function MaxCreditPageClient() {
             <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight text-[#111739]">Dashboard</h1>
               <p className="mt-1 text-sm text-slate-400">
-                Track Chase CSR and Amex Gold credits before they expire.
+                {formatMonthLabel(selectedMonth)} credit usage for Chase CSR and Amex Gold.
               </p>
             </div>
 
-            <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-[180px_minmax(0,1fr)_auto]">
+              <select
+                value={selectedMonth}
+                onChange={(event) => changeSelectedMonth(event.target.value)}
+                className="min-h-11 rounded-lg border border-slate-100 bg-[#f7f9fd] px-3 text-sm font-semibold text-[#4d63c7] shadow-sm outline-none focus:border-[#aeb9ff]"
+              >
+                {monthOptions.map((monthKey) => (
+                  <option key={monthKey} value={monthKey}>
+                    {formatMonthLabel(monthKey)}
+                  </option>
+                ))}
+              </select>
               <div className="flex min-h-11 items-center gap-3 rounded-lg bg-[#f7f9fd] px-3 shadow-sm ring-1 ring-slate-100">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-[#5d74d8] shadow-sm">
                   S
