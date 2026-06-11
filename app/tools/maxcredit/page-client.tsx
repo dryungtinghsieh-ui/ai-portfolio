@@ -25,7 +25,8 @@ type CreditItem = {
 
 const storageKey = 'maxcredit.dashboard.v1';
 const syncKeyStorageKey = 'maxcredit.syncKey.v1';
-const firestoreCollection = 'maxcreditDashboards';
+const firestoreCollection = 'rooms';
+const firestoreDocPrefix = 'maxcredit-';
 
 const cardLabels: Record<CardKey | 'all', string> = {
   all: 'All Cards',
@@ -249,6 +250,10 @@ function normalizeSyncKey(value: string) {
     .slice(0, 64);
 }
 
+function getDashboardDocId(syncKey: string) {
+  return `${firestoreDocPrefix}${syncKey}`;
+}
+
 function getFirebaseErrorMessage(error: unknown, fallback: string) {
   if (!error || typeof error !== 'object') {
     return fallback;
@@ -331,7 +336,7 @@ export function MaxCreditPageClient() {
     }
 
     const db = getFirestore(app);
-    const dashboardRef = doc(db, firestoreCollection, syncKey);
+    const dashboardRef = doc(db, firestoreCollection, getDashboardDocId(syncKey));
     let hasSnapshotResponse = false;
     const timeoutId = window.setTimeout(() => {
       if (!hasSnapshotResponse) {
@@ -347,6 +352,8 @@ export function MaxCreditPageClient() {
 
         if (!snapshot.exists()) {
           setDoc(dashboardRef, {
+            tool: 'maxcredit',
+            syncKey,
             credits: latestCreditsRef.current,
             ownerUid: user.uid,
             updatedAt: serverTimestamp(),
@@ -403,8 +410,10 @@ export function MaxCreditPageClient() {
       const db = getFirestore(app);
       setSyncStatus('Saving...');
       setDoc(
-        doc(db, firestoreCollection, syncKey),
+        doc(db, firestoreCollection, getDashboardDocId(syncKey)),
         {
+          tool: 'maxcredit',
+          syncKey,
           credits,
           ownerUid: user.uid,
           updatedAt: serverTimestamp(),

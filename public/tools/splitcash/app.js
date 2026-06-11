@@ -994,7 +994,10 @@ function startRoomListSubscription() {
   if (state.unsubscribeRoomList) state.unsubscribeRoomList();
   const roomsQuery = query(collection(state.db, "rooms"), orderBy("updatedAt", "desc"));
   state.unsubscribeRoomList = onSnapshot(roomsQuery, (snapshot) => {
-    state.rooms = snapshot.docs.map((roomDoc) => {
+    state.rooms = snapshot.docs.filter((roomDoc) => {
+      const data = roomDoc.data();
+      return data.tool !== "maxcredit";
+    }).map((roomDoc) => {
       const data = roomDoc.data();
       const savedCode = typeof data.roomCode === "string" ? data.roomCode.trim() : "";
       const looksHashed = /^[a-f0-9]{64}$/i.test(savedCode || roomDoc.id);
