@@ -432,6 +432,14 @@ export default function Home() {
                   >
                     View Research Projects
                   </motion.a>
+                  <motion.a
+                    href="/tools/maxcredit"
+                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+                    className={`${ctaBaseClass} ${ctaTertiaryClass}`}
+                  >
+                    MaxCredit Dashboard
+                  </motion.a>
                   {/* Temporarily hidden per request
                   <motion.a
                     href="/cv.pdf"

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Microstrip Designer',
@@ -15,12 +16,12 @@ export default function MicrostripFunPage() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-lg font-semibold">Microstrip Fun Project</h1>
-          <a
+          <Link
             href="/"
             className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:border-cyan-400 hover:text-cyan-200"
           >
             Back to Home
-          </a>
+          </Link>
         </div>
         <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-2xl">
           <iframe
