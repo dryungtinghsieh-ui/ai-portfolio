@@ -361,7 +361,7 @@ export default function Home() {
                     Sr. R&D Product/Development Engineer
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
-                    Physics-Based SI × AI-Enhanced R&D
+                    SI Implementation Expertise × GenAI Expert
                   </p>
                 </motion.div>
 
