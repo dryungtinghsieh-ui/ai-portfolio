@@ -23,22 +23,22 @@ jobs:
       - name: Install scholarly
         run: python -m pip install --upgrade pip && python -m pip install -r scripts/requirements-scholar.txt
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Update scholarly cache
-        run: pnpm run update:scholarly-cache
+        run: pnpm run update:scholarly-cache || echo "scholarly cache update failed; falling back to direct Scholar citation refresh."
 
       - name: Update portfolio citation snapshots
         run: pnpm run update:citations

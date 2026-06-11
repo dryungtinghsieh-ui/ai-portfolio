@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const SCHOLAR_USER = 'TSoiF94AAAAJ';
 const SCHOLAR_URL = `https://scholar.google.com/citations?view_op=list_works&hl=en&user=${SCHOLAR_USER}`;
 const DATA_FILE = 'lib/research-data.ts';
+const CACHE_FILE = 'data/scholar-stats.json';
 
 function decodeHtml(input) {
   return input
@@ -31,6 +32,17 @@ function parseScholarCitations(html) {
   }
 
   return map;
+}
+
+function parseScholarMetrics(html) {
+  const metricRegex = /<td class="gsc_rsb_std">(\d+)<\/td>/g;
+  const metrics = [...html.matchAll(metricRegex)].map((match) => Number(match[1]));
+
+  return {
+    totalCitations: metrics[0],
+    hindex: metrics[2],
+    i10index: metrics[4],
+  };
 }
 
 async function fetchScholarHtml() {
@@ -72,22 +84,49 @@ function updateResearchData(content, citationsByScholarId) {
   return { nextContent, updates };
 }
 
+function updateScholarStatsCache(citationsByScholarId, metrics) {
+  const citationsByScholarIdObject = Object.fromEntries(citationsByScholarId);
+  const totalFromPublications = [...citationsByScholarId.values()].reduce(
+    (total, citations) => total + citations,
+    0
+  );
+  const currentCache = JSON.parse(readFileSync(CACHE_FILE, 'utf8'));
+  const nextCache = {
+    ...currentCache,
+    totalCitations: Number.isFinite(metrics.totalCitations)
+      ? metrics.totalCitations
+      : totalFromPublications,
+    hindex: Number.isFinite(metrics.hindex) ? metrics.hindex : currentCache.hindex,
+    i10index: Number.isFinite(metrics.i10index) ? metrics.i10index : currentCache.i10index,
+    fetchedAt: new Date().toISOString(),
+    citationsByScholarId: {
+      ...currentCache.citationsByScholarId,
+      ...citationsByScholarIdObject,
+    },
+  };
+
+  writeFileSync(CACHE_FILE, `${JSON.stringify(nextCache, null, 2)}\n`, 'utf8');
+}
+
 async function main() {
   const html = decodeHtml(await fetchScholarHtml());
   const citationsByScholarId = parseScholarCitations(html);
+  const metrics = parseScholarMetrics(html);
   const currentContent = readFileSync(DATA_FILE, 'utf8');
   const { nextContent, updates } = updateResearchData(
     currentContent,
     citationsByScholarId
   );
 
+  updateScholarStatsCache(citationsByScholarId, metrics);
+
   if (updates === 0) {
-    console.log('No citation updates found.');
+    console.log(`No citation updates found. Refreshed ${CACHE_FILE}.`);
     return;
   }
 
   writeFileSync(DATA_FILE, nextContent, 'utf8');
-  console.log(`Updated ${updates} citation value(s) in ${DATA_FILE}.`);
+  console.log(`Updated ${updates} citation value(s) in ${DATA_FILE} and refreshed ${CACHE_FILE}.`);
 }
 
 main().catch((error) => {
