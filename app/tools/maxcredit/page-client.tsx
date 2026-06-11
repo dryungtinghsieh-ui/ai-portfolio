@@ -249,6 +249,23 @@ function normalizeSyncKey(value: string) {
     .slice(0, 64);
 }
 
+function getFirebaseErrorMessage(error: unknown, fallback: string) {
+  if (!error || typeof error !== 'object') {
+    return fallback;
+  }
+
+  const candidate = error as { code?: unknown; message?: unknown };
+  if (typeof candidate.code === 'string') {
+    return candidate.code.replace('auth/', '').replace('firestore/', '');
+  }
+
+  if (typeof candidate.message === 'string') {
+    return candidate.message;
+  }
+
+  return fallback;
+}
+
 export function MaxCreditPageClient() {
   const [credits, setCredits] = useState<CreditItem[]>(getInitialCredits);
   const [activeCard, setActiveCard] = useState<CardKey | 'all'>('all');
@@ -278,14 +295,18 @@ export function MaxCreditPageClient() {
       },
       (error) => {
         console.error(error);
-        setSyncStatus('Firebase auth failed');
+        setSyncStatus(`Auth failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
       }
     );
 
-    signInAnonymously(auth).catch((error) => {
-      console.error(error);
-      setSyncStatus('Firebase sign-in failed');
-    });
+    signInAnonymously(auth)
+      .then((credential) => {
+        setUser(credential.user);
+      })
+      .catch((error) => {
+        console.error(error);
+        setSyncStatus(`Sign-in failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
+      });
 
     return unsubscribe;
   }, []);
@@ -311,19 +332,33 @@ export function MaxCreditPageClient() {
 
     const db = getFirestore(app);
     const dashboardRef = doc(db, firestoreCollection, syncKey);
+    let hasSnapshotResponse = false;
+    const timeoutId = window.setTimeout(() => {
+      if (!hasSnapshotResponse) {
+        setSyncStatus('Still connecting: check Firebase rules/network');
+      }
+    }, 12000);
 
     const unsubscribe = onSnapshot(
       dashboardRef,
       (snapshot) => {
+        hasSnapshotResponse = true;
+        window.clearTimeout(timeoutId);
+
         if (!snapshot.exists()) {
           setDoc(dashboardRef, {
             credits: latestCreditsRef.current,
             ownerUid: user.uid,
             updatedAt: serverTimestamp(),
-          }).catch((error) => {
-            console.error(error);
-            setSyncStatus('Sync failed');
-          });
+          })
+            .then(() => {
+              remoteReadyRef.current = true;
+              setSyncStatus('Synced');
+            })
+            .catch((error) => {
+              console.error(error);
+              setSyncStatus(`Sync failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
+            });
           return;
         }
 
@@ -337,13 +372,16 @@ export function MaxCreditPageClient() {
         }, 0);
       },
       (error) => {
+        hasSnapshotResponse = true;
+        window.clearTimeout(timeoutId);
         console.error(error);
         remoteReadyRef.current = false;
-        setSyncStatus('Sync failed');
+        setSyncStatus(`Sync failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
       }
     );
 
     return () => {
+      window.clearTimeout(timeoutId);
       unsubscribe();
       remoteReadyRef.current = false;
       if (saveTimerRef.current) {
@@ -376,7 +414,7 @@ export function MaxCreditPageClient() {
         .then(() => setSyncStatus('Synced'))
         .catch((error) => {
           console.error(error);
-          setSyncStatus('Sync failed');
+          setSyncStatus(`Sync failed: ${getFirebaseErrorMessage(error, 'unknown')}`);
         });
     }, 450);
   }, [credits, syncKey, user]);
@@ -467,7 +505,7 @@ export function MaxCreditPageClient() {
     setSyncKeyInput(normalized);
     setSyncKey(normalized);
     remoteReadyRef.current = false;
-    setSyncStatus(normalized ? 'Connecting...' : 'Local only');
+    setSyncStatus(normalized ? (user ? 'Connecting...' : 'Signing in...') : 'Local only');
   };
 
   return (
