@@ -563,15 +563,15 @@ export function MaxCreditPageClient() {
         </aside>
 
         <div className="min-w-0 bg-[#f8faff]">
-          <header className="grid gap-4 border-b border-slate-100 bg-white px-5 py-5 lg:grid-cols-[1fr_440px] lg:items-center">
-            <div>
+          <header className="grid gap-4 border-b border-slate-100 bg-white px-5 py-5 xl:grid-cols-[minmax(0,1fr)_minmax(320px,440px)] xl:items-center">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold tracking-tight text-[#111739]">Dashboard</h1>
               <p className="mt-1 text-sm text-slate-400">
                 Track Chase CSR and Amex Gold credits before they expire.
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
               <div className="flex min-h-11 items-center gap-3 rounded-lg bg-[#f7f9fd] px-3 shadow-sm ring-1 ring-slate-100">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-[#5d74d8] shadow-sm">
                   S
@@ -598,9 +598,9 @@ export function MaxCreditPageClient() {
             </div>
           </header>
 
-          <div className="grid gap-5 p-5 xl:grid-cols-[1fr_300px]">
-            <section className="grid gap-5">
-              <div className="rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]">
+          <div className="grid min-w-0 gap-5 p-5 xl:grid-cols-[minmax(0,1fr)_280px]">
+            <section className="grid min-w-0 gap-5">
+              <div className="min-w-0 rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="text-base font-bold text-[#111739]">Credit Report</h2>
@@ -608,8 +608,8 @@ export function MaxCreditPageClient() {
                       {summary.utilization}% used across {visibleCredits.length} buckets.
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-md bg-[#f7f9fd] px-3 py-2 text-xs font-medium text-slate-500">
+                  <div className="flex min-w-0 flex-wrap gap-2">
+                    <span className="max-w-full truncate rounded-md bg-[#f7f9fd] px-3 py-2 text-xs font-medium text-slate-500">
                       Status: {syncStatus}
                       {syncKey ? ` / ${syncKey}` : ''}
                     </span>
@@ -623,7 +623,7 @@ export function MaxCreditPageClient() {
                   </div>
                 </div>
 
-                <div className="mt-6 grid items-end gap-3 border-b border-dashed border-slate-200 pb-6 sm:grid-cols-8">
+                <div className="mt-6 grid items-end gap-2 overflow-hidden border-b border-dashed border-slate-200 pb-6 sm:grid-cols-4 lg:grid-cols-8">
                   {visibleCredits.slice(0, 8).map((item) => {
                     const ratio =
                       item.allowance > 0 ? Math.min((item.used / item.allowance) * 100, 100) : 0;
@@ -647,8 +647,8 @@ export function MaxCreditPageClient() {
                   })}
                 </div>
 
-                <div className="mt-5 overflow-x-auto">
-                  <table className="w-full min-w-[720px] text-left text-sm">
+                <div className="mt-5 max-w-full overflow-x-auto">
+                  <table className="w-full min-w-[620px] text-left text-sm">
                     <thead>
                       <tr className="border-b border-slate-100 text-xs text-slate-400">
                         <th className="py-3 font-semibold">Name</th>
@@ -664,18 +664,18 @@ export function MaxCreditPageClient() {
                         const remaining = Math.max(item.allowance - item.used, 0);
                         return (
                           <tr key={`row-${item.id}`} className="border-b border-slate-50">
-                            <td className="py-3">
-                              <div className="flex items-center gap-3">
-                                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#fff4dc] text-xs font-bold text-[#dd9a25]">
+                            <td className="max-w-[220px] py-3 pr-3">
+                              <div className="flex min-w-0 items-center gap-3">
+                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#fff4dc] text-xs font-bold text-[#dd9a25]">
                                   {item.creditName.slice(0, 1)}
                                 </span>
-                                <div>
-                                  <p className="font-semibold text-[#111739]">{item.creditName}</p>
+                                <div className="min-w-0">
+                                  <p className="truncate font-semibold text-[#111739]">{item.creditName}</p>
                                   <p className="text-xs text-slate-400">{item.resetLabel}</p>
                                 </div>
                               </div>
                             </td>
-                            <td className="py-3 text-slate-500">{cardLabels[item.card]}</td>
+                            <td className="py-3 pr-3 text-slate-500">{cardLabels[item.card]}</td>
                             <td className="py-3">
                               <input
                                 type="number"
@@ -686,7 +686,7 @@ export function MaxCreditPageClient() {
                                     allowance: clampMoney(Number(event.target.value)),
                                   })
                                 }
-                                className="h-9 w-24 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                className="h-9 w-20 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
                               />
                             </td>
                             <td className="py-3">
@@ -699,7 +699,7 @@ export function MaxCreditPageClient() {
                                     used: clampMoney(Number(event.target.value)),
                                   })
                                 }
-                                className="h-9 w-24 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                className="h-9 w-20 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
                               />
                               <p className="mt-1 text-xs text-slate-400">
                                 {formatCurrency(remaining)} left
@@ -718,7 +718,7 @@ export function MaxCreditPageClient() {
                 </div>
               </div>
 
-              <div className="grid gap-5 lg:grid-cols-2">
+              <div className="grid min-w-0 gap-5 2xl:grid-cols-2">
                 {(['csr', 'amex-gold'] as const).map((card) => {
                   const items = groupedCredits[card];
                   if (items.length === 0) {
@@ -728,7 +728,7 @@ export function MaxCreditPageClient() {
                   return (
                     <div
                       key={card}
-                      className="rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]"
+                      className="min-w-0 rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]"
                     >
                       <div className="mb-4 flex items-center justify-between">
                         <div>
@@ -739,7 +739,7 @@ export function MaxCreditPageClient() {
                             {items[0].cardName}
                           </h2>
                         </div>
-                        <span className="rounded-full bg-[#f7f9fd] px-3 py-1 text-xs font-semibold text-slate-500">
+                        <span className="shrink-0 rounded-full bg-[#f7f9fd] px-3 py-1 text-xs font-semibold text-slate-500">
                           {formatCurrency(
                             items.reduce(
                               (total, item) => total + Math.max(item.allowance - item.used, 0),
@@ -757,11 +757,11 @@ export function MaxCreditPageClient() {
                               ? Math.min((item.used / item.allowance) * 100, 100)
                               : 0;
                           return (
-                            <article key={item.id} className="rounded-lg bg-[#fbfcff] p-4">
+                            <article key={item.id} className="min-w-0 rounded-lg bg-[#fbfcff] p-4">
                               <div className="flex items-start justify-between gap-3">
-                                <div>
+                                <div className="min-w-0">
                                   <h3 className="font-semibold text-[#111739]">{item.creditName}</h3>
-                                  <p className="mt-1 text-xs leading-5 text-slate-400">{item.note}</p>
+                                  <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.note}</p>
                                 </div>
                                 <button
                                   type="button"
@@ -779,7 +779,7 @@ export function MaxCreditPageClient() {
                                 />
                               </div>
 
-                              <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
+                              <div className="mt-3 grid gap-2 xl:grid-cols-3 2xl:grid-cols-[1fr_1fr_1fr_auto]">
                                 <input
                                   type="number"
                                   min="0"
@@ -789,7 +789,7 @@ export function MaxCreditPageClient() {
                                       allowance: clampMoney(Number(event.target.value)),
                                     })
                                   }
-                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                  className="h-9 min-w-0 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
                                 />
                                 <input
                                   type="number"
@@ -800,7 +800,7 @@ export function MaxCreditPageClient() {
                                       used: clampMoney(Number(event.target.value)),
                                     })
                                   }
-                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                  className="h-9 min-w-0 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
                                 />
                                 <select
                                   value={item.cadence}
@@ -810,7 +810,7 @@ export function MaxCreditPageClient() {
                                       resetLabel: getCadenceLabel(event.target.value as Cadence),
                                     })
                                   }
-                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                  className="h-9 min-w-0 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
                                 >
                                   <option value="monthly">Monthly</option>
                                   <option value="semiannual">Semiannual</option>
@@ -836,7 +836,7 @@ export function MaxCreditPageClient() {
               </div>
             </section>
 
-            <aside className="grid gap-5 content-start">
+            <aside className="grid min-w-0 content-start gap-5">
               <section className="grid grid-cols-2 gap-3">
                 {[
                   ['Allowance', formatCurrency(summary.allowance), '+ total bucket'],
