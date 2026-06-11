@@ -154,18 +154,18 @@ function getCreditStatus(item: CreditItem) {
   const ratio = item.allowance > 0 ? Math.min(item.used / item.allowance, 1) : 0;
 
   if (remaining === 0) {
-    return { label: 'Complete', tone: 'bg-emerald-400/15 text-emerald-200 border-emerald-400/30' };
+    return { label: 'Complete', tone: 'border-emerald-100 bg-emerald-50 text-emerald-700' };
   }
 
   if (ratio >= 0.7) {
-    return { label: 'Almost done', tone: 'bg-sky-400/15 text-sky-200 border-sky-400/30' };
+    return { label: 'Almost done', tone: 'border-sky-100 bg-sky-50 text-sky-700' };
   }
 
   if (item.cadence === 'monthly') {
-    return { label: 'Use soon', tone: 'bg-amber-400/15 text-amber-100 border-amber-300/30' };
+    return { label: 'Use soon', tone: 'border-amber-100 bg-amber-50 text-amber-700' };
   }
 
-  return { label: 'Open', tone: 'bg-zinc-400/10 text-zinc-200 border-zinc-400/20' };
+  return { label: 'Open', tone: 'border-slate-100 bg-slate-50 text-slate-600' };
 }
 
 function getCadenceLabel(cadence: Cadence) {
@@ -518,43 +518,64 @@ export function MaxCreditPageClient() {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-[#111111] text-zinc-100">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-5 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-5 border-b border-white/10 pb-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">
-              Credit tracker
-            </p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-              MaxCredit
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-300 sm:text-base">
-              Track premium card credits before they expire. Amounts are editable because issuers
-              can change benefit terms. Add a Sync Key to keep the same dashboard on every device.
+    <main className="min-h-[100dvh] bg-[#dfe6f3] p-3 text-[#111739] sm:p-6">
+      <div className="mx-auto grid min-h-[calc(100dvh-24px)] w-full max-w-7xl overflow-hidden rounded-2xl bg-[#fbfcff] shadow-[0_24px_80px_rgba(30,45,84,0.14)] lg:grid-cols-[180px_1fr]">
+        <aside className="border-b border-slate-100 bg-white px-4 py-5 lg:border-b-0 lg:border-r">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5d74d8] text-sm font-bold text-white">
+              MC
+            </div>
+            <div>
+              <p className="text-base font-bold tracking-tight">MaxCredit</p>
+              <p className="text-[11px] text-slate-400">Card credits</p>
+            </div>
+          </div>
+
+          <nav className="mt-8 grid gap-2 text-sm">
+            {(['all', 'csr', 'amex-gold'] as const).map((card) => (
+              <button
+                key={card}
+                type="button"
+                onClick={() => setActiveCard(card)}
+                className={`flex min-h-10 items-center gap-3 rounded-lg px-3 text-left font-medium transition ${
+                  activeCard === card
+                    ? 'bg-[#eef2ff] text-[#4d63c7]'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                }`}
+              >
+                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white text-xs shadow-sm">
+                  {card === 'all' ? 'A' : card === 'csr' ? 'C' : 'G'}
+                </span>
+                {cardLabels[card]}
+              </button>
+            ))}
+          </nav>
+
+          <div className="mt-8 rounded-lg bg-[#eeeaff] p-4 text-center">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#b9adff] text-sm font-bold text-white">
+              S
+            </div>
+            <p className="mt-3 text-sm font-bold">Cloud sync</p>
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Use one Sync Key to share this dashboard across devices.
             </p>
           </div>
-          <div className="grid gap-3">
-            <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-1 text-sm">
-              {(['all', 'csr', 'amex-gold'] as const).map((card) => (
-                <button
-                  key={card}
-                  type="button"
-                  onClick={() => setActiveCard(card)}
-                  className={`min-h-10 px-3 font-medium transition ${
-                    activeCard === card
-                      ? 'rounded-md bg-white text-zinc-950'
-                      : 'text-zinc-300 hover:text-white'
-                  }`}
-                >
-                  {cardLabels[card]}
-                </button>
-              ))}
-            </div>
-            <div className="rounded-lg border border-white/10 bg-[#181818] p-3">
-              <p className="mb-2 text-xs uppercase tracking-[0.18em] text-zinc-500">
-                Firebase sync
+        </aside>
+
+        <div className="min-w-0 bg-[#f8faff]">
+          <header className="grid gap-4 border-b border-slate-100 bg-white px-5 py-5 lg:grid-cols-[1fr_440px] lg:items-center">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-[#111739]">Dashboard</h1>
+              <p className="mt-1 text-sm text-slate-400">
+                Track Chase CSR and Amex Gold credits before they expire.
               </p>
-              <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <div className="flex min-h-11 items-center gap-3 rounded-lg bg-[#f7f9fd] px-3 shadow-sm ring-1 ring-slate-100">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-bold text-[#5d74d8] shadow-sm">
+                  S
+                </span>
                 <input
                   value={syncKeyInput}
                   onChange={(event) => setSyncKeyInput(event.target.value)}
@@ -564,268 +585,361 @@ export function MaxCreditPageClient() {
                     }
                   }}
                   placeholder="Sync key, e.g. yungting-wallet"
-                  className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-amber-200/60"
+                  className="min-h-10 min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
                 />
-                <button
-                  type="button"
-                  onClick={connectSyncKey}
-                  className="min-h-10 rounded-md bg-white px-4 text-sm font-semibold text-zinc-950 transition hover:bg-amber-100"
-                >
-                  Sync
-                </button>
-              </div>
-              <p className="mt-2 text-xs text-zinc-500">
-                Status: {syncStatus}
-                {syncKey ? ` / ${syncKey}` : ''}
-              </p>
-            </div>
-          </div>
-        </header>
-
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ['Allowance', formatCurrency(summary.allowance)],
-            ['Used', formatCurrency(summary.used)],
-            ['Remaining', formatCurrency(summary.remaining)],
-            ['Monthly left', formatCurrency(summary.monthlyRemaining)],
-          ].map(([label, value]) => (
-            <div key={label} className="rounded-lg border border-white/10 bg-[#181818] p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">{label}</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{value}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <div className="rounded-lg border border-white/10 bg-[#181818] p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-white">Credit Utilization</h2>
-                <p className="mt-1 text-sm text-zinc-400">
-                  {summary.utilization}% used across {visibleCredits.length} active buckets.
-                </p>
               </div>
               <button
                 type="button"
-                onClick={resetVisibleUsage}
-                className="min-h-10 rounded-md border border-white/10 px-4 text-sm font-semibold text-zinc-200 transition hover:border-amber-200/50 hover:text-white"
+                onClick={connectSyncKey}
+                className="min-h-11 rounded-lg bg-[#eef2ff] px-5 text-sm font-semibold text-[#4d63c7] shadow-sm transition hover:bg-[#e2e8ff]"
               >
-                Reset Visible
+                Sync
               </button>
             </div>
-            <div className="mt-5 h-3 overflow-hidden rounded-full bg-zinc-800">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-300 via-sky-300 to-amber-200"
-                style={{ width: `${Math.min(summary.utilization, 100)}%` }}
-              />
-            </div>
-          </div>
+          </header>
 
-          <div className="rounded-lg border border-white/10 bg-[#181818] p-5">
-            <h2 className="text-lg font-semibold text-white">Add Credit</h2>
-            <div className="mt-4 grid gap-3">
-              <select
-                value={newItem.card}
-                onChange={(event) =>
-                  setNewItem((current) => ({ ...current, card: event.target.value as CardKey }))
-                }
-                className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-              >
-                <option value="csr">Chase CSR</option>
-                <option value="amex-gold">Amex Gold</option>
-              </select>
-              <input
-                value={newItem.creditName}
-                onChange={(event) =>
-                  setNewItem((current) => ({ ...current, creditName: event.target.value }))
-                }
-                placeholder="Credit name"
-                className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-amber-200/60"
-              />
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="number"
-                  min="0"
-                  value={newItem.allowance}
-                  onChange={(event) =>
-                    setNewItem((current) => ({ ...current, allowance: event.target.value }))
-                  }
-                  className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-                />
-                <select
-                  value={newItem.cadence}
-                  onChange={(event) =>
-                    setNewItem((current) => ({
-                      ...current,
-                      cadence: event.target.value as Cadence,
-                    }))
-                  }
-                  className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-                >
-                  <option value="monthly">Monthly</option>
-                  <option value="semiannual">Semiannual</option>
-                  <option value="annual">Annual</option>
-                </select>
-              </div>
-              <button
-                type="button"
-                onClick={addCredit}
-                className="min-h-10 rounded-md bg-amber-200 px-4 text-sm font-semibold text-zinc-950 transition hover:bg-amber-100"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-5 lg:grid-cols-2">
-          {(['csr', 'amex-gold'] as const).map((card) => {
-            const items = groupedCredits[card];
-            if (items.length === 0) {
-              return null;
-            }
-
-            return (
-              <div key={card} className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
+          <div className="grid gap-5 p-5 xl:grid-cols-[1fr_300px]">
+            <section className="grid gap-5">
+              <div className="rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">
-                      {items[0].issuer}
+                    <h2 className="text-base font-bold text-[#111739]">Credit Report</h2>
+                    <p className="mt-1 text-sm text-slate-400">
+                      {summary.utilization}% used across {visibleCredits.length} buckets.
                     </p>
-                    <h2 className="text-2xl font-semibold text-white">{items[0].cardName}</h2>
                   </div>
-                  <span className="rounded-full border border-white/10 px-3 py-1 text-sm text-zinc-300">
-                    {formatCurrency(
-                      items.reduce((total, item) => total + Math.max(item.allowance - item.used, 0), 0)
-                    )}{' '}
-                    left
-                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-md bg-[#f7f9fd] px-3 py-2 text-xs font-medium text-slate-500">
+                      Status: {syncStatus}
+                      {syncKey ? ` / ${syncKey}` : ''}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={resetVisibleUsage}
+                      className="min-h-9 rounded-md bg-[#eef2ff] px-3 text-xs font-semibold text-[#4d63c7] transition hover:bg-[#e2e8ff]"
+                    >
+                      Reset Visible
+                    </button>
+                  </div>
                 </div>
 
-                {items.map((item) => {
-                  const remaining = Math.max(item.allowance - item.used, 0);
-                  const ratio = item.allowance > 0 ? Math.min((item.used / item.allowance) * 100, 100) : 0;
-                  const status = getCreditStatus(item);
+                <div className="mt-6 grid items-end gap-3 border-b border-dashed border-slate-200 pb-6 sm:grid-cols-8">
+                  {visibleCredits.slice(0, 8).map((item) => {
+                    const ratio =
+                      item.allowance > 0 ? Math.min((item.used / item.allowance) * 100, 100) : 0;
+                    return (
+                      <div key={`bar-${item.id}`} className="grid gap-2 text-center">
+                        <div className="flex h-40 items-end justify-center gap-1 rounded-md bg-[#fbfcff] px-2 py-2">
+                          <div
+                            className="w-3 rounded-t-full bg-[#8987df]"
+                            style={{ height: `${Math.max(ratio, 4)}%` }}
+                          />
+                          <div
+                            className="w-3 rounded-t-full bg-[#86b9df]"
+                            style={{ height: `${Math.max(100 - ratio, 8)}%` }}
+                          />
+                        </div>
+                        <p className="truncate text-[11px] font-medium text-slate-500">
+                          {item.creditName}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-5 overflow-x-auto">
+                  <table className="w-full min-w-[720px] text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-100 text-xs text-slate-400">
+                        <th className="py-3 font-semibold">Name</th>
+                        <th className="py-3 font-semibold">Card</th>
+                        <th className="py-3 font-semibold">Allowance</th>
+                        <th className="py-3 font-semibold">Used</th>
+                        <th className="py-3 font-semibold">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visibleCredits.map((item) => {
+                        const status = getCreditStatus(item);
+                        const remaining = Math.max(item.allowance - item.used, 0);
+                        return (
+                          <tr key={`row-${item.id}`} className="border-b border-slate-50">
+                            <td className="py-3">
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#fff4dc] text-xs font-bold text-[#dd9a25]">
+                                  {item.creditName.slice(0, 1)}
+                                </span>
+                                <div>
+                                  <p className="font-semibold text-[#111739]">{item.creditName}</p>
+                                  <p className="text-xs text-slate-400">{item.resetLabel}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-3 text-slate-500">{cardLabels[item.card]}</td>
+                            <td className="py-3">
+                              <input
+                                type="number"
+                                min="0"
+                                value={item.allowance}
+                                onChange={(event) =>
+                                  updateCredit(item.id, {
+                                    allowance: clampMoney(Number(event.target.value)),
+                                  })
+                                }
+                                className="h-9 w-24 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                              />
+                            </td>
+                            <td className="py-3">
+                              <input
+                                type="number"
+                                min="0"
+                                value={item.used}
+                                onChange={(event) =>
+                                  updateCredit(item.id, {
+                                    used: clampMoney(Number(event.target.value)),
+                                  })
+                                }
+                                className="h-9 w-24 rounded-md border border-slate-100 bg-[#fbfcff] px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                              />
+                              <p className="mt-1 text-xs text-slate-400">
+                                {formatCurrency(remaining)} left
+                              </p>
+                            </td>
+                            <td className="py-3">
+                              <span className={`rounded-full border px-3 py-1 text-xs ${status.tone}`}>
+                                {status.label}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="grid gap-5 lg:grid-cols-2">
+                {(['csr', 'amex-gold'] as const).map((card) => {
+                  const items = groupedCredits[card];
+                  if (items.length === 0) {
+                    return null;
+                  }
 
                   return (
-                    <article
-                      key={item.id}
-                      className="rounded-lg border border-white/10 bg-[#181818] p-4"
+                    <div
+                      key={card}
+                      className="rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]"
                     >
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="mb-4 flex items-center justify-between">
                         <div>
-                          <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-lg font-semibold text-white">{item.creditName}</h3>
-                            <span className={`rounded-full border px-2.5 py-1 text-xs ${status.tone}`}>
-                              {status.label}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-sm leading-5 text-zinc-400">{item.note}</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                            {items[0].issuer}
+                          </p>
+                          <h2 className="mt-1 text-base font-bold text-[#111739]">
+                            {items[0].cardName}
+                          </h2>
                         </div>
-                        <div className="text-left sm:text-right">
-                          <p className="text-2xl font-semibold text-white">{formatCurrency(remaining)}</p>
-                          <p className="text-xs uppercase tracking-[0.16em] text-zinc-500">remaining</p>
-                        </div>
+                        <span className="rounded-full bg-[#f7f9fd] px-3 py-1 text-xs font-semibold text-slate-500">
+                          {formatCurrency(
+                            items.reduce(
+                              (total, item) => total + Math.max(item.allowance - item.used, 0),
+                              0
+                            )
+                          )}{' '}
+                          left
+                        </span>
                       </div>
 
-                      <div className="mt-4 h-2 overflow-hidden rounded-full bg-zinc-800">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-emerald-300 to-amber-200"
-                          style={{ width: `${ratio}%` }}
-                        />
-                      </div>
+                      <div className="grid gap-3">
+                        {items.map((item) => {
+                          const ratio =
+                            item.allowance > 0
+                              ? Math.min((item.used / item.allowance) * 100, 100)
+                              : 0;
+                          return (
+                            <article key={item.id} className="rounded-lg bg-[#fbfcff] p-4">
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <h3 className="font-semibold text-[#111739]">{item.creditName}</h3>
+                                  <p className="mt-1 text-xs leading-5 text-slate-400">{item.note}</p>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => updateCredit(item.id, { used: 0 })}
+                                  className="min-h-8 rounded-md bg-white px-3 text-xs font-semibold text-[#4d63c7] shadow-sm"
+                                >
+                                  Reset
+                                </button>
+                              </div>
 
-                      <div className="mt-4 grid gap-3 sm:grid-cols-4">
-                        <label className="grid gap-1 text-xs uppercase tracking-[0.14em] text-zinc-500">
-                          Allowance
-                          <input
-                            type="number"
-                            min="0"
-                            value={item.allowance}
-                            onChange={(event) =>
-                              updateCredit(item.id, {
-                                allowance: clampMoney(Number(event.target.value)),
-                              })
-                            }
-                            className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-                          />
-                        </label>
-                        <label className="grid gap-1 text-xs uppercase tracking-[0.14em] text-zinc-500">
-                          Used
-                          <input
-                            type="number"
-                            min="0"
-                            value={item.used}
-                            onChange={(event) =>
-                              updateCredit(item.id, {
-                                used: clampMoney(Number(event.target.value)),
-                              })
-                            }
-                            className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-                          />
-                        </label>
-                        <label className="grid gap-1 text-xs uppercase tracking-[0.14em] text-zinc-500">
-                          Cadence
-                          <select
-                            value={item.cadence}
-                            onChange={(event) =>
-                              updateCredit(item.id, {
-                                cadence: event.target.value as Cadence,
-                                resetLabel: getCadenceLabel(event.target.value as Cadence),
-                              })
-                            }
-                            className="min-h-10 rounded-md border border-white/10 bg-[#101010] px-3 text-sm text-white outline-none focus:border-amber-200/60"
-                          >
-                            <option value="monthly">Monthly</option>
-                            <option value="semiannual">Semiannual</option>
-                            <option value="annual">Annual</option>
-                          </select>
-                        </label>
-                        <div className="grid content-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => updateCredit(item.id, { used: 0 })}
-                            className="min-h-10 rounded-md border border-white/10 px-3 text-sm font-semibold text-zinc-200 transition hover:border-emerald-300/50 hover:text-white"
-                          >
-                            Reset
-                          </button>
-                          {item.custom ? (
-                            <button
-                              type="button"
-                              onClick={() => deleteCredit(item.id)}
-                              className="min-h-10 rounded-md border border-red-300/20 px-3 text-sm font-semibold text-red-100 transition hover:border-red-300/50"
-                            >
-                              Delete
-                            </button>
-                          ) : null}
-                        </div>
-                      </div>
+                              <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-100">
+                                <div
+                                  className="h-full rounded-full bg-[#8987df]"
+                                  style={{ width: `${ratio}%` }}
+                                />
+                              </div>
 
-                      <p className="mt-3 text-xs text-zinc-500">
-                        Resets: {item.resetLabel}. Used {formatCurrency(Math.min(item.used, item.allowance))} of{' '}
-                        {formatCurrency(item.allowance)}.
-                      </p>
-                    </article>
+                              <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={item.allowance}
+                                  onChange={(event) =>
+                                    updateCredit(item.id, {
+                                      allowance: clampMoney(Number(event.target.value)),
+                                    })
+                                  }
+                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                />
+                                <input
+                                  type="number"
+                                  min="0"
+                                  value={item.used}
+                                  onChange={(event) =>
+                                    updateCredit(item.id, {
+                                      used: clampMoney(Number(event.target.value)),
+                                    })
+                                  }
+                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                />
+                                <select
+                                  value={item.cadence}
+                                  onChange={(event) =>
+                                    updateCredit(item.id, {
+                                      cadence: event.target.value as Cadence,
+                                      resetLabel: getCadenceLabel(event.target.value as Cadence),
+                                    })
+                                  }
+                                  className="h-9 rounded-md border border-slate-100 bg-white px-2 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                                >
+                                  <option value="monthly">Monthly</option>
+                                  <option value="semiannual">Semiannual</option>
+                                  <option value="annual">Annual</option>
+                                </select>
+                                {item.custom ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteCredit(item.id)}
+                                    className="min-h-9 rounded-md bg-rose-50 px-3 text-xs font-semibold text-rose-600"
+                                  >
+                                    Delete
+                                  </button>
+                                ) : null}
+                              </div>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
-            );
-          })}
-        </section>
+            </section>
 
-        <footer className="flex flex-col gap-3 border-t border-white/10 py-5 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            Saved locally and synced through Firebase when a Sync Key is connected. Verify final
-            benefit terms in Chase and Amex portals.
-          </p>
-          <button
-            type="button"
-            onClick={resetDefaults}
-            className="min-h-10 rounded-md border border-white/10 px-4 font-semibold text-zinc-300 transition hover:border-white/30 hover:text-white"
-          >
-            Restore Defaults
-          </button>
-        </footer>
+            <aside className="grid gap-5 content-start">
+              <section className="grid grid-cols-2 gap-3">
+                {[
+                  ['Allowance', formatCurrency(summary.allowance), '+ total bucket'],
+                  ['Used', formatCurrency(summary.used), `${summary.utilization}% utilized`],
+                  ['Remaining', formatCurrency(summary.remaining), 'available value'],
+                  ['Monthly left', formatCurrency(summary.monthlyRemaining), 'expires soon'],
+                ].map(([label, value, detail], index) => (
+                  <div
+                    key={label}
+                    className="rounded-lg bg-white p-4 shadow-[0_12px_40px_rgba(31,45,90,0.05)]"
+                  >
+                    <div
+                      className={`mb-4 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
+                        index === 0
+                          ? 'bg-[#f0e9ff] text-[#8f69df]'
+                          : index === 1
+                            ? 'bg-[#e8f7ff] text-[#45a5d9]'
+                            : index === 2
+                              ? 'bg-[#ffecef] text-[#e06b7c]'
+                              : 'bg-[#fff3df] text-[#e1a13b]'
+                      }`}
+                    >
+                      {label.slice(0, 1)}
+                    </div>
+                    <p className="text-xs text-slate-500">{label}</p>
+                    <p className="mt-2 text-xl font-bold text-[#111739]">{value}</p>
+                    <p className="mt-1 text-[11px] text-emerald-500">{detail}</p>
+                  </div>
+                ))}
+              </section>
+
+              <section className="rounded-lg bg-white p-5 shadow-[0_12px_40px_rgba(31,45,90,0.05)]">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-base font-bold text-[#111739]">Add Credit</h2>
+                  <button
+                    type="button"
+                    onClick={resetDefaults}
+                    className="text-xs font-semibold text-[#4d63c7]"
+                  >
+                    Restore
+                  </button>
+                </div>
+                <div className="grid gap-3">
+                  <select
+                    value={newItem.card}
+                    onChange={(event) =>
+                      setNewItem((current) => ({ ...current, card: event.target.value as CardKey }))
+                    }
+                    className="min-h-10 rounded-md border border-slate-100 bg-[#fbfcff] px-3 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                  >
+                    <option value="csr">Chase CSR</option>
+                    <option value="amex-gold">Amex Gold</option>
+                  </select>
+                  <input
+                    value={newItem.creditName}
+                    onChange={(event) =>
+                      setNewItem((current) => ({ ...current, creditName: event.target.value }))
+                    }
+                    placeholder="Credit name"
+                    className="min-h-10 rounded-md border border-slate-100 bg-[#fbfcff] px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#aeb9ff]"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="number"
+                      min="0"
+                      value={newItem.allowance}
+                      onChange={(event) =>
+                        setNewItem((current) => ({ ...current, allowance: event.target.value }))
+                      }
+                      className="min-h-10 rounded-md border border-slate-100 bg-[#fbfcff] px-3 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                    />
+                    <select
+                      value={newItem.cadence}
+                      onChange={(event) =>
+                        setNewItem((current) => ({
+                          ...current,
+                          cadence: event.target.value as Cadence,
+                        }))
+                      }
+                      className="min-h-10 rounded-md border border-slate-100 bg-[#fbfcff] px-3 text-sm text-slate-700 outline-none focus:border-[#aeb9ff]"
+                    >
+                      <option value="monthly">Monthly</option>
+                      <option value="semiannual">Semiannual</option>
+                      <option value="annual">Annual</option>
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addCredit}
+                    className="min-h-10 rounded-md bg-[#5d74d8] px-4 text-sm font-semibold text-white transition hover:bg-[#4d63c7]"
+                  >
+                    Add
+                  </button>
+                </div>
+              </section>
+
+              <p className="px-1 text-xs leading-5 text-slate-400">
+                Saved locally and synced through Firebase when a Sync Key is connected. Verify final
+                benefit terms in Chase and Amex portals.
+              </p>
+            </aside>
+          </div>
+        </div>
       </div>
     </main>
   );
