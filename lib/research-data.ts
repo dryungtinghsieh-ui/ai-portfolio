@@ -154,7 +154,7 @@ export const researchProjects: ResearchProject[] = [
           '2024 20th International Conference on Distributed Computing in Smart Systems and the Internet of Things (DCOSS-IoT)',
         year: 2024,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4DMP91E08xMC',
-        citations: 4,
+        citations: 5,
         scholarId: '4DMP91E08xMC',
       },
       {

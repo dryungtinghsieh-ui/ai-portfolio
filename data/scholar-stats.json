@@ -1,27 +1,27 @@
 {
-  "totalCitations": 121,
+  "totalCitations": 122,
   "hindex": 7,
   "i10index": 6,
-  "fetchedAt": "2026-06-11T01:49:51.406Z",
   "citationsByScholarId": {
+    "MXK_kJrjxJIC": 23,
+    "eQOLeE2rZwMC": 21,
     "2osOgNQ5qMEC": 18,
+    "d1gkVwhDpl0C": 18,
     "YsMSGLbcyi4C": 14,
     "Tyk-4Ss8FVUC": 12,
     "4TOpqqG69KYC": 8,
-    "4DMP91E08xMC": 4,
+    "4DMP91E08xMC": 5,
     "M3ejUd6NZC8C": 3,
-    "d1gkVwhDpl0C": 18,
-    "MXK_kJrjxJIC": 23,
-    "eQOLeE2rZwMC": 21,
-    "Zph67rFs4hoC": 0,
     "dhFuZR0502QC": 0,
     "QIV2ME_5wuYC": 0,
     "Wp0gIr-vW9MC": 0,
     "aqlVkmm33-oC": 0,
     "LkGwnXOMwfcC": 0,
     "ufrVoPGSRksC": 0,
+    "Zph67rFs4hoC": 0,
     "Y0pCki6q_DkC": 0,
     "_FxGoFyzp5QC": 0,
     "qxL8FJ1GzNcC": 0
-  }
+  },
+  "fetchedAt": "2026-06-22T08:48:11.962Z"
 }
