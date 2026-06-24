@@ -52,8 +52,6 @@ const ctaPrimaryClass =
   'bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-slate-50';
 const ctaSecondaryClass =
   'bg-gradient-to-br from-[#1D4ED8] to-[#2563EB] text-slate-100';
-const ctaTertiaryClass =
-  'bg-gradient-to-br from-[#1E40AF] to-[#1D4ED8] text-slate-100';
 const ctaQuaternaryClass =
   'bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-slate-100';
 
@@ -431,14 +429,6 @@ export default function Home() {
                     className={`${ctaBaseClass} ${ctaPrimaryClass}`}
                   >
                     View Research Projects
-                  </motion.a>
-                  <motion.a
-                    href="/tools/maxcredit"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className={`${ctaBaseClass} ${ctaTertiaryClass}`}
-                  >
-                    MaxCredit Dashboard
                   </motion.a>
                   {/* Temporarily hidden per request
                   <motion.a
