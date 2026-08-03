@@ -87,7 +87,7 @@ export const researchProjects: ResearchProject[] = [
           '2021 IEEE International Midwest Symposium on Circuits and Systems (MWSCAS)',
         year: 2021,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:2osOgNQ5qMEC',
-        citations: 18,
+        citations: 20,
         scholarId: '2osOgNQ5qMEC',
       },
       {
@@ -107,7 +107,7 @@ export const researchProjects: ResearchProject[] = [
           '2021 IEEE 18th International Conference on Mobile Ad Hoc and Smart Systems (MASS)',
         year: 2021,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:Tyk-4Ss8FVUC',
-        citations: 12,
+        citations: 11,
         scholarId: 'Tyk-4Ss8FVUC',
       },
       {
@@ -154,7 +154,7 @@ export const researchProjects: ResearchProject[] = [
           '2024 20th International Conference on Distributed Computing in Smart Systems and the Internet of Things (DCOSS-IoT)',
         year: 2024,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4DMP91E08xMC',
-        citations: 5,
+        citations: 4,
         scholarId: '4DMP91E08xMC',
       },
       {
@@ -164,7 +164,7 @@ export const researchProjects: ResearchProject[] = [
           '2024 IEEE International Conference on Pervasive Computing and Communications Workshops and other Affiliated Events (PerCom Workshops)',
         year: 2024,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:M3ejUd6NZC8C',
-        citations: 3,
+        citations: 2,
         scholarId: 'M3ejUd6NZC8C',
       },
     ],
@@ -200,7 +200,7 @@ export const researchProjects: ResearchProject[] = [
           '2020 IEEE 17th International Conference on Mobile Ad Hoc and Sensor Systems (MASS)',
         year: 2020,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:d1gkVwhDpl0C',
-        citations: 18,
+        citations: 19,
         scholarId: 'd1gkVwhDpl0C',
       },
       {
@@ -208,7 +208,7 @@ export const researchProjects: ResearchProject[] = [
         publication: 'Journal of Communications and Networks 25(2), 167-181',
         year: 2023,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:MXK_kJrjxJIC',
-        citations: 23,
+        citations: 25,
         scholarId: 'MXK_kJrjxJIC',
       },
       {
