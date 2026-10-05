@@ -1,7 +1,7 @@
 {
-  "totalCitations": 124,
+  "totalCitations": 126,
   "hindex": 7,
-  "i10index": 6,
+  "i10index": 7,
   "citationsByScholarId": {
     "MXK_kJrjxJIC": 25,
     "eQOLeE2rZwMC": 21,
@@ -9,7 +9,7 @@
     "d1gkVwhDpl0C": 19,
     "YsMSGLbcyi4C": 14,
     "Tyk-4Ss8FVUC": 11,
-    "4TOpqqG69KYC": 8,
+    "4TOpqqG69KYC": 10,
     "4DMP91E08xMC": 4,
     "M3ejUd6NZC8C": 2,
     "dhFuZR0502QC": 0,
@@ -23,5 +23,5 @@
     "_FxGoFyzp5QC": 0,
     "qxL8FJ1GzNcC": 0
   },
-  "fetchedAt": "2026-08-10T04:21:30.806Z"
+  "fetchedAt": "2026-10-05T09:45:53.439Z"
 }

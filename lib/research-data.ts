@@ -116,7 +116,7 @@ export const researchProjects: ResearchProject[] = [
         publication: 'IEEE Journal of Biomedical and Health Informatics',
         year: 2024,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4TOpqqG69KYC',
-        citations: 8,
+        citations: 10,
         scholarId: '4TOpqqG69KYC',
       },
     ],
