@@ -87,7 +87,7 @@ export const researchProjects: ResearchProject[] = [
           '2021 IEEE International Midwest Symposium on Circuits and Systems (MWSCAS)',
         year: 2021,
         url: 'https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:2osOgNQ5qMEC',
-        citations: 20,
+        citations: 21,
         scholarId: '2osOgNQ5qMEC',
       },
       {
