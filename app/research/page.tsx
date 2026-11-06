@@ -4,11 +4,11 @@ import { ResearchPageClient } from './research-page-client';
 export const metadata: Metadata = {
   title: 'Research Projects',
   description:
-    'Research portfolio in AI-assisted signal integrity, spiking neural networks, neuromorphic systems, and low-power sensing.',
+    'Selected engineering research in signal integrity modeling, low-power neural architectures, and underwater acoustic communications.',
   openGraph: {
     title: 'Research Projects | Dr. Yung-Ting Hsieh',
     description:
-      'Research portfolio in AI-assisted signal integrity, spiking neural networks, neuromorphic systems, and low-power sensing.',
+      'Selected engineering research in signal integrity modeling, low-power neural architectures, and underwater acoustic communications.',
     url: '/research',
     type: 'website',
   },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Research Projects | Dr. Yung-Ting Hsieh',
     description:
-      'Research portfolio in AI-assisted signal integrity, spiking neural networks, neuromorphic systems, and low-power sensing.',
+      'Selected engineering research in signal integrity modeling, low-power neural architectures, and underwater acoustic communications.',
   },
 };
 

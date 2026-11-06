@@ -2,7 +2,9 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useCitations } from '@/components/citation-provider';
+import { getPortfolioStats } from '@/lib/portfolio-stats';
 
 const socials = [
   {
@@ -55,24 +57,23 @@ const ctaSecondaryClass =
 const ctaQuaternaryClass =
   'bg-gradient-to-br from-[#1E3A8A] to-[#1D4ED8] text-slate-100';
 
-const softwareStack = [
-  'HFSS',
-  'CAD Tools',
-  'Python',
-  'C',
-  'Java',
-  'Linux',
-  'EDA',
-  'CUDA',
-  'Ollama',
-  'LMStudio',
-];
-
-const hardwareStack = [
-  'VNA',
-  'Oscilloscopes',
-  'Lab Instrumentation',
-  'NVIDIA GPU (GB/RTX Series)',
+const skillGroups = [
+  {
+    title: 'Signal Integrity & Modeling',
+    skills: ['Ansys HFSS', 'S-Parameters', 'Channel Operating Margin', 'Circuit Modeling'],
+  },
+  {
+    title: 'Measurement & Validation',
+    skills: ['VNA', 'Oscilloscopes', 'Simulation–Measurement Correlation'],
+  },
+  {
+    title: 'Machine Learning & Computing',
+    skills: ['Python', 'PyTorch', 'TensorFlow', 'CUDA', 'Linux'],
+  },
+  {
+    title: 'LLM Systems & Automation',
+    skills: ['RAG', 'LLM Workflows', 'MCP Tool Integration', 'Ollama / LM Studio'],
+  },
 ];
 
 const timelineEntries = [
@@ -82,7 +83,7 @@ const timelineEntries = [
     subtitle: 'Sr. R&D Product/Development Engineer',
     phases: [],
     detail:
-      'Started as a Signal Integrity Electrical Engineering Intern in 2022 and returned as a full-time Sr. R&D Product/Development Engineer, building AI-assisted SI modeling workflows and leading high-speed interconnect development through simulation, measurement correlation, and product-facing execution.',
+      'Develop high-speed interconnects through signal integrity analysis, simulation, and measurement correlation. Build AI-assisted modeling workflows alongside product development. Joined as an SI engineering intern in 2022 and returned in a full-time senior engineering role in 2025.',
   },
   {
     period: '2019-2026',
@@ -90,7 +91,7 @@ const timelineEntries = [
     subtitle: 'Ph.D. in Electrical and Computer Engineering',
     phases: [],
     detail:
-      'Served as Graduate Research Assistant and Teaching Assistant, focusing on signal processing, communications, low-power ML, and technical instruction throughout the Ph.D. journey.',
+      'Research in signal processing, underwater acoustic communications, and low-power neural architectures. Served as a Graduate Research Assistant and Teaching Assistant, connecting algorithm development with circuit and system implementation.',
   },
   {
     period: '2017-2018',
@@ -98,32 +99,44 @@ const timelineEntries = [
     subtitle: 'R&D Engineer',
     phases: [],
     detail:
-      'Worked with enterprise customers including Dell, HP, Amazon, and Microsoft, and improved test procedures to reduce setup time and increase profit margin.',
+      'Supported R&D and test workflows for enterprise customers including Dell, HP, Amazon, and Microsoft. Improved test procedures to reduce setup time and support more efficient engineering execution.',
   },
 ];
 
 const educationJourney = [
   {
     stage: 'HS',
-    school: 'Tainan First Senior High School',
+    school: 'TNFSH',
+    fullName: 'Tainan First Senior High School',
+    major: null,
+    website: 'https://www.tnfsh.tn.edu.tw/eng/content/index.aspx?Parser=1,15,151',
     logo: '/Schools/TNFSH_emblem.svg',
     ranking: 'Top 3% Selective',
   },
   {
     stage: 'BS',
-    school: 'National Chung Hsing University',
+    school: 'NCHU',
+    fullName: 'National Chung Hsing University',
+    major: 'Physics',
+    website: 'https://www.phys.nchu.edu.tw/en/',
     logo: '/Schools/National_Chung_Hsing_University_logo.svg',
     ranking: 'Top 6 Taiwan',
   },
   {
     stage: 'MS',
-    school: 'National Chiao Tung University',
+    school: 'NYCU',
+    fullName: 'National Yang Ming Chiao Tung University (formerly NCTU)',
+    major: 'Audio Engineering',
+    website: 'https://robotics.nycu.edu.tw/en/page/index.php?kind=39',
     logo: '/Schools/NCTU_emblem.svg',
     ranking: 'Top 3 Taiwan',
   },
   {
     stage: 'Ph.D.',
-    school: 'Rutgers University',
+    school: 'RU',
+    fullName: 'Rutgers University',
+    major: 'Electrical & Computer Engineering',
+    website: 'https://ece.rutgers.edu/',
     logo: '/Schools/Rutgers_Scarlet_Knights_logo.svg.png',
     ranking: 'Top 40 U.S.',
   },
@@ -142,7 +155,7 @@ function CareerTimeline({
     <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Timeline</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-blue-300">Experience</p>
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-[170px_1fr]">
@@ -222,74 +235,89 @@ function CareerTimeline({
   );
 }
 
-function EducationJourney() {
-  const mobileEducationJourney = [...educationJourney].reverse();
-
+function EducationCard({ entry }: { entry: (typeof educationJourney)[number] }) {
   return (
-    <div className="w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
+    <a
+      href={entry.website}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`${entry.fullName}${entry.major ? ` · ${entry.major}` : ''} · English website (opens in a new tab)`}
+      className="relative flex h-full min-w-0 flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-3 py-5 text-center transition-colors hover:border-blue-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-300"
+    >
+      <div className="mb-3 flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-blue-500/20 bg-white p-2">
+        <Image src={entry.logo} alt={entry.fullName} width={52} height={52} className="max-h-12 w-auto object-contain" />
+      </div>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">{entry.stage}</p>
+      <p className="mt-2 text-sm font-semibold leading-snug text-gray-300">{entry.school}<span className="ml-1 text-[10px]" aria-hidden="true">↗</span></p>
+      <div className="mt-2 min-h-[4.5rem] w-full">
+        {entry.major && <p className="text-xs leading-relaxed text-gray-300">{entry.major}</p>}
+      </div>
+      <div className="mt-auto w-full pt-3">
+        <p className="min-h-8 text-[11px] uppercase leading-4 tracking-[0.12em] text-blue-300/80">{entry.ranking}</p>
+      </div>
+    </a>
+  );
+}
+
+function EducationJourney() {
+  return (
+    <div className="@container w-full rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-900/70 to-slate-950/80 p-6 shadow-2xl">
       <p className="mb-5 text-xs uppercase tracking-[0.24em] text-blue-300">Education</p>
-      <div className="flex flex-col gap-4 sm:hidden">
-        {mobileEducationJourney.map((entry) => (
-          <div key={`mobile-${entry.stage}`} className="relative">
-            <div className="flex h-full flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-4 py-5 text-center">
-              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-white p-2">
-                <Image
-                  src={entry.logo}
-                  alt={entry.school}
-                  width={52}
-                  height={52}
-                  className="max-h-12 w-auto object-contain"
-                />
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                {entry.stage}
-              </p>
-              <p className="mt-2 text-sm leading-snug text-gray-300">{entry.school}</p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-blue-300/80">
-                {entry.ranking}
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="grid auto-rows-fr grid-cols-2 gap-3 @min-[440px]:hidden">
+        {[...educationJourney].reverse().map(entry => <EducationCard key={entry.stage} entry={entry} />)}
       </div>
-      <div className="hidden gap-4 sm:grid sm:grid-cols-4">
-        {educationJourney.map((entry, index) => (
-          <div key={entry.stage} className="relative">
-            {index < educationJourney.length - 1 && (
-              <div className="absolute left-[calc(50%+28px)] top-9 hidden h-px w-[calc(100%-56px)] bg-gradient-to-r from-blue-500/40 to-cyan-400/30 sm:block" />
-            )}
-            <div className="flex h-full flex-col items-center rounded-xl border border-blue-500/20 bg-slate-900/60 px-4 py-5 text-center">
-              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-blue-500/20 bg-white p-2">
-                <Image
-                  src={entry.logo}
-                  alt={entry.school}
-                  width={52}
-                  height={52}
-                  className="max-h-12 w-auto object-contain"
-                />
-              </div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                {entry.stage}
-              </p>
-              <p className="mt-2 text-sm leading-snug text-gray-300">{entry.school}</p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-blue-300/80">
-                {entry.ranking}
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="hidden auto-rows-fr grid-cols-4 gap-3 @min-[440px]:grid">
+        {educationJourney.map(entry => <EducationCard key={entry.stage} entry={entry} />)}
       </div>
+      <p className="mt-4 border-t border-blue-500/20 pt-3 text-[11px] leading-relaxed text-gray-400">
+        NYCU (formerly NCTU) · Current program: Robotics.
+      </p>
     </div>
   );
 }
 
 export default function Home() {
   const reduceMotion = useReducedMotion();
+  const { snapshot: citationSnapshot } = useCitations();
   const [activeTimelineEntry, setActiveTimelineEntry] = useState(0);
+  const [palette, setPalette] = useState('graphite');
+  const [localPreview, setLocalPreview] = useState(false);
+  useEffect(() => {
+    if (!['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)) return;
+    setLocalPreview(true);
+    const selected = new URLSearchParams(window.location.search).get('palette');
+    setPalette(['original', 'graphite', 'paper', 'forest'].includes(selected ?? '') ? selected! : 'graphite');
+  }, []);
+  const paletteOptions = [
+    { id: 'graphite', name: '石墨白', note: '炭灰 × 暖白 · 推薦', colors: ['#17191c', '#ece9e2', '#9bb6ce'] },
+    { id: 'paper', name: '暖紙墨', note: '米白 × 墨色 × 陶土', colors: ['#f2eee7', '#272923', '#995439'] },
+    { id: 'forest', name: '深林綠', note: '深綠 × 柔白 × 鼠尾草', colors: ['#14231f', '#eef0e8', '#b2c6a5'] },
+    { id: 'original', name: '目前原版', note: '黑 × 藍青漸層', colors: ['#000000', '#2563eb', '#22d3ee'] },
+  ];
 
   return (
-    <main className="min-h-screen w-full overflow-hidden bg-black text-white">
-      <div className="fixed inset-0 pointer-events-none">
+    <>
+      {localPreview && (
+        <aside className="palette-preview" aria-label="本機配色預覽">
+          <div className="palette-intro"><strong>配色實驗室</strong><span>僅本機預覽 · 尚未發布</span></div>
+          <div className="palette-options">
+            {paletteOptions.map(option => (
+              <button key={option.id} type="button" aria-pressed={palette === option.id}
+                onClick={() => {
+                  setPalette(option.id);
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('palette', option.id);
+                  window.history.replaceState(null, '', url);
+                }}>
+                <span className="palette-swatches" aria-hidden="true">{option.colors.map(color => <i key={color} style={{ background: color }} />)}</span>
+                <span><strong>{option.name}</strong><small>{option.note}</small></span>
+              </button>
+            ))}
+          </div>
+        </aside>
+      )}
+    <main data-palette={palette} className="portfolio-theme min-h-screen w-full overflow-hidden bg-black text-white">
+      <div className="portfolio-ambient fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-black opacity-90" />
         <svg className="absolute inset-0 h-full w-full opacity-10" preserveAspectRatio="none">
           <defs>
@@ -374,7 +402,7 @@ export default function Home() {
                     Sr. R&D Product/Development Engineer
                   </h2>
                   <p className="text-lg font-medium text-cyan-300 sm:text-xl">
-                    SI Implementation Expertise × GenAI Expert
+                    Physics-based modeling and AI for high-speed interconnects.
                   </p>
                 </motion.div>
 
@@ -387,41 +415,36 @@ export default function Home() {
                   className="mb-12 rounded-xl border border-blue-500/20 bg-gradient-to-r from-slate-900/50 to-slate-800/50 p-6 backdrop-blur-sm sm:p-8"
                 >
                   <p className="text-sm leading-relaxed text-gray-200 sm:text-base">
-                    <span className="font-semibold text-cyan-300">Sr. R&D Product/Development Engineer at TE Connectivity</span>{' '}
-                    with <span className="text-cyan-300">4+ years of advanced Signal Integrity expertise</span> and{' '}
-                    <span className="text-cyan-300">7+ years of AI/ML development experience</span>. Focused on circuit modeling, engineering AI workflows, and system-level problem solving.
+                    I&apos;m a <span className="font-semibold text-cyan-300">Sr. R&D Product/Development Engineer at TE Connectivity</span>.
+                    {' '}I develop high-speed interconnects through <span className="text-cyan-300">electromagnetic simulation, circuit modeling, and measurement correlation</span>.
+                    {' '}Alongside my SI work, I build <span className="text-cyan-300">neural models and LLM-assisted engineering workflows</span> to shorten analysis cycles and make technical knowledge easier to use.
                   </p>
-                  <div className="mt-4 grid gap-4 text-xs sm:grid-cols-2 sm:text-sm">
-                    <div className="rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
-                      <p className="mb-2 text-blue-300">Software</p>
-                      <div className="flex flex-wrap gap-2">
-                        {softwareStack.map((tool) => (
-                          <span
-                            key={tool}
-                            className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[11px] text-gray-200 sm:text-xs"
-                          >
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="rounded-lg border border-cyan-500/20 bg-slate-900/40 p-3">
-                      <p className="mb-2 text-cyan-300">Hardware</p>
-                      <div className="flex flex-wrap gap-2">
-                        {hardwareStack.map((tool) => (
-                          <span
-                            key={tool}
-                            className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] text-gray-200 sm:text-xs"
-                          >
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2" aria-label="Technical expertise">
+                    {skillGroups.map(group => (
+                      <section key={group.title} className="min-w-0 rounded-lg border border-blue-500/20 bg-slate-900/40 p-3">
+                        <h3 className="mb-3 text-xs font-semibold leading-relaxed text-blue-300">{group.title}</h3>
+                        <ul className="flex flex-wrap gap-1.5" aria-label={group.title}>
+                          {group.skills.map(skill => (
+                            <li key={skill} className="max-w-full rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 text-[11px] leading-relaxed text-gray-200">
+                              {skill}
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ))}
                   </div>
+                  <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-5 border-t border-blue-500/20 pt-5 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-4" aria-label="Research and career statistics">
+                    {getPortfolioStats(citationSnapshot.totalCitations).map(stat => (
+                      <div key={stat.label} className="flex min-w-0 flex-col gap-1.5">
+                        <dt className="order-2 text-[11px] leading-relaxed text-gray-400">{stat.label}</dt>
+                        <dd className="text-2xl font-semibold tabular-nums tracking-tight text-white">{stat.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
                   <p className="mt-4 text-xs font-mono text-blue-300 sm:text-sm">
-                    Developing AI for advanced SI parameter prediction: 4000x faster iterations, ~4% prediction
-                    error, and ~$12.5M estimated savings.
+                    TE Connectivity recognized our team&apos;s COM prediction work with the Best AI Innovation prize
+                    at the TE AI Cup 2022–23. Estimated potential testing savings: $12.5M.
+                    {' '}<a className="underline underline-offset-4" href="https://ece.rutgers.edu/sites/default/files/2024-06/ECE_Newsletter_2023.pdf#page=6" target="_blank" rel="noopener noreferrer">Award coverage &amp; impact estimate ↗</a>
                   </p>
                 </motion.div>
 
@@ -435,7 +458,7 @@ export default function Home() {
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                     className={`${ctaBaseClass} ${ctaSecondaryClass}`}
                   >
-                    Microstrip Fun Project
+                    Microstrip Design Tool
                   </motion.a>
                   <motion.a
                     href="/research"
@@ -443,7 +466,7 @@ export default function Home() {
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                     className={`${ctaBaseClass} ${ctaPrimaryClass}`}
                   >
-                    View Research Projects
+                    Explore Research
                   </motion.a>
                   {/* Temporarily hidden per request
                   <motion.a
@@ -461,7 +484,7 @@ export default function Home() {
                     whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                     className={`${ctaBaseClass} ${ctaQuaternaryClass}`}
                   >
-                    Contact Me
+                    Get in Touch
                   </motion.a>
                 </motion.div>
 
@@ -517,5 +540,6 @@ export default function Home() {
 
       </div>
     </main>
+    </>
   );
 }

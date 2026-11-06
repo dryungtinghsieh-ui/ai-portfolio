@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import { CitationProvider } from '@/components/citation-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -15,23 +16,23 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://dryungtinghsieh-ui.github.io/ai-portfolio'),
   title: {
-    default: 'Dr. Yung-Ting Hsieh | AI Research Portfolio',
+    default: 'Dr. Yung-Ting Hsieh | Signal Integrity & Applied AI',
     template: '%s | Dr. Yung-Ting Hsieh',
   },
   description:
-    'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
+    'Yung-Ting Hsieh, Ph.D. — signal integrity engineer working on high-speed interconnects, physics-based modeling, and applied AI for engineering.',
   openGraph: {
-    title: 'Dr. Yung-Ting Hsieh | AI Research Portfolio',
+    title: 'Dr. Yung-Ting Hsieh | Signal Integrity & Applied AI',
     description:
-      'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
+      'Yung-Ting Hsieh, Ph.D. — signal integrity engineer working on high-speed interconnects, physics-based modeling, and applied AI for engineering.',
     type: 'website',
     url: '/',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dr. Yung-Ting Hsieh | AI Research Portfolio',
+    title: 'Dr. Yung-Ting Hsieh | Signal Integrity & Applied AI',
     description:
-      'AI-assisted Signal Integrity Engineer and researcher focused on spiking neural networks, S-parameter prediction, and engineering AI workflows.',
+      'Yung-Ting Hsieh, Ph.D. — signal integrity engineer working on high-speed interconnects, physics-based modeling, and applied AI for engineering.',
   },
 };
 
@@ -45,7 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <CitationProvider>{children}</CitationProvider>
       </body>
     </html>
   );

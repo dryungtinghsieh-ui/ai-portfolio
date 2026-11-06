@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useCitations } from '@/components/citation-provider';
 import { researchProjects } from '@/lib/research-data';
 
 const containerVariants = {
@@ -29,94 +29,13 @@ const itemVariants = {
   },
 };
 
-type CitationState = {
-  totalCitations: number;
-  citationsByScholarId: Record<string, number>;
-  fetchedAt: string | null;
-  source: string | null;
-};
-
 export function ResearchPageClient() {
   const reduceMotion = useReducedMotion();
-  const fallbackCitationState = useMemo(() => {
-    const citationsByScholarId: Record<string, number> = {};
-    const totalCitations = researchProjects.reduce(
-      (acc, project) =>
-        acc +
-        (project.publications?.reduce((pubAcc, pub) => {
-          const citations = pub.citations || 0;
-          if (pub.scholarId) {
-            citationsByScholarId[pub.scholarId] = citations;
-          }
-          return pubAcc + citations;
-        }, 0) || 0),
-      0
-    );
-
-    return { totalCitations, citationsByScholarId };
-  }, []);
-
-  const [citationState, setCitationState] = useState<CitationState>({
-    totalCitations: fallbackCitationState.totalCitations,
-    citationsByScholarId: fallbackCitationState.citationsByScholarId,
-    fetchedAt: null,
-    source: null,
-  });
-  const [usingFallbackData, setUsingFallbackData] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchCitations = async () => {
-      try {
-        const response = await fetch('/api/scholar-citations', { cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error('Citation API request failed');
-        }
-
-        const data = await response.json();
-        if (!isMounted || typeof data.totalCitations !== 'number') {
-          return;
-        }
-
-        setCitationState({
-          totalCitations: data.totalCitations,
-          citationsByScholarId:
-            data.citationsByScholarId && typeof data.citationsByScholarId === 'object'
-              ? data.citationsByScholarId
-              : fallbackCitationState.citationsByScholarId,
-          fetchedAt: typeof data.fetchedAt === 'string' ? data.fetchedAt : null,
-          source: typeof data.source === 'string' ? data.source : null,
-        });
-        if (data.source === 'local-fallback') {
-          setUsingFallbackData(true);
-        }
-      } catch {
-        if (isMounted) {
-          setUsingFallbackData(true);
-        }
-      }
-    };
-
-    fetchCitations();
-    return () => {
-      isMounted = false;
-    };
-  }, [fallbackCitationState.citationsByScholarId]);
-
-  const lastCheckedLabel = citationState.fetchedAt
-    ? new Date(citationState.fetchedAt).toLocaleString()
-    : 'Using local fallback values';
-  const getPublicationCitations = (scholarId?: string, fallbackCitations?: number) => {
-    if (scholarId && typeof citationState.citationsByScholarId[scholarId] === 'number') {
-      return citationState.citationsByScholarId[scholarId];
-    }
-    return fallbackCitations;
-  };
+  const { getPublicationCitations } = useCitations();
 
   return (
-    <main className="min-h-screen w-full overflow-hidden bg-black text-white">
-      <div className="fixed inset-0 pointer-events-none">
+    <main data-palette="graphite" className="portfolio-theme min-h-screen w-full overflow-hidden bg-black text-white">
+      <div className="portfolio-ambient fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-black opacity-90" />
         <svg className="absolute inset-0 h-full w-full opacity-10" preserveAspectRatio="none">
           <defs>
@@ -168,7 +87,7 @@ export function ResearchPageClient() {
           </div>
         </section>
 
-        <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <section className="px-4 pb-4 pt-12 sm:px-6 lg:px-8">
           <motion.div
             className="mx-auto max-w-6xl text-center"
             variants={containerVariants}
@@ -177,67 +96,14 @@ export function ResearchPageClient() {
           >
             <motion.h1
               variants={itemVariants}
-              className="mb-6 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl"
+              className="text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl"
             >
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                 Research Projects
               </span>
             </motion.h1>
 
-            <motion.p
-              variants={itemVariants}
-              className="mx-auto mb-2 max-w-3xl text-lg text-gray-300 sm:text-xl"
-            >
-              Pioneering work in AI-assisted signal integrity, spiking neural networks, and
-              neuromorphic computing.
-            </motion.p>
-
-            <motion.p
-              variants={itemVariants}
-              className="mx-auto max-w-2xl text-md text-cyan-300 sm:text-lg"
-            >
-              Publications in IEEE, ACM, and leading technical conferences.
-            </motion.p>
           </motion.div>
-        </section>
-
-        <section className="bg-gradient-to-b from-transparent via-slate-900/30 to-black px-4 py-8 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            <motion.div
-              className="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4"
-              variants={containerVariants}
-              initial={reduceMotion ? false : 'hidden'}
-              whileInView="visible"
-              viewport={{ once: true, margin: '-100px' }}
-            >
-              {[
-                { label: 'Research Projects', value: researchProjects.length },
-                { label: 'Publications', value: 12 },
-                { label: 'Patents Filed', value: 2 },
-                { label: 'Citations', value: citationState.totalCitations.toLocaleString() },
-              ].map((stat) => (
-                <motion.div
-                  key={stat.label}
-                  variants={itemVariants}
-                  className="rounded-lg border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 p-4 text-center"
-                >
-                  <p className="mb-2 bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-                    {stat.value}
-                  </p>
-                  <p className="text-sm text-gray-400 sm:text-base">{stat.label}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-            <p className="mt-4 text-center text-xs text-gray-500">
-              Citation source: {citationState.source === 'local-fallback'
-                ? 'local project data'
-                : citationState.source === 'scholarly-cache'
-                  ? 'scholarly cache'
-                  : 'scholarly cache'}.
-              {' '}Last checked: {lastCheckedLabel}
-              {usingFallbackData ? ' (cache unavailable, fallback applied)' : ''}
-            </p>
-          </div>
         </section>
 
         <section className="px-4 py-12 sm:px-6 lg:px-8">
@@ -306,7 +172,7 @@ export function ResearchPageClient() {
                       {project.achievements && project.achievements.length > 0 && (
                         <div className="mb-6 rounded-lg border-l-2 border-blue-500/50 bg-blue-500/5 p-3">
                           <p className="text-sm text-blue-200">
-                            <span className="font-semibold">Key Achievement:</span>{' '}
+                            <span className="font-semibold">Selected Result:</span>{' '}
                             {project.achievements[0]}
                           </p>
                         </div>
@@ -369,7 +235,7 @@ export function ResearchPageClient() {
                         className="flex items-center text-sm font-semibold text-blue-400 transition-colors group-hover:text-blue-300"
                         whileHover={reduceMotion ? undefined : { x: 4 }}
                       >
-                        <span>View Details</span>
+                        <span>Read Project</span>
                         <span className="ml-2" aria-hidden>
                           &rarr;
                         </span>

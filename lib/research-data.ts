@@ -28,9 +28,9 @@ export const researchProjects: ResearchProject[] = [
     id: 'ai-s-parameter-prediction',
     title: 'AI-Assisted S-Parameter Prediction',
     shortDescription:
-      'Like a GPS for high-speed circuits: AI predicts signal behavior in seconds instead of waiting hours for simulations.',
+      'Neural modeling and signal preprocessing to accelerate Channel Operating Margin prediction for high-speed interconnect evaluation.',
     fullDescription:
-      'When engineers design high-speed connectors, tiny signal reflections can break an entire product. Traditionally, teams run heavy electromagnetic simulations and wait a long time for each design trial. In the TE AI Cup 2022-23 challenge, our team proposed novel neural-network architectures and signal pre-processing methods to predict IEEE-standard Channel Operating Margin (COM) parameters, replacing a time-consuming model-based MATLAB workflow. In plain terms, instead of repeatedly baking a whole cake to test one ingredient, we can taste a reliable sample first. That means faster design decisions, fewer costly dead-ends, and much quicker time-to-market while keeping engineering accuracy at production level.',
+      'High-speed interconnect evaluation depends on repeated signal analysis, which can make design exploration computationally expensive. For the TE AI Cup 2022-23, our Rutgers team developed neural-network architectures and signal preprocessing methods to predict IEEE-standard Channel Operating Margin (COM) parameters in place of a time-consuming model-based MATLAB workflow. The project received the Best AI Innovation prize. Rutgers estimated $12.5M in potential savings in tester time and capital expenditure for high-speed testing.',
     image: '/research/ai-cup.jpg',
     technologies: [
       'TensorFlow',
@@ -50,24 +50,22 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      'Up to 4000x faster prediction than traditional full simulation workflows',
-      'Around 4% error while staying useful for real design decisions',
-      'About $12.5M saved through faster design iteration and reduced prototyping',
-      'Deployed in production at TE Connectivity',
-      'Won Best AI Innovation Prize in TE AI Cup 2022-23',
-      'Ranked first among 40 teams from 25 universities worldwide',
-      'Recognized in Rutgers ECE Newsletter with team members from CPS Lab and ECE',
+      'Best AI Innovation prize, TE AI Cup 2022-23',
+      'Neural-network architectures and signal preprocessing for COM parameter prediction',
+      'Project benchmarks reported up to 4,000× faster prediction and approximately 4% prediction error; results are specific to the evaluated workflow',
+      'Estimated $12.5M in potential tester-time and capital-expenditure savings, as reported by Rutgers',
+      'Recognized in a competition involving 40 teams from 25 universities',
     ],
     impact:
-      'Turned a slow trial-and-error design cycle into a rapid feedback loop engineers can use daily.',
+      'Demonstrates how learned models can accelerate a defined SI evaluation workflow, with potential reductions in high-speed testing time and equipment cost.',
   },
   {
     id: 'hybrid-neural-networks',
-    title: 'Ultra-low Power Analog Folded Neural Network for Cardiovascular Health Monitoring',
+    title: 'Ultra-Low-Power Analog Neural Networks for ECG Monitoring',
     shortDescription:
-      'A wearable heart guardian that can run with extremely low power and continuously check ECG signals.',
+      'Analog neural-network architectures that reuse computation hardware to reduce power and area requirements for ECG monitoring.',
     fullDescription:
-      'Most health wearables trade battery life for intelligence. This project redesigns that balance. We built an analog folded neural network that works like a compact, energy-sipping specialist for ECG patterns. Folded means the same hardware is reused cleverly over time, so we do more with less power and less chip area. For non-experts: imagine one skilled doctor examining patients one by one very efficiently instead of hiring a full hospital for every check. The result is continuous heart monitoring with tiny energy needs, opening the door to lighter, longer-lasting, and more practical preventive healthcare devices.',
+      'Continuous ECG analysis requires inference within tight power and hardware budgets. This research investigates analog folded neural networks, reusing computation resources over time rather than allocating separate hardware to every operation. The work spans resistive processing units, analog activation functions, and hybrid analog-digital sensing architectures. The engineering focus is the tradeoff among inference capability, circuit complexity, and power consumption for wearable health-monitoring applications.',
     image: '/research/ecg_acqnmon-exp.jpg',
     technologies: [
       'Analog Neural Networks',
@@ -121,23 +119,21 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      'Near-batteryless operating profile through serialized computation',
-      'Optimized 6-layer model (hidden size 30) for ECG anomaly screening',
-      'Continuous monitoring suitable for day-long wearable use',
-      'Strong detection performance for key cardiovascular warning patterns',
-      'Low thermal noise and compact on-chip footprint',
-      'Lower peak power compared with conventional analog neural implementations',
+      'Analog folded computation for resource-constrained ECG inference',
+      'Evaluation of a six-layer model with hidden size 30 for ECG anomaly screening',
+      'Hardware reuse to address power and circuit-area constraints',
+      'Related work published in IEEE Journal of Biomedical and Health Informatics, MASS, and MWSCAS',
     ],
     impact:
-      'Makes always-on heart monitoring more realistic for everyday users, not just clinical environments.',
+      'Explores a lower-power implementation path for continuous ECG analysis through neural-network and circuit architecture co-design.',
   },
   {
     id: 'spiking-neural-networks',
     title: 'Spiking Neural Networks for Signal Processing',
     shortDescription:
-      'Brain-inspired AI that fires only when needed, reducing power use for always-on sensing.',
+      'Hybrid analog-digital and event-driven neural architectures for power-constrained sensing and temporal signal processing.',
     fullDescription:
-      'Regular neural networks compute constantly, even when nothing important is happening. Spiking neural networks behave more like real neurons: they stay quiet and activate only when meaningful events appear. For beginners, this is like motion-sensor lights compared with lights that are always on. We apply this idea to signal analysis so systems can watch streams in real time while using far less energy. That makes SNNs attractive for edge devices, smart cameras, and IoT sensors that must stay alert without draining batteries.',
+      'Always-on sensing must extract useful information from time-varying inputs within a limited energy budget. This research examines spiking neural networks and hybrid analog-digital implementations for IoT sensing and smart-camera applications. The work focuses on temporal representations and event-driven computation, assessing how neural architecture and hardware implementation affect the cost of continuous signal processing.',
     image: '/research/snn-exp.jpg',
     technologies: [
       'Spiking Neural Networks',
@@ -169,20 +165,21 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      'Up to 1000x lower energy use compared with conventional dense neural processing',
-      'Real-time signal processing capability',
-      'Demonstrated on Intel Loihi neuromorphic hardware',
-      'Captures time-based signal patterns that standard models often miss',
+      'Hybrid analog-digital spiking neural-network designs for IoT applications',
+      'Temporal and event-driven processing for low-power sensing',
+      'Research on pervasive smart-camera implementations',
+      'Publications at DCOSS-IoT and IEEE PerCom Workshops',
     ],
-    impact: 'Enables practical always-on AI for low-power edge products.',
+    impact:
+      'Investigates how event-driven neural processing can support continuous sensing under constrained power budgets.',
   },
   {
     id: 'underwater-acoustic-communications',
     title: 'Full-Duplex Underwater Acoustic Communications',
     shortDescription:
-      'Lets underwater robots talk and listen at the same time, like a real conversation instead of walkie-talkie turns.',
+      'Spatial self-interference cancellation and Doppler compensation for simultaneous underwater acoustic transmission and reception.',
     fullDescription:
-      "Underwater communication is hard because radio waves do not travel well in water, so teams rely on sound. Traditional systems act like walkie-talkies: one side speaks, then waits. This research enables true full-duplex communication, where both sides talk and hear simultaneously. The core trick is canceling a device's own loud echo so it can still hear incoming signals. Think of trying to hear a friend while shouting in a tunnel; we build the anti-echo hearing aid that makes it possible. This significantly improves coordination speed for underwater robots, monitoring stations, and ocean exploration missions.",
+      'Full-duplex underwater acoustic links must recover incoming signals while suppressing interference from their own transmitter. This research addresses that constraint through spatial self-interference cancellation, supported by work on joint Doppler estimation and compensation. The objective is to improve acoustic-channel utilization while accounting for the propagation and motion effects that complicate underwater communications. The project connects signal-processing methods with experimental acoustic-link evaluation.',
     image: '/research/underwater-acoustic-exp.jpg',
     technologies: [
       'Acoustic Communications',
@@ -231,13 +228,12 @@ export const researchProjects: ResearchProject[] = [
       },
     ],
     achievements: [
-      'Around 2x channel efficiency versus half-duplex underwater links',
-      'Real-time bidirectional communication underwater',
-      'Adaptive steering angle adjustment via integrated protocol',
-      'Validated in real underwater acoustic channels',
-      'Supports advanced phased-array beamforming techniques',
+      'Spatial self-interference cancellation for full-duplex acoustic communication',
+      'Joint Doppler estimation and compensation using machine-learning methods',
+      'Experimental validation in underwater acoustic channels',
+      'Related work published in Journal of Communications and Networks, IEEE MASS, and ACM WUWNet',
     ],
     impact:
-      'Turns underwater networking from turn-taking messaging into true real-time teamwork.',
+      'Addresses interference and channel variation that limit simultaneous transmission and reception in underwater acoustic networks.',
   },
 ];

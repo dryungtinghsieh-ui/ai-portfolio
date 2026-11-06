@@ -18,8 +18,8 @@
       <section class="panel">
         <h1>Microstrip Designer</h1>
         <p class="subtitle">
-          Enter target impedance and material properties to generate dimensions
-          and a 3D model.
+          Estimate trace dimensions from target impedance and substrate properties.
+          Inspect the resulting geometry in 3D.
         </p>
 
         <form id="design-form" class="form-grid">
@@ -64,11 +64,11 @@
             </label>
           </div>
 
-          <button type="submit">Generate Design</button>
+          <button type="submit">Calculate &amp; Update Model</button>
         </form>
 
         <section class="results">
-          <h2>Computed Results</h2>
+          <h2>Calculated Dimensions</h2>
           <p><strong>Line Width W:</strong> <span id="result-w">-</span></p>
           <p><strong>W / h:</strong> <span id="result-wh">-</span></p>
           <p><strong>Effective Permittivity:</strong> <span id="result-eeff">-</span></p>
@@ -77,7 +77,7 @@
 
       <section class="viewer-wrap">
         <div id="viewer"></div>
-        <p class="hint">Drag to rotate, wheel to zoom, right-drag to pan.</p>
+        <p class="hint">Rotate: drag · Zoom: scroll · Pan: right-drag</p>
       </section>
     </main>
 

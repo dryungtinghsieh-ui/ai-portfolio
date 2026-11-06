@@ -8,7 +8,7 @@ const outWH = document.getElementById("result-wh");
 const outEff = document.getElementById("result-eeff");
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xe8f3ff);
+scene.background = new THREE.Color(0x1b1e22);
 
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 5000);
 camera.position.set(120, 90, 120);
@@ -25,7 +25,7 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
 dirLight.position.set(70, 120, 90);
 scene.add(dirLight);
 
-const grid = new THREE.GridHelper(250, 25, 0x6f8ba6, 0xbfd7ea);
+const grid = new THREE.GridHelper(250, 25, 0x66717c, 0x343a42);
 scene.add(grid);
 
 let modelGroup = new THREE.Group();

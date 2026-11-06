@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Microstrip Designer',
-  description: 'Interactive microstrip design and 3D visualization tool.',
+  description: 'Explore microstrip geometry from target impedance and material properties, with an interactive 3D model.',
   robots: {
     index: false,
     follow: false,
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 
 export default function MicrostripFunPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+    <main data-palette="graphite" className="portfolio-theme min-h-screen bg-slate-950 text-slate-100">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-lg font-semibold">Microstrip Fun Project</h1>
+          <h1 className="text-lg font-semibold">Microstrip Design Tool</h1>
           <Link
             href="/"
             className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-semibold text-slate-200 transition-colors hover:border-cyan-400 hover:text-cyan-200"

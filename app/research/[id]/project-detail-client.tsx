@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useCitations } from '@/components/citation-provider';
 import { ResearchProject, researchProjects } from '@/lib/research-data';
 
 interface ProjectDetailClientProps {
@@ -24,62 +24,11 @@ const itemVariants = {
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const reduceMotion = useReducedMotion();
-  const fallbackCitationsByScholarId = useMemo(() => {
-    const citationsByScholarId: Record<string, number> = {};
-    for (const publication of project.publications ?? []) {
-      if (publication.scholarId) {
-        citationsByScholarId[publication.scholarId] = publication.citations ?? 0;
-      }
-    }
-    return citationsByScholarId;
-  }, [project.publications]);
-
-  const [citationsByScholarId, setCitationsByScholarId] = useState<Record<string, number>>(
-    fallbackCitationsByScholarId
-  );
-  const [citationsLastChecked, setCitationsLastChecked] = useState<string | null>(null);
-  const [citationSyncFailed, setCitationSyncFailed] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchCitations = async () => {
-      try {
-        const response = await fetch('/api/scholar-citations', { cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error('Citation API request failed');
-        }
-
-        const data = await response.json();
-        if (!isMounted) {
-          return;
-        }
-
-        if (data.citationsByScholarId && typeof data.citationsByScholarId === 'object') {
-          setCitationsByScholarId(data.citationsByScholarId);
-        }
-        if (typeof data.fetchedAt === 'string') {
-          setCitationsLastChecked(data.fetchedAt);
-        }
-        if (data.source === 'local-fallback') {
-          setCitationSyncFailed(true);
-        }
-      } catch {
-        if (isMounted) {
-          setCitationSyncFailed(true);
-        }
-      }
-    };
-
-    fetchCitations();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { getPublicationCitations } = useCitations();
 
   return (
-    <main className="min-h-screen w-full overflow-hidden bg-black text-white">
-      <div className="fixed inset-0 pointer-events-none">
+    <main data-palette="graphite" className="portfolio-theme min-h-screen w-full overflow-hidden bg-black text-white">
+      <div className="portfolio-ambient fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-black to-black opacity-90" />
         <svg className="absolute inset-0 h-full w-full opacity-5" preserveAspectRatio="none">
           <defs>
@@ -189,7 +138,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 variants={itemVariants}
                 className="mb-12 rounded-xl border border-green-500/20 bg-gradient-to-r from-green-900/20 to-cyan-900/20 p-6 sm:p-8"
               >
-                <h2 className="mb-4 text-xl font-bold text-green-400 sm:text-2xl">Real-World Impact</h2>
+                <h2 className="mb-4 text-xl font-bold text-green-400 sm:text-2xl">Engineering Relevance</h2>
                 <p className="text-base leading-relaxed text-gray-300 sm:text-lg">{project.impact}</p>
               </motion.div>
             )}
@@ -200,7 +149,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
               variants={itemVariants}
               className="mb-12"
             >
-              <h2 className="mb-4 text-xl font-bold text-blue-300 sm:text-2xl">Technologies & Techniques</h2>
+              <h2 className="mb-4 text-xl font-bold text-blue-300 sm:text-2xl">Methods & Tools</h2>
               <div className="flex flex-wrap gap-3">
                 {project.technologies.map((tech) => (
                   <span
@@ -220,7 +169,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 variants={itemVariants}
                 className="mb-12"
               >
-                <h2 className="mb-6 text-xl font-bold text-blue-300 sm:text-2xl">Key Achievements</h2>
+                <h2 className="mb-6 text-xl font-bold text-blue-300 sm:text-2xl">Selected Results</h2>
                 <div className="space-y-4">
                   {project.achievements.map((achievement, index) => (
                     <motion.div
@@ -246,13 +195,6 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 className="mb-12"
               >
                 <h2 className="mb-6 text-xl font-bold text-blue-300 sm:text-2xl">Publications</h2>
-                <p className="mb-4 text-xs text-gray-500">
-                  Citation data {citationSyncFailed ? 'using fallback values' : 'synced from scholarly cache'}
-                  {citationsLastChecked
-                    ? `, last checked ${new Date(citationsLastChecked).toLocaleString()}`
-                    : ''}
-                  .
-                </p>
                 <div className="space-y-4">
                   {project.publications.map((pub, index) => (
                     <motion.div
@@ -269,9 +211,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                           <p className="font-semibold text-cyan-400">{pub.year}</p>
                           <p className="font-semibold text-blue-300">
                             Cited by{' '}
-                            {pub.scholarId && typeof citationsByScholarId[pub.scholarId] === 'number'
-                              ? citationsByScholarId[pub.scholarId]
-                              : pub.citations ?? 0}
+                            {getPublicationCitations(pub.scholarId, pub.citations) ?? '—'}
                           </p>
                         </div>
                       </div>
@@ -362,10 +302,10 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h3 className="mb-6 text-2xl font-bold sm:text-3xl">Want to Discuss This Research?</h3>
+            <h3 className="mb-6 text-2xl font-bold sm:text-3xl">Discuss the Engineering</h3>
             <p className="mx-auto mb-8 max-w-2xl text-gray-400">
-              I&apos;m always excited to discuss technical details, potential applications, or
-              collaborative opportunities.
+              Get in touch to discuss signal integrity modeling, low-power inference, or
+              related research and engineering work.
             </p>
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <motion.a
@@ -374,7 +314,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
                 whileTap={reduceMotion ? undefined : { scale: 0.98 }}
                 className="rounded-lg bg-gradient-to-r from-green-500 to-cyan-500 px-8 py-3 font-semibold text-white transition-all hover:shadow-lg"
               >
-                Get In Touch
+                Get in Touch
               </motion.a>
               <Link href="/research">
                 <motion.button

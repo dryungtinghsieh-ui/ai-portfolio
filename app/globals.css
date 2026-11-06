@@ -35,3 +35,54 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Local palette comparison. Original and other routes retain their own styles. */
+.palette-preview { position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: center; gap: 28px; padding: 14px 24px; background: #f8f7f4; color: #252728; border-bottom: 1px solid #d9d9d4; box-shadow: 0 3px 18px #00000012; }
+.palette-intro { display: grid; gap: 4px; white-space: nowrap; font-size: 13px; }
+.palette-intro span { font-size: 11px; color: #666864; }
+.palette-options { display: flex; gap: 8px; }
+.palette-options button { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 1px solid #d9d9d4; border-radius: 9px; background: #fff; cursor: pointer; text-align: left; }
+.palette-options button[aria-pressed="true"] { border-color: #393e3c; box-shadow: 0 0 0 1px #393e3c; }
+.palette-options button:focus-visible { outline: 3px solid #58799b; outline-offset: 3px; }
+.palette-options strong { display: block; font-size: 12px; }
+.palette-options small { display: block; font-size: 10px; color: #666864; margin-top: 3px; }
+.palette-swatches { display: flex; }
+.palette-swatches i { width: 12px; height: 24px; border: 1px solid #00000012; }
+.palette-swatches i:first-child { border-radius: 5px 0 0 5px; }
+.palette-swatches i:last-child { border-radius: 0 5px 5px 0; }
+@media (max-width: 800px) { .palette-preview { align-items: stretch; flex-direction: column; gap: 10px; padding: 12px 16px; } .palette-intro { display: flex; align-items: center; justify-content: space-between; } .palette-options { overflow-x: auto; padding: 2px 2px 5px; } .palette-options button { flex-shrink: 0; } }
+.portfolio-theme[data-palette="graphite"] { --p-bg: #17191c; --p-surface: #202328; --p-inset: #1b1e22; --p-text: #ece9e2; --p-muted: #b1b4b8; --p-accent: #a7bfd4; --p-line: #3d434b; --p-button: #b8ccdc; --p-ink: #17222b; }
+.portfolio-theme[data-palette="paper"] { --p-bg: #f2eee7; --p-surface: #faf8f3; --p-inset: #eee9e0; --p-text: #272923; --p-muted: #62645c; --p-accent: #995439; --p-line: #d3cbbd; --p-button: #85472f; --p-ink: #fffaf3; }
+.portfolio-theme[data-palette="forest"] { --p-bg: #14231f; --p-surface: #1c2e27; --p-inset: #172820; --p-text: #eef0e8; --p-muted: #b4c1b6; --p-accent: #b2c6a5; --p-line: #3b5143; --p-button: #b2c6a5; --p-ink: #18271e; }
+.portfolio-theme[data-palette]:not([data-palette="original"]) { background: var(--p-bg); color: var(--p-text); }
+.portfolio-theme:not([data-palette="original"]) .portfolio-ambient { display: none; }
+.portfolio-theme:not([data-palette="original"]) [class*="from-slate-"] { background-image: none; background-color: var(--p-surface); }
+.portfolio-theme:not([data-palette="original"]) [class*="bg-slate-900/"] { background-color: var(--p-inset); }
+.portfolio-theme:not([data-palette="original"]) [class*="border-blue-"],
+.portfolio-theme:not([data-palette="original"]) [class*="border-cyan-"] { border-color: var(--p-line); }
+.portfolio-theme:not([data-palette="original"]) [class*="text-gray-"],
+.portfolio-theme:not([data-palette="original"]) [class*="text-blue-"] { color: var(--p-muted); }
+.portfolio-theme:not([data-palette="original"]) [class*="text-white"] { color: var(--p-text); }
+.portfolio-theme:not([data-palette="original"]) [class*="text-cyan-"] { color: var(--p-accent); }
+.portfolio-theme:not([data-palette="original"]) h1 span { background-image: none; color: var(--p-text); }
+.portfolio-theme:not([data-palette="original"]) [class*="bg-blue-500/"],
+.portfolio-theme:not([data-palette="original"]) [class*="bg-cyan-500/"] { background-color: var(--p-inset); }
+.portfolio-theme:not([data-palette="original"]) [class*="shadow-"],
+.portfolio-theme:not([data-palette="original"]) :is(.blur-2xl, .blur-3xl) { box-shadow: none; }
+.portfolio-theme:not([data-palette="original"]) :is(.blur-2xl, .blur-3xl) { display: none; }
+.portfolio-theme:not([data-palette="original"]) [class*="bg-cyan-300"] { background-color: var(--p-accent); border-color: var(--p-accent); }
+.portfolio-theme:not([data-palette="original"]) a[class*="bg-gradient-"] { background-image: none; background-color: transparent; color: var(--p-text); border: 1px solid var(--p-line); }
+.portfolio-theme:not([data-palette="original"]) a[class*="bg-gradient-"]:hover { border-color: var(--p-accent); }
+
+/* Shared graphite palette for portfolio routes; research figures retain their colors. */
+.portfolio-theme[data-palette="graphite"] [class*="bg-gradient-"]:not(.bg-clip-text) { background-image: none; background-color: var(--p-surface); }
+.portfolio-theme[data-palette="graphite"] .bg-clip-text { background-image: none; color: var(--p-text); }
+.portfolio-theme[data-palette="graphite"] [class*="border-slate-"],
+.portfolio-theme[data-palette="graphite"] [class*="border-green-"] { border-color: var(--p-line); }
+.portfolio-theme[data-palette="graphite"] [class*="text-slate-"],
+.portfolio-theme[data-palette="graphite"] [class*="text-green-"] { color: var(--p-muted); }
+.portfolio-theme[data-palette="graphite"] [class*="bg-slate-900"] { background-color: var(--p-surface); }
+.portfolio-theme[data-palette="graphite"] a[class*="bg-gradient-"] { color: var(--p-text); background-color: var(--p-inset); }
+.portfolio-theme[data-palette="graphite"] a[href^="mailto:"][class*="bg-gradient-to-r"] { color: var(--p-ink); background-color: var(--p-button); }
+.portfolio-theme[data-palette="graphite"] a:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 4px; }
+.portfolio-theme[data-palette="graphite"] a:hover { color: var(--p-accent); }
