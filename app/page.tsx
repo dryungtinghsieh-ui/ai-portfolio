@@ -49,7 +49,7 @@ const itemVariants = {
 
 
 const ctaBaseClass =
-  'inline-flex items-center justify-center self-center rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)] sm:px-8 sm:py-3 sm:text-base md:self-auto';
+  'inline-flex h-full min-h-14 w-full items-center justify-center rounded-xl px-3 py-3 text-center text-xs font-semibold transition-all duration-200 ease-in-out hover:shadow-[0_0_12px_rgba(59,130,246,0.4)] sm:text-sm';
 const ctaPrimaryClass =
   'bg-gradient-to-br from-[#2563EB] to-[#0EA5E9] text-slate-50';
 const ctaSecondaryClass =
@@ -276,6 +276,58 @@ function EducationJourney() {
   );
 }
 
+function ProfileLinks({ reduceMotion }: { reduceMotion: boolean | null }) {
+  return (
+    <div className="mt-6 w-full max-w-[500px]" aria-label="Quick links and social profiles">
+      <motion.div
+        variants={itemVariants}
+        className="grid grid-cols-3 gap-2 sm:gap-3"
+      >
+        <motion.a
+          href="/fun/microstrip"
+          whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+          whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+          className={`${ctaBaseClass} ${ctaSecondaryClass}`}
+        >
+          Microstrip Design Tool
+        </motion.a>
+        <motion.a
+          href="/research"
+          whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+          whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+          className={`${ctaBaseClass} ${ctaPrimaryClass}`}
+        >
+          Explore Research
+        </motion.a>
+        <motion.a
+          href="mailto:dr.yungting.hsieh@gmail.com"
+          whileHover={reduceMotion ? undefined : { scale: 1.04 }}
+          whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+          className={`${ctaBaseClass} ${ctaQuaternaryClass}`}
+        >
+          Get in Touch
+        </motion.a>
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="mt-5 flex justify-end gap-3">
+        {socials.map((social) => (
+          <motion.a
+            key={social.name}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={reduceMotion ? undefined : { scale: 1.12, y: -2 }}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/30 text-sm font-semibold text-gray-300 transition-colors hover:text-blue-300"
+            title={social.name}
+          >
+            {social.label}
+          </motion.a>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
+
 export default function Home() {
   const reduceMotion = useReducedMotion();
   const { snapshot: citationSnapshot } = useCitations();
@@ -349,18 +401,18 @@ export default function Home() {
       </div>
 
       <div className="relative z-10">
-        <section className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8">
+        <section className="flex min-h-screen items-start justify-center px-4 pb-12 pt-8 sm:px-6 sm:pt-12 lg:px-8">
           <motion.div
             className="w-full max-w-6xl"
             variants={containerVariants}
             initial={reduceMotion ? false : 'hidden'}
             animate="visible"
           >
-            <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12">
-              <div className="text-center md:text-left">
+            <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-12">
+              <div className="@container text-center md:text-left">
                 <motion.h1
                   variants={itemVariants}
-                  className="mb-6 text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl"
+                  className="mb-4 whitespace-nowrap md:mb-6 text-[clamp(1.125rem,8cqw,3rem)] font-black leading-[1.1] tracking-tight"
                 >
                   <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                     Dr. Yung-Ting Hsieh
@@ -448,65 +500,11 @@ export default function Home() {
                   </p>
                 </motion.div>
 
-                <motion.div
-                  variants={itemVariants}
-                  className="mb-12 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4 md:items-start md:justify-start"
-                >
-                  <motion.a
-                    href="/fun/microstrip"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className={`${ctaBaseClass} ${ctaSecondaryClass}`}
-                  >
-                    Microstrip Design Tool
-                  </motion.a>
-                  <motion.a
-                    href="/research"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className={`${ctaBaseClass} ${ctaPrimaryClass}`}
-                  >
-                    Explore Research
-                  </motion.a>
-                  {/* Temporarily hidden per request
-                  <motion.a
-                    href="/cv.pdf"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className={`${ctaBaseClass} ${ctaTertiaryClass}`}
-                  >
-                    Download CV
-                  </motion.a>
-                  */}
-                  <motion.a
-                    href="mailto:dr.yungting.hsieh@gmail.com"
-                    whileHover={reduceMotion ? undefined : { scale: 1.04 }}
-                    whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-                    className={`${ctaBaseClass} ${ctaQuaternaryClass}`}
-                  >
-                    Get in Touch
-                  </motion.a>
-                </motion.div>
 
-                <motion.div variants={itemVariants} className="flex justify-center gap-4 md:justify-start">
-                  {socials.map((social) => (
-                    <motion.a
-                      key={social.name}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={reduceMotion ? undefined : { scale: 1.12, y: -2 }}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/30 text-sm font-semibold text-gray-300 transition-colors hover:text-blue-300"
-                      title={social.name}
-                    >
-                      {social.label}
-                    </motion.a>
-                  ))}
-                </motion.div>
               </div>
 
               <motion.div variants={itemVariants} className="hidden md:flex md:flex-col md:items-center md:justify-start">
-                <div className="relative -mt-10 h-[640px] w-[500px] max-w-[480px]">
+                <div className="relative h-[640px] w-full max-w-[480px]">
                   {!reduceMotion && (
                     <motion.div
                       className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 blur-2xl"
@@ -533,7 +531,11 @@ export default function Home() {
                     reduceMotion={reduceMotion}
                   />
                 </div>
+                <ProfileLinks reduceMotion={reduceMotion} />
               </motion.div>
+              <div className="w-full max-w-[500px] justify-self-end md:hidden">
+                <ProfileLinks reduceMotion={reduceMotion} />
+              </div>
             </div>
           </motion.div>
         </section>
