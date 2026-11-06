@@ -157,6 +157,8 @@ function CareerTimeline({
                   type="button"
                   onClick={() => onSelect(index)}
                   onMouseEnter={() => onSelect(index)}
+                  onFocus={() => onSelect(index)}
+                  aria-pressed={isActive}
                   className={`relative w-full text-left transition-colors ${
                     isActive ? 'text-white' : 'text-gray-400 hover:text-gray-200'
                   }`}
@@ -182,26 +184,39 @@ function CareerTimeline({
             })}
           </div>
         </div>
-        <motion.div
-          key={timelineEntries[activeIndex].title}
-          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="rounded-xl border border-blue-500/20 bg-slate-900/60 p-5"
-        >
-          <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">
-            {timelineEntries[activeIndex].period}
-          </p>
-          <h4 className="mt-2 text-2xl font-bold text-white">
-            {timelineEntries[activeIndex].title}
-          </h4>
-          <p className="mt-2 text-sm font-medium text-blue-300">
-            {timelineEntries[activeIndex].subtitle}
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-gray-300">
-            {timelineEntries[activeIndex].detail}
-          </p>
-        </motion.div>
+        {/* Overlapping grid items reserve the tallest entry at every viewport width.
+            Keep inactive entries in layout so hover never moves its own targets. */}
+        <div className="grid min-w-0">
+          {timelineEntries.map((entry, index) => {
+            const isActive = activeIndex === index;
+            return (
+              <motion.div
+                key={entry.title}
+                aria-hidden={!isActive}
+                inert={!isActive}
+                initial={false}
+                animate={{ opacity: isActive ? 1 : 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.35, ease: 'easeOut' }}
+                className={`col-start-1 row-start-1 min-w-0 rounded-xl border border-blue-500/20 bg-slate-900/60 p-5 ${
+                  isActive ? 'visible' : 'invisible pointer-events-none'
+                }`}
+              >
+                <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">
+                  {entry.period}
+                </p>
+                <h4 className="mt-2 text-2xl font-bold text-white">
+                  {entry.title}
+                </h4>
+                <p className="mt-2 text-sm font-medium text-blue-300">
+                  {entry.subtitle}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-gray-300">
+                  {entry.detail}
+                </p>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
