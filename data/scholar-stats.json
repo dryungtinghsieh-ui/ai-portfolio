@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "authorId": "TSoiF94AAAAJ",
-  "totalCitations": 127,
+  "totalCitations": 128,
   "hindex": 7,
   "i10index": 7,
   "citationsByScholarId": {
-    "MXK_kJrjxJIC": 25,
+    "MXK_kJrjxJIC": 26,
     "eQOLeE2rZwMC": 21,
     "2osOgNQ5qMEC": 21,
     "d1gkVwhDpl0C": 19,
@@ -25,6 +25,6 @@
     "_FxGoFyzp5QC": 0,
     "qxL8FJ1GzNcC": 0
   },
-  "fetchedAt": "2026-11-06T16:03:44.905Z",
+  "fetchedAt": "2026-11-07T16:25:21.010Z",
   "source": "google-scholar"
 }
