@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
+import { contextFor } from '@/lib/agent-context.mjs';
 
 type ToolTrace = { id: string; name: string; arguments: unknown; result: unknown; status: string; duration_ms: number };
 type Message = { role: 'user' | 'assistant'; content: string; tools?: ToolTrace[] };
@@ -12,13 +13,6 @@ const suggestions = [
   { tag: 'CALCULATE', title: 'Work through the numbers', text: 'Use the calculator to find the mean of 12.5, 18.2, 21.8, and 15.5. Explain the result.' },
   { tag: 'TIME', title: 'Try a tool call', text: 'What is the current UTC date and time? Use the time tool.' },
 ];
-
-// Send complete pairs only, within the Worker's 10-message / 20,000-character budget.
-function contextFor(messages: Message[], next: string) {
-  let history = messages.slice(-10).map(({ role, content }) => ({ role, content }));
-  while (history.length && history.reduce((sum, m) => sum + m.content.length, next.length) > 20000) history = history.slice(2);
-  return history;
-}
 
 function parseTraces(value: unknown): ToolTrace[] {
   if (!Array.isArray(value)) return [];
