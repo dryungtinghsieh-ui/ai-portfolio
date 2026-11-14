@@ -451,6 +451,7 @@ export default function Home() {
                     </div>
                   </div>
                 </motion.div>
+                <div className="mx-auto mb-8 max-w-[340px] md:hidden"><MiniAiLink /></div>
                 <motion.div variants={itemVariants} className="mb-8 md:hidden">
                   <CareerTimeline
                     activeIndex={activeTimelineEntry}
