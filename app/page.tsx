@@ -276,6 +276,16 @@ function EducationJourney() {
   );
 }
 
+function MiniAiLink() {
+  return (
+    <a href="/agent" className="group mx-auto mt-4 flex w-full max-w-[480px] items-center gap-4 rounded-xl border border-blue-500/30 bg-slate-900/40 px-5 py-4 text-left transition-colors hover:border-cyan-300">
+      <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-blue-500/30 text-xl text-cyan-300">✳</span>
+      <span className="flex-1"><span className="block text-base font-semibold text-white">Try My Mini AI</span><span className="mt-1 block text-xs leading-relaxed text-gray-400">A little AI experience. Ask a question, explore my work.</span></span>
+      <span aria-hidden="true" className="text-lg text-cyan-300">↗</span>
+    </a>
+  );
+}
+
 function ProfileLinks({ reduceMotion }: { reduceMotion: boolean | null }) {
   return (
     <div className="mt-6 w-full max-w-[500px]" aria-label="Quick links and social profiles">
@@ -309,11 +319,6 @@ function ProfileLinks({ reduceMotion }: { reduceMotion: boolean | null }) {
         </motion.a>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="mt-4">
-        <a href="/agent" className="flex items-center justify-between rounded-xl border border-blue-500/30 px-4 py-3 text-sm text-gray-300 transition-colors hover:text-blue-300">
-          <span>AI Agent · Research &amp; calculations</span><span aria-hidden="true">↗</span>
-        </a>
-      </motion.div>
       <motion.div variants={itemVariants} className="mt-5 flex justify-end gap-3">
         {socials.map((social) => (
           <motion.a
@@ -529,6 +534,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
+                <MiniAiLink />
                 <div className="mt-6 w-full max-w-[500px]">
                   <CareerTimeline
                     activeIndex={activeTimelineEntry}
