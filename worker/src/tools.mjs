@@ -7,6 +7,9 @@ const schema = (name, description, properties, required) => ({
 });
 
 export const tools = [
+  schema('signal_basics', 'Calculate simple signal-integrity quantities. bit_period: value is data rate in Gbps (NRZ only). reflection: value is load resistance in ohms, reference_ohms is line impedance. Return assumptions and explain in plain English.', {
+    operation: {type:'string', enum:['bit_period','reflection']}, value:{type:'number'}, reference_ohms:{type:'number'}
+  }, ['operation','value','reference_ohms']),
   schema('get_current_time', 'Get the current UTC date and time.', {}, []),
   schema('calculate', 'Perform numeric arithmetic. Subtract, divide and power require two numbers; sqrt requires one. Never executes code.', {
     operation: { type: 'string', enum: ['add', 'subtract', 'multiply', 'divide', 'mean', 'sqrt', 'power'] },
@@ -24,6 +27,14 @@ function exactKeys(args, expected) {
 }
 
 export function executeTool(name, args) {
+  if(name === 'signal_basics') {
+    exactKeys(args, ['operation','value','reference_ohms']);
+    const {operation,value,reference_ohms:z}=args;
+    if(!Number.isFinite(value)||value<=0||value>1e6||!Number.isFinite(z)||z<=0||z>1e6) throw new Error('Use positive finite inputs up to 1e6');
+    if(operation==='bit_period') return {bit_period_ps:1000/value,assumption:'NRZ signaling: one bit per symbol. Reference impedance is unused.', explanation:'Time available for each bit; shorter time means less room for distortion.'};
+    if(operation==='reflection') {const gamma=(value-z)/(value+z);return {reflection_coefficient:gamma,reflected_power_percent:100*gamma*gamma,assumption:'Purely resistive load and real line impedance; ideal single interface, not a full channel simulation.', explanation:'The reflected power percentage shows how much incident power bounces back at this impedance mismatch.'};}
+    throw new Error('Unknown signal operation');
+  }
   if (name === 'get_current_time') {
     exactKeys(args, []);
     return { utc: new Date().toISOString() };

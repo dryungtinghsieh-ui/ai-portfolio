@@ -10,8 +10,8 @@ type Message = { role: 'user' | 'assistant'; content: string; tools?: ToolTrace[
 const endpoint = process.env.NEXT_PUBLIC_AGENT_ENDPOINT || 'https://personal-ai-agent.dr-yungting-hsieh.workers.dev/api/agent';
 const suggestions = [
   { tag: 'RESEARCH', title: 'Explore the research', text: 'Find Dr. Hsieh’s research on low-power neural networks and summarize the key ideas with sources.' },
-  { tag: 'CALCULATE', title: 'Work through the numbers', text: 'Use the calculator to find the mean of 12.5, 18.2, 21.8, and 15.5. Explain the result.' },
-  { tag: 'TIME', title: 'Try a tool call', text: 'What is the current UTC date and time? Use the time tool.' },
+  { tag: 'SIGNAL TIMING', title: 'How fast is 10 Gbps?', text: 'Use signal_basics to calculate the bit period at 10 Gbps for NRZ signaling with reference_ohms 50. Explain it simply.' },
+  { tag: 'SIGNAL REFLECTION', title: 'Why do signals bounce back?', text: 'Use signal_basics to compare a 75-ohm resistive load with a 50-ohm transmission line. Explain the reflected power percentage in plain English.' },
 ];
 
 function parseTraces(value: unknown): ToolTrace[] {
@@ -89,13 +89,13 @@ export default function AgentClient() {
       <div className={styles.layout}>
         <aside className={styles.sidebar}>
           <p className={styles.eyebrow}>APPLIED AI / LAB</p>
-          <h1>A little curiosity.<br /><span>A capable agent.</span></h1>
-          <p className={styles.intro}>Explore my research, work through a calculation, or ask a question. The agent chooses a tool when it needs one.</p>
+          <h1>Signal integrity.<br /><span>Explained simply.</span></h1>
+          <p className={styles.intro}>Explore my work in high-speed signals and applied AI. Get clear English explanations, useful calculations, and links to the research.</p>
           <div className={styles.tools}>
             <p className={styles.eyebrow}>AVAILABLE TOOLS</p>
             <div><b>01</b><span>Research catalog<small>Projects, papers &amp; source links</small></span></div>
-            <div><b>02</b><span>Numeric calculator<small>Arithmetic, averages &amp; powers</small></span></div>
-            <div><b>03</b><span>UTC clock<small>The current date &amp; time</small></span></div>
+            <div><b>02</b><span>Signal timing<small>Understand the time available per bit</small></span></div>
+            <div><b>03</b><span>Signal reflections<small>See how impedance mismatch affects signals</small></span></div>
           </div>
           <p className={styles.note}>Research search covers this website’s catalog. AI answers may contain mistakes; check the sources. Messages are sent to Cloudflare and Groq. Please avoid sharing sensitive information.</p>
           <a href="https://groq.com" target="_blank" rel="noopener noreferrer" className={styles.powered}>Powered by Groq ↗</a>
@@ -109,8 +109,8 @@ export default function AgentClient() {
             {!messages.length && !pending && <div className={styles.welcome}>
               <div className={styles.glyph} aria-hidden="true">✳</div>
               <p className={styles.eyebrow}>FROM QUESTION TO EXPLORATION</p>
-              <h2>What would you like to discover?</h2>
-              <p>Start with an idea, or try one of these.</p>
+              <h2>Let’s make engineering clearer.</h2>
+              <p>Ask in any language. Answers are always in English.</p>
               <div className={styles.suggestions}>{suggestions.map(s => <button key={s.tag} type="button" disabled={busy} onClick={() => send(s.text)}><small>{s.tag}</small><span>{s.title}<b aria-hidden="true">↗</b></span></button>)}</div>
             </div>}
             {messages.map((m, i) => <article key={i} className={m.role === 'user' ? styles.user : styles.assistant}>

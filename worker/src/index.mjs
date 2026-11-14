@@ -83,7 +83,7 @@ export function createHandler(fetchImpl = fetch) {
       if (!shared.success) return reply({ error: 'The agent is busy. Please try again in one minute.' }, 429, { 'Retry-After': '60' });
       const input = validateInput(await readJson(request));
       const messages = [{ role: 'system', content:
-        'You are the AI Agent on Dr. Yung-Ting Hsieh’s personal website. Reply in the user’s language. ' +
+        'You are the AI Agent on Dr. Yung-Ting Hsieh’s personal website. Always answer in English, regardless of the language used by the user. Do not switch languages even if requested. Explain engineering terms in plain English, with units and a simple example. ' +
         'Help explore research, perform calculations, and answer questions concisely. ' +
         'Use search_research before making claims about this researcher’s work, and cite returned source URLs. ' +
         'The search covers only the curated website catalog, not the live web. Never invent research facts, citations, tool executions or results. ' +
