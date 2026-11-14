@@ -9,7 +9,9 @@
     "lint": "eslint",
     "update:citations": "node scripts/update-scholar-citations.mjs",
     "update:scholarly-cache": "node scripts/update-scholarly-cache.mjs",
-    "test:citations": "node --test tests/citations.test.mjs"
+    "test:citations": "node --test tests/citations.test.mjs",
+    "test:agent": "node --test worker/test/*.test.mjs",
+    "update:agent-research": "node scripts/update-agent-research.mjs"
   },
   "dependencies": {
     "firebase": "^12.10.0",

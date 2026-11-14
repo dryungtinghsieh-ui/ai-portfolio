@@ -1,0 +1,136 @@
+[
+  {
+    "id": "ai-s-parameter-prediction",
+    "title": "AI-Assisted S-Parameter Prediction",
+    "description": "High-speed interconnect evaluation depends on repeated signal analysis, which can make design exploration computationally expensive. For the TE AI Cup 2022-23, our Rutgers team developed neural-network architectures and signal preprocessing methods to predict IEEE-standard Channel Operating Margin (COM) parameters in place of a time-consuming model-based MATLAB workflow. The project received the Best AI Innovation prize. Rutgers estimated $12.5M in potential savings in tester time and capital expenditure for high-speed testing.",
+    "technologies": [
+      "TensorFlow",
+      "PyTorch",
+      "Signal Processing",
+      "S-Parameters",
+      "Channel Operating Margin (COM)",
+      "Deep Learning",
+      "High-Speed Interconnects"
+    ],
+    "url": "https://www.ythsieh.dev/research/ai-s-parameter-prediction",
+    "references": [
+      {
+        "title": "Rutgers ECE Team Won Best AI Innovation Prize in TE AI Cup 2022-23",
+        "source": "Rutgers University ECE Newsletter 2023",
+        "year": 2024,
+        "url": "https://ece.rutgers.edu/sites/default/files/2024-06/ECE_Newsletter_2023.pdf"
+      }
+    ]
+  },
+  {
+    "id": "hybrid-neural-networks",
+    "title": "Ultra-Low-Power Analog Neural Networks for ECG Monitoring",
+    "description": "Continuous ECG analysis requires inference within tight power and hardware budgets. This research investigates analog folded neural networks, reusing computation resources over time rather than allocating separate hardware to every operation. The work spans resistive processing units, analog activation functions, and hybrid analog-digital sensing architectures. The engineering focus is the tradeoff among inference capability, circuit complexity, and power consumption for wearable health-monitoring applications.",
+    "technologies": [
+      "Analog Neural Networks",
+      "Folded Neural Networks",
+      "Ultra-Low Power Design",
+      "Health Monitoring",
+      "Wearable Computing",
+      "ECG Signal Processing",
+      "Distributed Sensing",
+      "VLSI"
+    ],
+    "url": "https://www.ythsieh.dev/research/hybrid-neural-networks",
+    "publications": [
+      {
+        "title": "Neural network design via voltage-based resistive processing unit and diode activation function-a new architecture",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:2osOgNQ5qMEC",
+        "publication": "2021 IEEE International Midwest Symposium on Circuits and Systems (MWSCAS)",
+        "year": 2021
+      },
+      {
+        "title": "Ultra-low Power Analog Recurrent Neural Network Design Approximation for Wireless Health Monitoring",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:YsMSGLbcyi4C",
+        "publication": "2022 IEEE 19th International Conference on Mobile Ad Hoc and Smart Systems (MASS)",
+        "year": 2022
+      },
+      {
+        "title": "Hybrid analog-digital sensing approach for low-power real-time anomaly detection in drones",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:Tyk-4Ss8FVUC",
+        "publication": "2021 IEEE 18th International Conference on Mobile Ad Hoc and Smart Systems (MASS)",
+        "year": 2021
+      },
+      {
+        "title": "Ultra-low power analog folded neural network for cardiovascular health monitoring",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4TOpqqG69KYC",
+        "publication": "IEEE Journal of Biomedical and Health Informatics",
+        "year": 2024
+      }
+    ]
+  },
+  {
+    "id": "spiking-neural-networks",
+    "title": "Spiking Neural Networks for Signal Processing",
+    "description": "Always-on sensing must extract useful information from time-varying inputs within a limited energy budget. This research examines spiking neural networks and hybrid analog-digital implementations for IoT sensing and smart-camera applications. The work focuses on temporal representations and event-driven computation, assessing how neural architecture and hardware implementation affect the cost of continuous signal processing.",
+    "technologies": [
+      "Spiking Neural Networks",
+      "Neuromorphic Computing",
+      "TDR Signal Processing",
+      "Temporal Coding",
+      "Edge Computing",
+      "Event-Driven Processing"
+    ],
+    "url": "https://www.ythsieh.dev/research/spiking-neural-networks",
+    "publications": [
+      {
+        "title": "A lightweight hybrid analog-digital spiking neural network for iot",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:4DMP91E08xMC",
+        "publication": "2024 20th International Conference on Distributed Computing in Smart Systems and the Internet of Things (DCOSS-IoT)",
+        "year": 2024
+      },
+      {
+        "title": "A Bio-inspired Low-power Hybrid Analog/Digital Spiking Neural Networks for Pervasive Smart Cameras",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:M3ejUd6NZC8C",
+        "publication": "2024 IEEE International Conference on Pervasive Computing and Communications Workshops and other Affiliated Events (PerCom Workshops)",
+        "year": 2024
+      }
+    ]
+  },
+  {
+    "id": "underwater-acoustic-communications",
+    "title": "Full-Duplex Underwater Acoustic Communications",
+    "description": "Full-duplex underwater acoustic links must recover incoming signals while suppressing interference from their own transmitter. This research addresses that constraint through spatial self-interference cancellation, supported by work on joint Doppler estimation and compensation. The objective is to improve acoustic-channel utilization while accounting for the propagation and motion effects that complicate underwater communications. The project connects signal-processing methods with experimental acoustic-link evaluation.",
+    "technologies": [
+      "Acoustic Communications",
+      "Full-Duplex Technology",
+      "Signal Processing",
+      "Interference Cancellation",
+      "Underwater Acoustics",
+      "Vector Sensors",
+      "Autonomous Underwater Vehicles"
+    ],
+    "url": "https://www.ythsieh.dev/research/underwater-acoustic-communications",
+    "publications": [
+      {
+        "title": "FD-UWA: Full-duplex underwater acoustic comms via self-interference cancellation in space",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:d1gkVwhDpl0C",
+        "publication": "2020 IEEE 17th International Conference on Mobile Ad Hoc and Sensor Systems (MASS)",
+        "year": 2020
+      },
+      {
+        "title": "Full-Duplex Underwater Acoustic Communications via Self-Interference Cancellation in Space",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:MXK_kJrjxJIC",
+        "publication": "Journal of Communications and Networks 25(2), 167-181",
+        "year": 2023
+      },
+      {
+        "title": "ML-based joint Doppler estimation and compensation in underwater acoustic communications",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:eQOLeE2rZwMC",
+        "publication": "Proceedings of the 16th International Conference on Underwater Networks and Systems (WUWNet)",
+        "year": 2022
+      },
+      {
+        "title": "Demo: ML-based Joint Doppler Estimation and Compensation in Underwater Acoustic Comms",
+        "url": "https://scholar.google.com.tw/citations?view_op=view_citation&hl=zh-TW&user=TSoiF94AAAAJ&citation_for_view=TSoiF94AAAAJ:Zph67rFs4hoC",
+        "publication": "ACM WUWNet Demo",
+        "year": 2022
+      }
+    ]
+  }
+]

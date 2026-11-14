@@ -14,6 +14,7 @@ This repository is for maintaining my own site, not an open-source starter templ
 ## Route Map
 
 - `/` Landing page
+- `/agent` Tool-using AI Agent (Cloudflare Worker + Groq)
 - `/research` Research list
 - `/research/[id]` Research detail
 - `/fun/microstrip` Interactive demo
@@ -94,6 +95,10 @@ Tests cover malformed/blocked pages, actual zero citations, multi-page profiles,
 request retries, incomplete payloads, atomic writes, and preserving last-good data.
 
 ## Maintenance Commands
+
+The AI Agent UI and Worker setup, security boundaries, validation and rollback
+are documented in [worker/README.md](worker/README.md). Run `npm run test:agent`
+for its backend tests and `npm run update:agent-research` after research changes.
 
 - `pnpm dev`
 - `pnpm build`

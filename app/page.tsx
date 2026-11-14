@@ -309,6 +309,11 @@ function ProfileLinks({ reduceMotion }: { reduceMotion: boolean | null }) {
         </motion.a>
       </motion.div>
 
+      <motion.div variants={itemVariants} className="mt-4">
+        <a href="/agent" className="flex items-center justify-between rounded-xl border border-blue-500/30 px-4 py-3 text-sm text-gray-300 transition-colors hover:text-blue-300">
+          <span>AI Agent · Research &amp; calculations</span><span aria-hidden="true">↗</span>
+        </a>
+      </motion.div>
       <motion.div variants={itemVariants} className="mt-5 flex justify-end gap-3">
         {socials.map((social) => (
           <motion.a
