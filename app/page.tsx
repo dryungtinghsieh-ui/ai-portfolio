@@ -319,6 +319,11 @@ function ProfileLinks({ reduceMotion }: { reduceMotion: boolean | null }) {
         </motion.a>
       </motion.div>
 
+      <a href="/certifications" className="mt-3 flex min-h-12 items-center justify-between rounded-xl border border-blue-500/30 bg-slate-900/40 px-5 py-3 text-sm text-cyan-300 transition-colors hover:border-cyan-300">
+        <span>Certifications · From Simulation to Silicon</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+
       <motion.div variants={itemVariants} className="mt-5 flex justify-end gap-3">
         {socials.map((social) => (
           <motion.a
